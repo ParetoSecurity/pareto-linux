@@ -1,0 +1,58 @@
+# Run all tests, linters, code analysis and other QA tasks on
+# every push to master and PRs.
+#
+# To SSH into the runner to debug a failure, add the following step before
+# the failing step
+#       - uses: mxschmitt/action-tmate@v3
+#         with:
+#           install-dependencies: false
+
+name: Integration Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+# Prevent multiple jobs running after fast subsequent pushes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Unstable build
+    runs-on: namespace-profile-pareto-linux
+    steps:
+      - uses: namespacelabs/nscloud-checkout-action@v5
+      - uses: ./.github/actions/devenv
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - run: devenv shell -- goreleaser build --snapshot --clean
+      - uses: actions/upload-artifact@v4
+        name: Upload release
+        with:
+          name: build
+          path: dist
+  integration:
+    name: Test on ${{ matrix.os }}
+    runs-on: namespace-profile-pareto-linux
+    needs: build
+    strategy:
+      matrix:
+        os: [ubuntu, debian, fedora, nixos]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      - uses: ./.github/actions/devenv
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - run: nix run .#test-${{ matrix.os }}
+        if: matrix.os != 'nixos'
+      - run: nix flake check .
+        if: matrix.os == 'nixos'

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParetoSecurity Packages</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">ParetoSecurity Packages</h1>
+
+        <h3 id="stable" class="text-xl font-semibold mb-2">Stable Release</h3>
+        <pre class="bg-gray-800 text-white p-4 rounded">
+# Add paretosecurity gpg key
+sudo mkdir -p --mode=0755 /usr/share/keyrings
+curl -fsSL https://apt.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
+
+# Add this repo to your apt repositories
+echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://apt.paretosecurity.com stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
+
+# install pareto
+sudo apt update && sudo apt install pareto
+        </pre>
+    </div>
+</body>
+
+</html>

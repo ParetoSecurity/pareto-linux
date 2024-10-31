@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    # run only against tags
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      # More assembly might be required: Docker logins, GPG, etc.
+      # It all depends on your needs.
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+      - uses: actions/upload-artifact@v4
+        name: Upload release
+        with:
+          name: release
+          path: dist
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Install reprepro
+        run: sudo apt install -y reprepro
+      - run: reprepro -b apt includedeb stable dist/pareto-linux_*_linux_*.deb
+      - name: Host repository for testing
+        uses: Eun/http-server-action@856e467dda36cd5d30e93bd7dd168cf3e1676301 # v1
+        with:
+            directory: apt
+            port: 8000
+
+      - name: Check repository works
+        run: |
+            set +x
+        
+            # Copy signing keyring
+            sudo cp paretosecurity.gpg /usr/share/keyrings/paretosecurity.gpg
+            # Point apt at local apt repo overwriting all default sources
+            echo "deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] http://localhost:8000/debian/ stable main" | sudo tee /etc/apt/sources.list
+            # Later ubuntu versions use the `conf.d` approach so we need to remove the default sources
+            sudo rm -R /etc/apt/sources.list.d/*
+
+            sudo apt-get update --allow-insecure-repositories
+        working-directory: ./apt
+
+      - uses: ryand56/r2-upload-action@latest
+        with:
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: pareto-apt
+          source-dir: apt
+          destination-dir: ./
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'dist/pareto-linux_*_linux_*.deb'

@@ -1,0 +1,6 @@
+Origin: apt.paretosecurity.com
+Codename: stable
+Architectures: amd64 arm64
+Components: main
+SignWith: 196FECB38F8C215A
+Tracking: minimal
