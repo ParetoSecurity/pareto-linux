@@ -70,7 +70,7 @@
           vmTest = inputs.nix-vm-test.lib.x86_64-linux.debian."13" {
             sharedDirs = {
               packageDir = {
-                source = "${./.}";
+                source = "${./.}/dist";
                 target = "/mnt/package";
               };
             };
@@ -83,7 +83,7 @@
           vmTest = inputs.nix-vm-test.lib.x86_64-linux.fedora."40" {
             sharedDirs = {
               packageDir = {
-                source = "${./.}";
+                source = "${./.}/dist";
                 target = "/mnt/package";
               };
             };
@@ -96,7 +96,7 @@
           vmTest = inputs.nix-vm-test.lib.x86_64-linux.ubuntu."23_10" {
             sharedDirs = {
               packageDir = {
-                source = "${./.}";
+                source = "${./.}/dist";
                 target = "/mnt/package";
               };
             };

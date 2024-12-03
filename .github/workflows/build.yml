@@ -61,7 +61,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: build
-          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R
       - uses: ./.github/actions/devenv
         with:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
