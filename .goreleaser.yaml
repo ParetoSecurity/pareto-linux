@@ -19,6 +19,7 @@ builds:
       - arm64
     ldflags:
       - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}}
+    binary: paretosecurity
 
 archives:
   - builds: [pareto]
