@@ -20,7 +20,10 @@ builds:
     ldflags:
       - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}}
     binary: paretosecurity
-
+    gcflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    asmflags:
+      - all=-trimpath={{.Env.GOPATH}}
 archives:
   - builds: [pareto]
 
