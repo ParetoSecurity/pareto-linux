@@ -1,7 +1,7 @@
 # pareto-linux
 Automatically audit your Linux machine for basic security hygiene.
 
-https://github.com/user-attachments/assets/6c6b2bec-947c-41f8-93f3-f5d15e80e6a8
+
 
 
 ## Installation
@@ -22,10 +22,29 @@ To run a one-time security audit without installation:
 nix run github:paretosecurity/pareto-linux -- check
 ```
 
-or if running from local repo
+or if running from local repo with JSON reporter
 
 ```bash
-nix run . -- check
+nix run . -- check --json
 ```
 
 This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
+
+### Using Debian/Ubuntu/Pop_OS!
+
+See [https://apt.paretosecurity.com](https://apt.paretosecurity.com) for install steps.
+
+
+#### Quick Start
+
+To run a one-time security audit:
+
+```bash
+paretosecurity check
+```
+
+or with JSON reporter
+
+```bash
+paretosecurity check --json
+```
