@@ -19,6 +19,7 @@ in {
     go mod verify
     go test ./...
     go build .
+    goreleaser check
   '';
 
   # https://devenv.sh/pre-commit-hooks/
@@ -27,6 +28,13 @@ in {
     gofmt.enable = true;
     golangci-lint.enable = true;
     govet.enable = true;
+    nix-run = {
+      name = "Verify package.nix hash";
+      enable = true;
+      pass_filenames = false;
+      files = "go.(mod|sum)$";
+      entry = "nix run .# -- --help";
+    };
   };
 
   # See full reference at https://devenv.sh/reference/options/

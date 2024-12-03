@@ -24,13 +24,26 @@ concurrency:
 jobs:
   build:
     name: Unstable build
-    runs-on: namespace-profile-pareto-linux
+    runs-on: ubuntu-latest
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@v5
-      - uses: ./.github/actions/devenv
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - run: devenv shell -- goreleaser build --snapshot --clean
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          # either 'goreleaser' (default) or 'goreleaser-pro'
+          distribution: goreleaser
+          # 'latest', 'nightly', or a semver
+          version: "~> v2"
+          args: build --snapshot --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         name: Upload release
         with:

@@ -1,35 +1,40 @@
-version: 2
-project_name: scorecard
-env:
-  - CGO_ENABLED=0
-  - COSIGN_YES=true
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 1
+
 before:
   hooks:
-    - go mod download
-gomod:
-  proxy: true
+    - go mod tidy
 
 builds:
-  - main: .
-    binary: pareto
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
     goarch:
       - amd64
       - arm64
-    goos:
-      - linux
-      - darwin
     ldflags:
       - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}}
-      - -trimpath
-      - -tags=netgo
+
 archives:
   - builds: [pareto]
 
 nfpms:
   - vendor: niteo.co
     homepage: https://github.com/paretosecurity/pareto-linux
-    maintainer: NIteo
+    maintainer: Niteo
     description: Automatically audit your Linux machine for basic security hygiene.
     license: MIT
-    formats: [deb, rpm, apk]
+    formats: [deb, rpm]
     bindir: /usr/bin
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

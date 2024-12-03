@@ -14,3 +14,4 @@ devenv.local.nix
 /target
 .DS_Store
 dist
+dist/
