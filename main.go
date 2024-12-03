@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/caarlos0/log"
@@ -10,6 +9,7 @@ import (
 	"go.uber.org/automaxprocs/maxprocs"
 	"paretosecurity.com/auditor/cmd"
 	"paretosecurity.com/auditor/shared"
+	"paretosecurity.com/auditor/team"
 )
 
 var rootCmd = &cobra.Command{
@@ -43,21 +43,14 @@ func init() { // enable colored output on github actions et al
 }
 
 var linkCmd = &cobra.Command{
-	Use:   "link [url]",
+	Use:   "link",
 	Short: "Link team to this device",
-	Args: func(cc *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			log.Error("requires a URL argument")
-			return nil
-		}
-		if !shared.IsValidParetoURL(args[0]) {
-			log.Error("invalid URL, must start with paretosecurity://")
-			return nil
-		}
-		return nil
-	},
 	Run: func(cc *cobra.Command, args []string) {
-		//team.LinkWithDevice(args[0])
+		err := team.LinkAndWaitForTicket()
+		if err != nil {
+			log.WithError(err).Warn("failed to link")
+			os.Exit(1)
+		}
 	},
 }
 
@@ -65,7 +58,13 @@ var unlinkCmd = &cobra.Command{
 	Use:   "unlink",
 	Short: "Unlink team",
 	Run: func(cc *cobra.Command, args []string) {
-		fmt.Println("Unlinking system components...")
+		log.Info("Unlinking device ...")
+		shared.Config.TeamID = ""
+		shared.Config.AuthToken = ""
+		if err := shared.SaveConfig(); err != nil {
+			log.WithError(err).Warn("failed to save config")
+			os.Exit(1)
+		}
 	},
 }
 
@@ -73,7 +72,7 @@ var daemonCmd = &cobra.Command{
 	Use:   "daemon",
 	Short: "Run as a daemon",
 	Run: func(cc *cobra.Command, args []string) {
-		fmt.Println("Starting daemon mode...")
+		log.Info("Starting daemon mode...")
 	},
 }
 
