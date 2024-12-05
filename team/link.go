@@ -2,31 +2,20 @@ package team
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
-	"testing"
+	"sync"
 	"time"
 
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
-	"github.com/carlmjohnson/requests/reqtest"
-	"github.com/zcalusic/sysinfo"
 	"paretosecurity.com/auditor/shared"
 )
 
-const baseURL = "https://dash.paretosecurity.com/api/v1/team"
 const enrollURL = "https://dash.paretosecurity.com/api/v1/team/enroll"
-
-type LinkingDevice struct {
-	Hostname  string `json:"hostname"`
-	OS        string `json:"os"`
-	OSVersion string `json:"osVersion"`
-	Kernel    string `json:"kernel"`
-	UUID      string `json:"uuid"`
-	Ticket    string `json:"ticket"`
-	Version   string `json:"version"`
-}
 
 type LinkingResponse struct {
 	Team string `json:"team"`
@@ -35,49 +24,6 @@ type LinkingResponse struct {
 
 type TicketResponse struct {
 	URL string `json:"url"`
-}
-
-func getTransport() http.RoundTripper {
-	if testing.Testing() {
-		return reqtest.Replay("fixtures")
-	}
-	return http.DefaultTransport
-}
-
-// NewLinkingDevice creates a new instance of LinkingDevice with system information.
-// It retrieves the system UUID and device ticket, and populates the LinkingDevice struct
-// with the hostname, OS name, OS version, kernel version, UUID, and ticket.
-// Returns a pointer to the LinkingDevice and an error if any occurs during the process.
-func NewLinkingDevice() (*LinkingDevice, error) {
-	if testing.Testing() {
-		return &LinkingDevice{
-			Hostname:  "test-hostname",
-			OS:        "test-os",
-			OSVersion: "test-os-version",
-			Kernel:    "test-kernel",
-			UUID:      "test-uuid",
-			Ticket:    "test-ticket",
-		}, nil
-	}
-
-	sysinfo := sysinfo.SysInfo{}
-	sysinfo.GetSysInfo()
-	uuid, err := shared.SystemUUID()
-	if err != nil {
-		return nil, err
-	}
-	ticket, err := shared.SystemDevice()
-	if err != nil {
-		return nil, err
-	}
-	return &LinkingDevice{
-		Hostname:  os.Getenv("HOSTNAME"),
-		OS:        sysinfo.OS.Name,
-		OSVersion: sysinfo.OS.Release,
-		Kernel:    sysinfo.Kernel.Release,
-		UUID:      uuid,
-		Ticket:    ticket,
-	}, nil
 }
 
 // LinkAndWaitForTicket initiates the device linking process and waits for the device to be linked to a team.
@@ -91,35 +37,50 @@ func NewLinkingDevice() (*LinkingDevice, error) {
 //
 // Returns an error if any step in the process fails.
 func LinkAndWaitForTicket() error {
+	var wg sync.WaitGroup
 	device, err := NewLinkingDevice()
 	if err != nil {
 		return err
 	}
-
+	log.Infof("Linking device with UUID: %s", device.UUID)
+	log.Infof("Device hostname: %s", device.Hostname)
+	log.Infof("Device OS: %s", device.OS)
+	log.Infof("Device OS version: %s", device.OSVersion)
+	log.Infof("Device kernel version: %s", device.Kernel)
+	log.Infof("Device ticket: %s", device.Ticket)
+	log.Info("Please wait while we link your device to a team...")
 	var linkResp TicketResponse
 	err = requests.
 		URL(enrollURL).
 		BodyJSON(&device).
 		ToJSON(&linkResp).
-		Transport(getTransport()).
+		Transport(shared.HTTPTransport()).
 		Fetch(context.Background())
 	if err != nil {
 		return err
 	}
 
 	log.Infof("Please visit the following URL to enroll your device: %s", linkResp.URL)
-
+	wg.Add(1)
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
 			var linkStatus LinkingResponse
 			err := requests.
-				URL(baseURL).
+				URL(enrollURL).
+				Param("ticket", device.Ticket).
+				BodyJSON(&device).
 				ToJSON(&linkStatus).
-				Transport(getTransport()).
+				Transport(shared.HTTPTransport()).
 				Fetch(context.Background())
 			if err != nil {
 				log.Errorf("Error checking link status: %v", err)
+				var httpErr *requests.ResponseError
+				if errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusNotFound {
+
+					fmt.Print(".")
+					continue
+				}
 				continue
 			}
 
@@ -132,6 +93,7 @@ func LinkAndWaitForTicket() error {
 					os.Exit(1)
 				}
 				log.Infof("Device successfully linked to team: %s", linkStatus.Team)
+				wg.Done()
 				break
 			} else {
 				log.Infof("Waiting for device to be linked to team...")
@@ -143,6 +105,6 @@ func LinkAndWaitForTicket() error {
 	if err != nil {
 		log.Warnf("Error opening browser: %v", err)
 	}
-
+	wg.Wait()
 	return nil
 }

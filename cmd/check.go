@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/caarlos0/log"
 	"github.com/pterm/pterm"
 	"paretosecurity.com/auditor/check"
 	"paretosecurity.com/auditor/claims"
@@ -15,9 +16,9 @@ import (
 func Check() {
 	multi := pterm.DefaultMultiPrinter
 	var wg sync.WaitGroup
-	pterm.Println("Starting checks...")
+	log.Info("Starting checks...")
 	if _, err := multi.Start(); err != nil {
-		fmt.Println(err)
+		log.WithError(err).Warn("failed to stop multi printer")
 	}
 	for _, claim := range claims.All {
 		for _, chk := range claim.Checks {
@@ -53,12 +54,12 @@ func Check() {
 	}
 	wg.Wait()
 	if _, err := multi.Stop(); err != nil {
-		fmt.Println(err)
+		log.WithError(err).Warn("failed to stop multi printer")
 	}
 	time.Sleep(1 * time.Second)
-	pterm.Println("Checks completed.")
+	log.Info("Checks completed.")
 	if err := shared.SaveConfig(); err != nil {
-		fmt.Println(err)
+		log.WithError(err).Warn("cannot save config")
 	}
 }
 
@@ -74,11 +75,11 @@ func CheckJSON() {
 		}
 	}
 	if err := shared.SaveConfig(); err != nil {
-		fmt.Println(err)
+		log.WithError(err).Warn("cannot save config")
 	}
 	out, err := json.MarshalIndent(status, "", "  ")
 	if err != nil {
-		fmt.Println(err)
+		log.WithError(err).Warn("cannot marshal status")
 	}
 	fmt.Println(string(out))
 }

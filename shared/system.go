@@ -17,12 +17,10 @@ func SystemUUID() (string, error) {
 	}
 
 	for _, iface := range interfaces {
-		if iface.HardwareAddr != nil {
+		if len(iface.HardwareAddr) >= 6 {
 			hwAddr := iface.HardwareAddr
-			uuid, err := uuid.FromBytes(hwAddr)
-			if err != nil {
-				return "", err
-			}
+			// Use hardware address as seed for deterministic UUID
+			uuid := uuid.NewMD5(uuid.NameSpaceOID, hwAddr)
 			return uuid.String(), nil
 		}
 	}

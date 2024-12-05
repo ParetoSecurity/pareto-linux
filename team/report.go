@@ -1,14 +1,20 @@
 package team
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"os"
+	"fmt"
 	"time"
 
+	"github.com/caarlos0/log"
+	"github.com/carlmjohnson/requests"
+	"github.com/davecgh/go-spew/spew"
 	"paretosecurity.com/auditor/claims"
 	"paretosecurity.com/auditor/shared"
 )
+
+const reportURL = "https://dash.paretosecurity.com/api/v1/team"
 
 type ReportingDevice struct {
 	MachineUUID  string `json:"machineUUID"`
@@ -20,18 +26,15 @@ type ReportingDevice struct {
 }
 
 func CurrentReportingDevice() ReportingDevice {
-
+	device, err := NewLinkingDevice()
+	if err != nil {
+		panic(err)
+	}
 	return ReportingDevice{
-		MachineUUID: func() string {
-			uuid, _ := shared.SystemUUID()
-			return uuid
-		}(),
-		MachineName: func() string {
-			name, _ := os.Hostname()
-			return name
-		}(),
+		MachineUUID:  device.UUID,
+		MachineName:  device.Hostname,
 		Auth:         shared.Config.AuthToken,
-		MacOSVersion: "Linux",
+		MacOSVersion: fmt.Sprintf("%s %s", device.OS, device.OSVersion),
 		ModelName: func() string {
 			modelName, err := shared.SystemDevice()
 			if err != nil {
@@ -103,5 +106,19 @@ func NowReport() Report {
 		LastCheck:         time.Now().Format(time.RFC3339),
 		SignificantChange: hex.EncodeToString(significantChange[:]),
 		State:             checkStates,
+	}
+}
+
+// ReportAndSave generates a report and saves it to the configuration file.
+func ReportToTeam() {
+	report := NowReport()
+	log.Info(spew.Sdump(report))
+	err := requests.URL(reportURL).
+		Pathf("/%s/device", shared.Config.TeamID).
+		Transport(shared.HTTPTransport()).
+		BodyJSON(&report).
+		Fetch(context.Background())
+	if err != nil {
+		log.WithError(err).Warnf("Failed to report to team: %s", shared.Config.TeamID)
 	}
 }
