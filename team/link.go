@@ -12,10 +12,20 @@ import (
 
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
+	"github.com/davecgh/go-spew/spew"
 	"paretosecurity.com/auditor/shared"
 )
 
 const enrollURL = "https://dash.paretosecurity.com/api/v1/team/enroll"
+
+type NewDevice struct {
+	MachineName  string `json:"machineName"`
+	ModelName    string `json:"modelName"`
+	ModelSerial  string `json:"modelSerial"`
+	MacOSVersion string `json:"macOSVersion"`
+	MachineUUID  string `json:"machineUUID"`
+	Auth         string `json:"auth"`
+}
 
 type LinkingResponse struct {
 	Team string `json:"team"`
@@ -87,11 +97,18 @@ func LinkAndWaitForTicket() error {
 			if linkStatus.Auth != "" {
 				shared.Config.TeamID = linkStatus.Team
 				shared.Config.AuthToken = linkStatus.Auth
-				err := shared.SaveConfig()
+				err := AddDevice()
+				if err != nil {
+					log.WithError(err).Fatal("Failed to report device to team")
+					os.Exit(1)
+				}
+
+				err = shared.SaveConfig()
 				if err != nil {
 					log.Errorf("Error saving config: %v", err)
 					os.Exit(1)
 				}
+
 				log.Infof("Device successfully linked to team: %s", linkStatus.Team)
 				wg.Done()
 				break
@@ -106,5 +123,37 @@ func LinkAndWaitForTicket() error {
 		log.Warnf("Error opening browser: %v", err)
 	}
 	wg.Wait()
+	return nil
+}
+
+// AddDevice reports the device to the team.
+func AddDevice() error {
+	device := CurrentReportingDevice()
+
+	res := ""
+	newDevice := NewDevice{
+		MachineName:  device.MachineName,
+		ModelName:    device.ModelName,
+		ModelSerial:  device.ModelSerial,
+		MacOSVersion: device.MacOSVersion,
+		MachineUUID:  device.MachineUUID,
+		Auth:         device.Auth,
+	}
+	log.Debug(spew.Sdump(newDevice))
+	err := requests.URL(reportURL).
+		Pathf("/api/v1/team/%s/device", shared.Config.TeamID).
+		Method(http.MethodPut).
+		Transport(shared.HTTPTransport()).
+		BodyJSON(&newDevice).
+		ToString(&res).
+		Fetch(context.Background())
+	if err != nil {
+
+		log.WithField("response", res).
+			WithError(err).
+			Warnf("Failed to report to team: %s", shared.Config.TeamID)
+		return err
+	}
+	log.WithField("response", res).Debug("API Response")
 	return nil
 }

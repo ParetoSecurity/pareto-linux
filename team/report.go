@@ -5,6 +5,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/caarlos0/log"
@@ -14,7 +16,7 @@ import (
 	"paretosecurity.com/auditor/shared"
 )
 
-const reportURL = "https://dash.paretosecurity.com/api/v1/team"
+const reportURL = "https://dash.paretosecurity.com"
 
 type ReportingDevice struct {
 	MachineUUID  string `json:"machineUUID"`
@@ -28,13 +30,22 @@ type ReportingDevice struct {
 func CurrentReportingDevice() ReportingDevice {
 	device, err := NewLinkingDevice()
 	if err != nil {
-		panic(err)
+		log.WithError(err).Fatal("Failed to get device information")
 	}
+
 	return ReportingDevice{
-		MachineUUID:  device.UUID,
-		MachineName:  device.Hostname,
-		Auth:         DeviceAuth(),
-		MacOSVersion: fmt.Sprintf("%s %s", device.OS, device.OSVersion),
+		MachineUUID: device.UUID,
+		MachineName: device.Hostname,
+		Auth:        DeviceAuth(),
+		MacOSVersion: func() string {
+			if runtime.GOOS == "darwin" {
+				version, err := shared.MacOSVersion()
+				if err == nil {
+					return version
+				}
+			}
+			return fmt.Sprintf("%s %s", device.OS, device.OSVersion)
+		}(),
 		ModelName: func() string {
 			modelName, err := shared.SystemDevice()
 			if err != nil {
@@ -110,15 +121,24 @@ func NowReport() Report {
 }
 
 // ReportAndSave generates a report and saves it to the configuration file.
-func ReportToTeam() {
+func ReportToTeam() error {
 	report := NowReport()
 	log.Debug(spew.Sdump(report))
+	res := ""
 	err := requests.URL(reportURL).
-		Pathf("/%s/device", shared.Config.TeamID).
+		Pathf("/api/v1/team/%s/device", shared.Config.TeamID).
+		Method(http.MethodPatch).
 		Transport(shared.HTTPTransport()).
 		BodyJSON(&report).
+		ToString(&res).
 		Fetch(context.Background())
 	if err != nil {
-		log.WithError(err).Warnf("Failed to report to team: %s", shared.Config.TeamID)
+
+		log.WithField("response", res).
+			WithError(err).
+			Warnf("Failed to report to team: %s", shared.Config.TeamID)
+		return err
 	}
+	log.WithField("response", res).Debug("API Response")
+	return nil
 }

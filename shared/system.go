@@ -19,9 +19,9 @@ func SystemUUID() (string, error) {
 	for _, iface := range interfaces {
 		if len(iface.HardwareAddr) >= 6 {
 			hwAddr := iface.HardwareAddr
-			// Use hardware address as seed for deterministic UUID
-			uuid := uuid.NewMD5(uuid.NameSpaceOID, hwAddr)
-			return uuid.String(), nil
+			// Create a namespace UUID from hardware address
+			nsUUID := uuid.NewSHA1(uuid.NameSpaceOID, hwAddr)
+			return nsUUID.String(), nil
 		}
 	}
 
@@ -56,4 +56,19 @@ func SystemSerial() (string, error) {
 	}
 
 	return serialNumber, nil
+}
+
+func MacOSVersion() (string, error) {
+	cmd := exec.Command("sw_vers", "-productVersion")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	version := strings.TrimSpace(string(output))
+	if version == "" {
+		return "", fmt.Errorf("unable to retrieve macOS version")
+	}
+
+	return version, nil
 }

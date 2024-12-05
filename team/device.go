@@ -75,15 +75,19 @@ func DeviceAuth() string {
 		Token  string `json:"token"`
 	}
 
+	if shared.Config.AuthToken == "" {
+		return ""
+	}
+
 	payload := Payload{}
 	claims := strings.Split(shared.Config.AuthToken, ".")[1]
 	token, err := base64.RawURLEncoding.DecodeString(claims)
 	if err != nil {
-		log.WithError(err).WithField("claims", claims).Fatal("failed to decode claims")
+		log.WithError(err).WithField("claims", claims).Warn("failed to decode claims")
 		return ""
 	}
 	if err := json.Unmarshal(token, &payload); err != nil {
-		log.WithError(err).WithField("claims", claims).Fatal("failed to unmarshal claims")
+		log.WithError(err).WithField("claims", claims).Warn("failed to unmarshal claims")
 		return ""
 	}
 	return payload.Token

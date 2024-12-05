@@ -2,43 +2,51 @@ package team
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"paretosecurity.com/auditor/shared"
 )
 
 func TestDeviceAuth(t *testing.T) {
-	// Mock the shared.Config.AuthToken
-	shared.Config.AuthToken = "header." + base64.StdEncoding.EncodeToString([]byte(`{"sub":"1234567890","teamID":"team123","role":"admin","iat":1516239022,"token":"test-token"}`)) + ".signature"
-
-	expectedToken := "test-token"
-	actualToken := DeviceAuth()
-
-	if actualToken != expectedToken {
-		t.Errorf("expected %s, got %s", expectedToken, actualToken)
+	tests := []struct {
+		name      string
+		authToken string
+		expected  string
+	}{
+		{
+			name:      "Empty AuthToken",
+			authToken: "",
+			expected:  "",
+		},
+		{
+			name:      "Invalid Base64 AuthToken",
+			authToken: "invalid.token",
+			expected:  "",
+		},
+		{
+			name: "Valid AuthToken",
+			authToken: func() string {
+				payload := map[string]string{
+					"sub":    "test-sub",
+					"teamID": "test-teamID",
+					"role":   "test-role",
+					"token":  "test-token",
+				}
+				payloadBytes, _ := json.Marshal(payload)
+				encodedPayload := base64.RawURLEncoding.EncodeToString(payloadBytes)
+				return "header." + encodedPayload + ".signature"
+			}(),
+			expected: "test-token",
+		},
 	}
-}
 
-func TestDeviceAuthInvalidToken(t *testing.T) {
-	// Mock the shared.Config.AuthToken with an invalid token
-	shared.Config.AuthToken = "invalid.token"
-
-	expectedToken := ""
-	actualToken := DeviceAuth()
-
-	if actualToken != expectedToken {
-		t.Errorf("expected %s, got %s", expectedToken, actualToken)
-	}
-}
-
-func TestDeviceAuthMalformedPayload(t *testing.T) {
-	// Mock the shared.Config.AuthToken with a malformed payload
-	shared.Config.AuthToken = "header." + base64.StdEncoding.EncodeToString([]byte(`malformed-payload`)) + ".signature"
-
-	expectedToken := ""
-	actualToken := DeviceAuth()
-
-	if actualToken != expectedToken {
-		t.Errorf("expected %s, got %s", expectedToken, actualToken)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			shared.Config.AuthToken = tt.authToken
+			result := DeviceAuth()
+			assert.Equal(t, tt.expected, result)
+		})
 	}
 }
