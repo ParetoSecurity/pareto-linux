@@ -26,7 +26,10 @@ var checkCmd = &cobra.Command{
 		}
 		Check()
 		if team.IsLinked() {
-			team.ReportToTeam()
+			err := team.ReportToTeam()
+			if err != nil {
+				log.WithError(err).Warn("failed to report to team")
+			}
 		}
 	},
 }
