@@ -3,6 +3,7 @@ module paretosecurity.com/auditor
 go 1.22.0
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	github.com/zcalusic/sysinfo v1.1.3
@@ -17,7 +18,6 @@ require (
 	github.com/charmbracelet/lipgloss v0.12.0 // indirect
 	github.com/charmbracelet/x/ansi v0.1.3 // indirect
 	github.com/containerd/console v1.0.4 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.2.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect

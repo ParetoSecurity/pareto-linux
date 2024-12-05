@@ -33,7 +33,7 @@ func CurrentReportingDevice() ReportingDevice {
 	return ReportingDevice{
 		MachineUUID:  device.UUID,
 		MachineName:  device.Hostname,
-		Auth:         shared.Config.AuthToken,
+		Auth:         DeviceAuth(),
 		MacOSVersion: fmt.Sprintf("%s %s", device.OS, device.OSVersion),
 		ModelName: func() string {
 			modelName, err := shared.SystemDevice()
@@ -112,7 +112,7 @@ func NowReport() Report {
 // ReportAndSave generates a report and saves it to the configuration file.
 func ReportToTeam() {
 	report := NowReport()
-	log.Info(spew.Sdump(report))
+	log.Debug(spew.Sdump(report))
 	err := requests.URL(reportURL).
 		Pathf("/%s/device", shared.Config.TeamID).
 		Transport(shared.HTTPTransport()).

@@ -8,10 +8,33 @@ import (
 
 	"github.com/caarlos0/log"
 	"github.com/pterm/pterm"
+	"github.com/spf13/cobra"
 	"paretosecurity.com/auditor/check"
 	"paretosecurity.com/auditor/claims"
 	"paretosecurity.com/auditor/shared"
+	"paretosecurity.com/auditor/team"
 )
+
+var checkCmd = &cobra.Command{
+	Use:   "check [--json]",
+	Short: "Check system status",
+	Run: func(cc *cobra.Command, args []string) {
+		jsonOutput, _ := cc.Flags().GetBool("json")
+		if jsonOutput {
+			CheckJSON()
+			return
+		}
+		Check()
+		if team.IsLinked() {
+			team.ReportToTeam()
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(checkCmd)
+	checkCmd.Flags().Bool("json", false, "output JSON")
+}
 
 func Check() {
 	multi := pterm.DefaultMultiPrinter

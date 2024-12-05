@@ -1,9 +1,13 @@
 package team
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/caarlos0/log"
 	"github.com/google/uuid"
 	"github.com/zcalusic/sysinfo"
 	"paretosecurity.com/auditor/shared"
@@ -57,4 +61,30 @@ func NewLinkingDevice() (*LinkingDevice, error) {
 		UUID:      systemUUID,
 		Ticket:    ticket.String(),
 	}, nil
+}
+
+// DeviceAuth decodes a JWT token from the shared configuration's AuthToken,
+// extracts the payload, and returns the token string from the payload.
+// It returns an empty string if there is an error during decoding or unmarshalling.
+func DeviceAuth() string {
+	type Payload struct {
+		Sub    string `json:"sub"`
+		TeamID string `json:"teamID"`
+		Role   string `json:"role"`
+		Iat    int    `json:"iat"`
+		Token  string `json:"token"`
+	}
+
+	payload := Payload{}
+	claims := strings.Split(shared.Config.AuthToken, ".")[1]
+	token, err := base64.RawURLEncoding.DecodeString(claims)
+	if err != nil {
+		log.WithError(err).WithField("claims", claims).Fatal("failed to decode claims")
+		return ""
+	}
+	if err := json.Unmarshal(token, &payload); err != nil {
+		log.WithError(err).WithField("claims", claims).Fatal("failed to unmarshal claims")
+		return ""
+	}
+	return payload.Token
 }
