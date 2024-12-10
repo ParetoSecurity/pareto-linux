@@ -115,16 +115,21 @@ func ReportToTeam() error {
 	report := NowReport()
 	log.Debug(spew.Sdump(report))
 	res := ""
+	errRes := ""
 	err := requests.URL(reportURL).
 		Pathf("/api/v1/team/%s/device", shared.Config.TeamID).
 		Method(http.MethodPatch).
 		Transport(shared.HTTPTransport()).
 		BodyJSON(&report).
 		ToString(&res).
+		AddValidator(
+			requests.ValidatorHandler(
+				requests.DefaultValidator,
+				requests.ToString(&errRes),
+			)).
 		Fetch(context.Background())
 	if err != nil {
-
-		log.WithField("response", res).
+		log.WithField("response", errRes).
 			WithError(err).
 			Warnf("Failed to report to team: %s", shared.Config.TeamID)
 		return err

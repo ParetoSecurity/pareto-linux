@@ -131,6 +131,7 @@ func AddDevice() error {
 	device := CurrentReportingDevice()
 
 	res := ""
+	errRes := ""
 	newDevice := NewDevice{
 		MachineName:    device.MachineName,
 		ModelName:      device.ModelName,
@@ -144,12 +145,17 @@ func AddDevice() error {
 		Pathf("/api/v1/team/%s/device", shared.Config.TeamID).
 		Method(http.MethodPut).
 		Transport(shared.HTTPTransport()).
+		AddValidator(
+			requests.ValidatorHandler(
+				requests.DefaultValidator,
+				requests.ToString(&errRes),
+			)).
 		BodyJSON(&newDevice).
 		ToString(&res).
 		Fetch(context.Background())
 	if err != nil {
 
-		log.WithField("response", res).
+		log.WithField("response", errRes).
 			WithError(err).
 			Warnf("Failed to report to team: %s", shared.Config.TeamID)
 		return err
