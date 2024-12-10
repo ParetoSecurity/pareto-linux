@@ -35,6 +35,8 @@ nfpms:
     formats: [deb, rpm]
     bindir: /usr/bin
     file_name_template: "{{ .ProjectName }}_{{ .Arch }}.{{ .Format }}"
+    dependencies:
+      - curl
     scripts:
       postinstall: "apt/postinstall.sh"
 

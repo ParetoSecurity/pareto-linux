@@ -6,7 +6,7 @@ if [[ -f /etc/os-release ]]; then
     . /etc/os-release
     if [[ "$ID" == "ubuntu" || "$ID" == "debian" || "$ID" == "pop" ]]; then
         # Create keyrings directory
-        sudo mkdir -p --mode=0755 /usr/share/keyrings
+        mkdir -p --mode=0755 /usr/share/keyrings
 
         # Download and install GPG key
         curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
