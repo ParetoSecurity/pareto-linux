@@ -13,6 +13,7 @@ var rootCmd = &cobra.Command{
 	Long: `Pareto Security CLI is a tool for running and reporting audits 
 to paretosecurity.com.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+
 		if verbose {
 			log.SetLevel(log.DebugLevel)
 		}
@@ -21,6 +22,7 @@ to paretosecurity.com.`,
 
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "output verbose logs")
+
 }
 
 func Execute() {

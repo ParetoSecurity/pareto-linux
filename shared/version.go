@@ -1,4 +1,7 @@
 package shared
 
-const Version = "0.1.0"
-const Hash = "dev"
+var (
+	Version = "dev"
+	Commit  = "none"
+	Date    = "unknown"
+)

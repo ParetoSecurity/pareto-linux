@@ -17,8 +17,10 @@ builds:
     goarch:
       - amd64
       - arm64
+    gcflags:
+      - all=-trimpath=${GOPATH}
     ldflags:
-      - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}}
+      - -s -w -X shared.Version={{.Version}} -X shared.Commit={{.Commit}} -X shared.Date={{.Date}}
     binary: paretosecurity
 
 archives:

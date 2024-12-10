@@ -55,7 +55,7 @@ func createSafeHTTPClient() *http.Client {
 	// Wrap the transport to insert the User-Agent header
 	client.Transport = &userAgentTransport{
 		Transport: customTransport,
-		agent:     fmt.Sprintf("Pareto Security/%s (Linux; build:%s)", Version, Hash),
+		agent:     fmt.Sprintf("Pareto Security/%s (Linux; build:%s)", Version, Commit),
 	}
 
 	return client
