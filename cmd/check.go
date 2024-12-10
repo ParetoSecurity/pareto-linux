@@ -43,7 +43,7 @@ var checkCmd = &cobra.Command{
 			}
 		}
 		if !isUserTimerInstalled() {
-			log.Info("It looks like the user timer is not installed. To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
+			log.Info("To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
 		}
 	},
 }
