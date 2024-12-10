@@ -3,7 +3,7 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
-version: 1
+version: 2
 
 before:
   hooks:
@@ -20,7 +20,7 @@ builds:
     gcflags:
       - all=-trimpath=${GOPATH}
     ldflags:
-      - -s -w -X shared.Version={{.Version}} -X shared.Commit={{.Commit}} -X shared.Date={{.Date}}
+      - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}} -X paretosecurity.com/auditor/shared.Commit={{.Commit}} -X paretosecurity.com/auditor/shared.Date={{.Date}}
     binary: paretosecurity
 
 archives:
