@@ -20,7 +20,7 @@ type ReportingDevice struct {
 	MachineUUID    string `json:"machineUUID"`
 	MachineName    string `json:"machineName"`
 	Auth           string `json:"auth"`
-	LinuxOSVersion string `json:"LinuxOSVersion"`
+	LinuxOSVersion string `json:"linuxOSVersion"`
 	ModelName      string `json:"modelName"`
 	ModelSerial    string `json:"modelSerial"`
 }
