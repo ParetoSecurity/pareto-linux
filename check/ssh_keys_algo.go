@@ -127,10 +127,20 @@ func (f *SSHKeysAlgo) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *SSHKeysAlgo) PassedMessage() string {
+	return "SSH keys use strong encryption"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *SSHKeysAlgo) FailedMessage() string {
+	return "SSH keys are using weak encryption"
+}
+
 // Status returns the status of the check
 func (f *SSHKeysAlgo) Status() string {
 	if f.Passed() {
-		return "SSH keys use strong encryption"
+		return f.PassedMessage()
 	}
 
 	return "SSH key " + f.sshKey + " is using weak encryption"

@@ -61,6 +61,16 @@ func (f *Printer) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *Printer) PassedMessage() string {
+	return "Printer sharing is disabled"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *Printer) FailedMessage() string {
+	return "Printer sharing is enabled"
+}
+
 // Status returns the status of the check
 func (f *Printer) Status() string {
 	if !f.Passed() {

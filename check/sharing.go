@@ -62,6 +62,16 @@ func (f *Sharing) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *Sharing) PassedMessage() string {
+	return "No file sharing services found running"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *Sharing) FailedMessage() string {
+	return "Sharing services found running "
+}
+
 // Status returns the status of the check
 func (f *Sharing) Status() string {
 	if !f.Passed() {
@@ -71,5 +81,5 @@ func (f *Sharing) Status() string {
 		}
 		return msg
 	}
-	return "No file sharing services found running"
+	return f.PassedMessage()
 }

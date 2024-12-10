@@ -14,7 +14,7 @@ type EncryptingFS struct {
 
 // Name returns the name of the check
 func (f *EncryptingFS) Name() string {
-	return "Block device encryption is enabled"
+	return "Block device encryption"
 }
 
 // Passed returns the status of the check
@@ -35,6 +35,16 @@ func (f *EncryptingFS) UUID() string {
 // ReportIfDisabled returns whether the check should report if it is disabled
 func (f *EncryptingFS) ReportIfDisabled() bool {
 	return true
+}
+
+// PassedMessage returns the message to return if the check passed
+func (f *EncryptingFS) PassedMessage() string {
+	return "Block device encryption is enabled"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *EncryptingFS) FailedMessage() string {
+	return "Block device encryption is disabled"
 }
 
 // Status returns the status of the check
@@ -107,10 +117,10 @@ func (f *EncryptingFS) Run() error {
 		f.passed = true
 		f.status = "Both root and home are LUKS encrypted"
 	} else if rootEncrypted {
-		f.passed = false
+		f.passed = true
 		f.status = "Only root is LUKS encrypted"
 	} else if homeEncrypted {
-		f.passed = false
+		f.passed = true
 		f.status = "Only home is LUKS encrypted"
 	} else {
 		f.passed = false

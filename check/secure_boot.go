@@ -45,10 +45,10 @@ func (f *SecureBoot) Run() error {
 	// Value of 1 means enabled, 0 means disabled
 	if len(data) >= 5 && data[4] == 1 {
 		f.passed = true
-		f.status = "SecureBoot is enabled"
+		f.status = f.PassedMessage()
 	} else {
 		f.passed = false
-		f.status = "SecureBoot is disabled"
+		f.status = f.FailedMessage()
 	}
 
 	return nil
@@ -72,6 +72,16 @@ func (f *SecureBoot) UUID() string {
 // ReportIfDisabled returns whether the check should report if it is disabled
 func (f *SecureBoot) ReportIfDisabled() bool {
 	return true
+}
+
+// PassedMessage returns the message to return if the check passed
+func (f *SecureBoot) PassedMessage() string {
+	return "SecureBoot is enabled"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *SecureBoot) FailedMessage() string {
+	return "SecureBoot is disabled"
 }
 
 // Status returns the status of the check

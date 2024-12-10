@@ -82,10 +82,20 @@ func (f *Firewall) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *Firewall) PassedMessage() string {
+	return "Firewall is on"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *Firewall) FailedMessage() string {
+	return "Firewall is off"
+}
+
 // Status returns the status of the check
 func (f *Firewall) Status() string {
 	if f.Passed() {
-		return "Firewall is on"
+		return f.PassedMessage()
 	}
-	return "Firewall is off"
+	return f.FailedMessage()
 }

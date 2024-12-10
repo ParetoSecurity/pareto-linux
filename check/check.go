@@ -8,6 +8,8 @@ import (
 
 type Check interface {
 	Name() string
+	PassedMessage() string
+	FailedMessage() string
 	Run() error
 	Passed() bool
 	IsRunnable() bool

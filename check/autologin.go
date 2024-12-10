@@ -75,10 +75,20 @@ func (f *Autologin) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *Autologin) PassedMessage() string {
+	return "Automatic login is off"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *Autologin) FailedMessage() string {
+	return "Automatic login is on"
+}
+
 // Status returns the status of the check
 func (f *Autologin) Status() string {
 	if !f.Passed() {
-		return "Automatic login is on"
+		return f.FailedMessage()
 	}
-	return "Automatic login is off"
+	return f.PassedMessage()
 }

@@ -16,10 +16,17 @@ import (
 )
 
 var checkCmd = &cobra.Command{
-	Use:   "check [--json]",
+	Use:   "check [--json] [--schema]",
 	Short: "Check system status",
 	Run: func(cc *cobra.Command, args []string) {
 		jsonOutput, _ := cc.Flags().GetBool("json")
+		schemaOutput, _ := cc.Flags().GetBool("schema")
+
+		if schemaOutput {
+			PrintSchemaJSON()
+			return
+		}
+
 		if jsonOutput {
 			CheckJSON()
 			return
@@ -37,6 +44,7 @@ var checkCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(checkCmd)
 	checkCmd.Flags().Bool("json", false, "output JSON")
+	checkCmd.Flags().Bool("schema", false, "output schema for all checks")
 }
 
 func Check() {
@@ -106,6 +114,22 @@ func CheckJSON() {
 	out, err := json.MarshalIndent(status, "", "  ")
 	if err != nil {
 		log.WithError(err).Warn("cannot marshal status")
+	}
+	fmt.Println(string(out))
+}
+
+func PrintSchemaJSON() {
+	schema := make(map[string]map[string][]string)
+	for _, claim := range claims.All {
+		checks := make(map[string][]string)
+		for _, chk := range claim.Checks {
+			checks[chk.UUID()] = []string{chk.PassedMessage(), chk.FailedMessage()}
+		}
+		schema[claim.Title] = checks
+	}
+	out, err := json.MarshalIndent(schema, "", "  ")
+	if err != nil {
+		log.WithError(err).Warn("cannot marshal schema")
 	}
 	fmt.Println(string(out))
 }

@@ -69,6 +69,16 @@ func (f *RemoteLogin) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *RemoteLogin) PassedMessage() string {
+	return "Remote access services are found running"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *RemoteLogin) FailedMessage() string {
+	return "No remote access services found running"
+}
+
 // Status returns the status of the check
 func (f *RemoteLogin) Status() string {
 	if !f.Passed() {

@@ -40,6 +40,13 @@ jobs:
         with:
           name: release
           path: dist
+      - run:  dist/pareto-linux_linux_amd64_v1/paretosecurity check --schema > checks.json
+      - name: Upload checks info
+        uses: softprops/action-gh-release@v1
+        with:
+          files: checks.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:

@@ -71,10 +71,20 @@ func (f *PasswordToUnlock) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *PasswordToUnlock) PassedMessage() string {
+	return "Password after sleep or screensaver is on"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *PasswordToUnlock) FailedMessage() string {
+	return "Password after sleep or screensaver is off"
+}
+
 // Status returns the status of the check
 func (f *PasswordToUnlock) Status() string {
 	if f.Passed() {
-		return "Password after sleep or screensaver is on"
+		return f.PassedMessage()
 	}
-	return "Password after sleep or screensaver is off"
+	return f.FailedMessage()
 }

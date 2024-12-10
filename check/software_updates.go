@@ -89,6 +89,16 @@ func (f *SoftwareUpdates) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *SoftwareUpdates) PassedMessage() string {
+	return "All apps are up to date"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *SoftwareUpdates) FailedMessage() string {
+	return "Some apps are out of date"
+}
+
 // Status returns the status of the check
 func (f *SoftwareUpdates) Status() string {
 	return f.details

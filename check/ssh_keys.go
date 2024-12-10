@@ -79,10 +79,20 @@ func (f *SSHKeys) ReportIfDisabled() bool {
 	return false
 }
 
+// PassedMessage returns the message to return if the check passed
+func (f *SSHKeys) PassedMessage() string {
+	return "SSH keys are password protected"
+}
+
+// FailedMessage returns the message to return if the check failed
+func (f *SSHKeys) FailedMessage() string {
+	return "SSH keys are not using password"
+}
+
 // Status returns the status of the check
 func (f *SSHKeys) Status() string {
 	if f.Passed() {
-		return "SSH keys are password protected"
+		return f.PassedMessage()
 	}
 	return "Found unprotected SSH key(s): " + strings.Join(f.failedKeys, ", ")
 }

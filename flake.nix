@@ -63,7 +63,7 @@
             ];
           };
 
-          testScript = builtins.readFile "${toString ./.}/integration/nixos.py";
+          testScript = builtins.readFile "${toString ./.}/test/integration/nixos.py";
         };
 
         packages.test-debian = let
@@ -74,7 +74,7 @@
                 target = "/mnt/package";
               };
             };
-            testScript = builtins.readFile "${toString ./.}/integration/debian.py";
+            testScript = builtins.readFile "${toString ./.}/test/integration/debian.py";
           };
         in
           vmTest.driver;
@@ -87,7 +87,7 @@
                 target = "/mnt/package";
               };
             };
-            testScript = builtins.readFile "${toString ./.}/integration/fedora.py";
+            testScript = builtins.readFile "${toString ./.}/test/integration/fedora.py";
           };
         in
           vmTest.driver;
@@ -100,7 +100,7 @@
                 target = "/mnt/package";
               };
             };
-            testScript = builtins.readFile "${toString ./.}/integration/ubuntu.py";
+            testScript = builtins.readFile "${toString ./.}/test/integration/ubuntu.py";
           };
         in
           vmTest.driver;
