@@ -16,12 +16,16 @@ import (
 )
 
 var checkCmd = &cobra.Command{
-	Use:   "check [--json] [--schema]",
+	Use:   "check [--json] [--schema] [--install]",
 	Short: "Check system status",
 	Run: func(cc *cobra.Command, args []string) {
 		jsonOutput, _ := cc.Flags().GetBool("json")
 		schemaOutput, _ := cc.Flags().GetBool("schema")
-
+		installFlag, _ := cc.Flags().GetBool("install")
+		if installFlag {
+			installUserTimer()
+			return
+		}
 		if schemaOutput {
 			PrintSchemaJSON()
 			return
@@ -38,6 +42,9 @@ var checkCmd = &cobra.Command{
 				log.WithError(err).Warn("failed to report to team")
 			}
 		}
+		if !isUserTimerInstalled() {
+			log.Info("It looks like the user timer is not installed. To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
+		}
 	},
 }
 
@@ -45,6 +52,7 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 	checkCmd.Flags().Bool("json", false, "output JSON")
 	checkCmd.Flags().Bool("schema", false, "output schema for all checks")
+	checkCmd.Flags().Bool("install", false, "setup hourly checks")
 }
 
 func Check() {

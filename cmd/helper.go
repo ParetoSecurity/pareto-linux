@@ -38,8 +38,8 @@ RemainAfterExit=no
 WantedBy=multi-user.target`, os.Args[0])
 }
 
-var installCmd = &cobra.Command{
-	Use:   "install",
+var helperCmd = &cobra.Command{
+	Use:   "helper",
 	Short: "install root helper",
 	Run: func(cmd *cobra.Command, args []string) {
 		installSystemdHelper()
@@ -47,7 +47,7 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(helperCmd)
 }
 
 func installSystemdHelper() {
