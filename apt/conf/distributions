@@ -1,4 +1,4 @@
-Origin: apt.paretosecurity.com
+Origin: pkg.paretosecurity.com
 Codename: stable
 Architectures: amd64 arm64
 Components: main

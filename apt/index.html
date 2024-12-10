@@ -17,10 +17,10 @@
         <pre class="bg-gray-800 text-white p-4 rounded">
 # Add paretosecurity gpg key
 sudo mkdir -p --mode=0755 /usr/share/keyrings
-curl -fsSL https://apt.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
+curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
 
 # Add this repo to your apt repositories
-echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://apt.paretosecurity.com stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
+echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
 
 # Install paretosecurity CLI
 sudo apt update && sudo apt install paretosecurity

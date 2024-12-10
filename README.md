@@ -34,7 +34,7 @@ This will analyze your system and provide a security report highlighting potenti
 
 ### Using Debian/Ubuntu/Pop_OS!
 
-See [https://apt.paretosecurity.com](https://apt.paretosecurity.com) for install steps.
+See [https://pkg.paretosecurity.com](https://pkg.paretosecurity.com) for install steps.
 
 
 #### Quick Start
