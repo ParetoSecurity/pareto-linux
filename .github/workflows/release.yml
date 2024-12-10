@@ -85,4 +85,7 @@ jobs:
           destination-dir: ./
       - uses: actions/attest-build-provenance@v1
         with:
-          subject-path: 'dist/pareto-linux_*_linux_*.deb'
+          subject-path: 'dist/*.deb'
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'dist/*.rpm'
