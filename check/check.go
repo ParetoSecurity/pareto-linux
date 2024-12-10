@@ -16,6 +16,7 @@ type Check interface {
 	ReportIfDisabled() bool
 	UUID() string
 	Status() string
+	RequiresRoot() bool
 }
 
 func Register(c Check) Check {

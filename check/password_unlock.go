@@ -81,6 +81,11 @@ func (f *PasswordToUnlock) FailedMessage() string {
 	return "Password after sleep or screensaver is off"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *PasswordToUnlock) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *PasswordToUnlock) Status() string {
 	if f.Passed() {

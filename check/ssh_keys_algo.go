@@ -137,6 +137,11 @@ func (f *SSHKeysAlgo) FailedMessage() string {
 	return "SSH keys are using weak encryption"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *SSHKeysAlgo) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *SSHKeysAlgo) Status() string {
 	if f.Passed() {

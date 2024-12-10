@@ -4,7 +4,9 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
+
+	"github.com/caarlos0/log"
+	"paretosecurity.com/auditor/shared"
 )
 
 type Firewall struct {
@@ -50,6 +52,17 @@ func (f *Firewall) checkFirewalld() bool {
 
 // Run executes the check
 func (f *Firewall) Run() error {
+	if f.RequiresRoot() && !shared.IsRoot() {
+		// Run as root
+		passed, err := shared.RunCheckViaHelper(f.UUID())
+		if err != nil {
+			log.WithError(err).Warn("Failed to run check via helper")
+			return err
+		}
+		f.passed = passed
+		return nil
+	}
+
 	switch {
 	case f.isUbuntu():
 		f.passed = f.checkUFW()
@@ -58,7 +71,6 @@ func (f *Firewall) Run() error {
 	default:
 		f.passed = false
 	}
-	time.Sleep(time.Duration(1 * time.Second))
 	return nil
 }
 
@@ -90,6 +102,11 @@ func (f *Firewall) PassedMessage() string {
 // FailedMessage returns the message to return if the check failed
 func (f *Firewall) FailedMessage() string {
 	return "Firewall is off"
+}
+
+// RequiresRoot returns whether the check requires root access
+func (f *Firewall) RequiresRoot() bool {
+	return true
 }
 
 // Status returns the status of the check

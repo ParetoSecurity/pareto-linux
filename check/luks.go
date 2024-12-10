@@ -5,6 +5,9 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/caarlos0/log"
+	"paretosecurity.com/auditor/shared"
 )
 
 type EncryptingFS struct {
@@ -52,12 +55,29 @@ func (f *EncryptingFS) Status() string {
 	return f.status
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *EncryptingFS) RequiresRoot() bool {
+	return true
+}
+
 // Run executes the check
 func (f *EncryptingFS) Run() error {
+
 	// Check if cryptsetup is available
 	if _, err := exec.LookPath("cryptsetup"); err != nil {
 		f.passed = false
 		f.status = "cryptsetup not found"
+		return nil
+	}
+
+	if f.RequiresRoot() && !shared.IsRoot() {
+		// Run as root
+		passed, err := shared.RunCheckViaHelper(f.UUID())
+		if err != nil {
+			log.WithError(err).Warn("Failed to run check via helper")
+			return err
+		}
+		f.passed = passed
 		return nil
 	}
 

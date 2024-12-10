@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/caarlos0/log"
 	"github.com/spf13/cobra"
+	"paretosecurity.com/auditor/claims"
 )
 
 const socketContent = `[Unit]
@@ -65,9 +67,42 @@ func handleConnection(conn net.Conn) {
 	defer conn.Close()
 	log.Info("Connection received")
 
+	// Read input from connection
+	decoder := json.NewDecoder(conn)
+	var input map[string]string
+	if err := decoder.Decode(&input); err != nil {
+		log.Debugf("Failed to decode input: %v\n", err)
+		return
+	}
+	uuid, ok := input["uuid"]
+	if !ok {
+		log.Debugf("UUID not found in input")
+		return
+	}
+	log.Debugf("Received UUID: %s", uuid)
+
+	status := map[string]bool{}
+	for _, claim := range claims.All {
+		for _, chk := range claim.Checks {
+			if chk.IsRunnable() && chk.RequiresRoot() && uuid == chk.UUID() {
+				log.Infof("Running check %s\n", chk.UUID())
+				if chk.Run() != nil {
+					log.Warnf("Failed to run check %s\n", chk.UUID())
+					continue
+				}
+				log.Infof("Check %s completed\n", chk.UUID())
+				status[chk.UUID()] = chk.Passed()
+			}
+		}
+	}
+
 	// Handle the request
-	_, err := conn.Write([]byte("Hello from Go app!\n"))
+	response, err := json.Marshal(status)
 	if err != nil {
+		log.Debugf("Failed to marshal response: %v\n", err)
+		return
+	}
+	if _, err = conn.Write(response); err != nil {
 		log.Debugf("Failed to write to connection: %v\n", err)
 	}
 }

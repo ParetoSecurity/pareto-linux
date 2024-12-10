@@ -54,3 +54,7 @@ func SystemSerial() (string, error) {
 
 	return serialNumber, nil
 }
+
+func IsRoot() bool {
+	return os.Geteuid() == 0
+}

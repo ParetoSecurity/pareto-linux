@@ -71,6 +71,11 @@ func (f *Printer) FailedMessage() string {
 	return "Printer sharing is enabled"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *Printer) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *Printer) Status() string {
 	if !f.Passed() {

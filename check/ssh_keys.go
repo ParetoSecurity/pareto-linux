@@ -89,6 +89,11 @@ func (f *SSHKeys) FailedMessage() string {
 	return "SSH keys are not using password"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *SSHKeys) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *SSHKeys) Status() string {
 	if f.Passed() {

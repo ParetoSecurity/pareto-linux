@@ -79,6 +79,11 @@ func (f *RemoteLogin) FailedMessage() string {
 	return "No remote access services found running"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *RemoteLogin) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *RemoteLogin) Status() string {
 	if !f.Passed() {

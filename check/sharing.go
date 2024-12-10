@@ -72,6 +72,11 @@ func (f *Sharing) FailedMessage() string {
 	return "Sharing services found running "
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *Sharing) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *Sharing) Status() string {
 	if !f.Passed() {

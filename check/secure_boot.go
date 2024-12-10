@@ -84,6 +84,11 @@ func (f *SecureBoot) FailedMessage() string {
 	return "SecureBoot is disabled"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *SecureBoot) RequiresRoot() bool {
+	return true
+}
+
 // Status returns the status of the check
 func (f *SecureBoot) Status() string {
 	return f.status

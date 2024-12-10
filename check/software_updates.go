@@ -99,6 +99,11 @@ func (f *SoftwareUpdates) FailedMessage() string {
 	return "Some apps are out of date"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *SoftwareUpdates) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *SoftwareUpdates) Status() string {
 	return f.details

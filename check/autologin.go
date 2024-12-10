@@ -85,6 +85,11 @@ func (f *Autologin) FailedMessage() string {
 	return "Automatic login is on"
 }
 
+// RequiresRoot returns whether the check requires root access
+func (f *Autologin) RequiresRoot() bool {
+	return false
+}
+
 // Status returns the status of the check
 func (f *Autologin) Status() string {
 	if !f.Passed() {
