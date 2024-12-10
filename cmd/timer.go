@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,18 +18,16 @@ Persistent=true
 [Install]
 WantedBy=timers.target`
 
-func getLocalServiceContent() string {
-	return fmt.Sprintf(`[Unit]
+const localServiceContent = `[Unit]
 Description=Service for pareto-linux
 
 [Service]
 Type=oneshot
-ExecStart=%s
+ExecStart=/usr/bin/paretosecurity
 StandardInput=null
 
 [Install]
-WantedBy=timers.target`, os.Args[0])
-}
+WantedBy=timers.target`
 
 func isUserTimerInstalled() bool {
 	homeDir, err := os.UserHomeDir()
@@ -68,7 +65,7 @@ func installUserTimer() {
 
 	// Create service file
 	servicePath := filepath.Join(systemdPath, "pareto-linux.service")
-	if err := os.WriteFile(servicePath, []byte(getLocalServiceContent()), 0644); err != nil {
+	if err := os.WriteFile(servicePath, []byte(localServiceContent), 0644); err != nil {
 		log.Fatalf("Failed to create service file:", err)
 		return
 	}

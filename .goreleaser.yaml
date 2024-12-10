@@ -4,7 +4,7 @@
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
 version: 2
-
+project_name: paretosecurity
 before:
   hooks:
     - go mod tidy
@@ -34,6 +34,9 @@ nfpms:
     license: MIT
     formats: [deb, rpm]
     bindir: /usr/bin
+    file_name_template: "{{ .ProjectName }}_{{ .Arch }}.{{ .Format }}"
+    scripts:
+      postinstall: "apt/postinstall.sh"
 
 changelog:
   sort: asc

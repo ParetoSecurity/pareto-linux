@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,13 +22,12 @@ Accept=no
 [Install]
 WantedBy=sockets.target`
 
-func getServiceContent() string {
-	return fmt.Sprintf(`[Unit]
+const serviceContent = `[Unit]
 Description=Service for pareto-linux
 Requires=pareto-linux.socket
 
 [Service]
-ExecStart=%s
+ExecStart=/usr/bin/paretosecurity helper
 User=root
 Group=root
 StandardInput=socket
@@ -35,19 +35,60 @@ Type=oneshot
 RemainAfterExit=no
 
 [Install]
-WantedBy=multi-user.target`, os.Args[0])
+WantedBy=multi-user.target`
+
+func runHelper() {
+	// Get the socket from file descriptor 0
+	file := os.NewFile(0, "socket")
+	listener, err := net.FileListener(file)
+	if err != nil {
+		log.Debugf("Failed to create listener: %v\n", err)
+		os.Exit(1)
+	}
+	defer listener.Close()
+
+	log.Info("Server is listening on Unix domain socket...")
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			log.Debugf("Failed to accept connection: %v\n", err)
+			continue
+		}
+
+		handleConnection(conn)
+		break
+	}
+}
+
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
+	log.Info("Connection received")
+
+	// Handle the request
+	_, err := conn.Write([]byte("Hello from Go app!\n"))
+	if err != nil {
+		log.Debugf("Failed to write to connection: %v\n", err)
+	}
 }
 
 var helperCmd = &cobra.Command{
-	Use:   "helper",
-	Short: "install root helper",
+	Use:   "helper [--install]",
+	Short: "A root helper",
+	Long:  `A root helper that listens on a Unix domain socket and responds to authenticated requests.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		installSystemdHelper()
+		installFlag, _ := cmd.Flags().GetBool("install")
+		if installFlag {
+			installSystemdHelper()
+			return
+		}
+		runHelper()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(helperCmd)
+	helperCmd.Flags().Bool("install", false, "install root helper")
 }
 
 func installSystemdHelper() {
@@ -68,7 +109,7 @@ func installSystemdHelper() {
 
 	// Create service file
 	servicePath := filepath.Join(systemdPath, "pareto-linux@.service")
-	if err := os.WriteFile(servicePath, []byte(getServiceContent()), 0644); err != nil {
+	if err := os.WriteFile(servicePath, []byte(serviceContent), 0644); err != nil {
 		fmt.Printf("Failed to create service file: %v\n", err)
 		return
 	}

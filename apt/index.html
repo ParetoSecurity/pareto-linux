@@ -8,23 +8,65 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 text-gray-900">
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold mb-4">ParetoSecurity Packages</h1>
-        <p class="mb-4">This repository contains packages for ParetoSecurity attestations can be found at
-            https://github.com/ParetoSecurity/pareto-linux/attestations.</p>
-        <h3 id="stable" class="text-xl font-semibold mb-2">Stable Release</h3>
-        <pre class="bg-gray-800 text-white p-4 rounded">
-# Add paretosecurity gpg key
-sudo mkdir -p --mode=0755 /usr/share/keyrings
-curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
+<body class="bg-black text-white">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">ParetoSecurity Packages</h1>
+        <p class="text-center text-gray-400 mb-12">
+            Secure your systems with ParetoSecurity CLI tools. Learn more on our
+            <a href="https://github.com/ParetoSecurity/pareto-linux/attestations" class="text-blue-500 underline">
+                GitHub repository
+            </a>.
+        </p>
 
-# Add this repo to your apt repositories
-echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
+        <div class="grid md:grid-cols-2 gap-8 mx-auto max-w-5xl">
+            <!-- macOS Section -->
+            <div class="text-center border border-gray-700 rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">macOS</h2>
+                <p class="text-gray-400 mb-6">Version 10.14+</p>
+                <a href="https://github.com/ParetoSecurity/pareto-mac/releases/latest/download/ParetoSecurity.dmg"
+                    class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                    Download for Mac
+                </a>
+            </div>
 
-# Install paretosecurity CLI
-sudo apt update && sudo apt install pareto-linux && paretosecurity --help
-        </pre>
+            <!-- Linux Section -->
+            <div class="text-center border border-gray-700 rounded-lg p-6">
+                <h2 class="text-2xl font-semibold mb-4">Linux</h2>
+                <p class="text-gray-400 mb-6">Debian, Ubuntu, Red Hat, Fedora</p>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <span>.deb</span>
+                        <div>
+                            <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_amd64.deb"
+                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded mr-2">
+                                x64
+                            </a>
+                            <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_arm64.deb"
+                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded">
+                                ARM64
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>.rpm</span>
+                        <div>
+                            <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_amd64.rpm"
+                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded mr-2">
+                                x64
+                            </a>
+                            <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_arm64.rpm"
+                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded">
+                                ARM64
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-500 mt-12">
+            © 2024 ParetoSecurity. All rights reserved.
+        </footer>
     </div>
 </body>
 
