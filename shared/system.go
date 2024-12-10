@@ -3,8 +3,8 @@ package shared
 import (
 	"fmt"
 	"net"
+	"os"
 
-	"os/exec"
 	"strings"
 
 	"github.com/google/uuid"
@@ -29,13 +29,12 @@ func SystemUUID() (string, error) {
 }
 
 func SystemDevice() (string, error) {
-	cmd := exec.Command("dmidecode", "-s", "system-product-name")
-	output, err := cmd.Output()
+	content, err := os.ReadFile("/sys/devices/virtual/dmi/id/product_name")
 	if err != nil {
 		return "", err
 	}
 
-	deviceName := strings.TrimSpace(string(output))
+	deviceName := strings.TrimSpace(string(content))
 	if deviceName == "" {
 		return "", fmt.Errorf("unable to retrieve device name")
 	}
@@ -44,13 +43,11 @@ func SystemDevice() (string, error) {
 }
 
 func SystemSerial() (string, error) {
-	cmd := exec.Command("dmidecode", "-s", "system-serial-number")
-	output, err := cmd.Output()
+	content, err := os.ReadFile("/sys/devices/virtual/dmi/id/product_serial")
 	if err != nil {
 		return "", err
 	}
-
-	serialNumber := strings.TrimSpace(string(output))
+	serialNumber := strings.TrimSpace(string(content))
 	if serialNumber == "" {
 		return "", fmt.Errorf("unable to retrieve serial number")
 	}

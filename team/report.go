@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -33,12 +32,10 @@ func CurrentReportingDevice() ReportingDevice {
 	}
 
 	return ReportingDevice{
-		MachineUUID: device.UUID,
-		MachineName: device.Hostname,
-		Auth:        DeviceAuth(),
-		LinuxOSVersion: func() string {
-			return fmt.Sprintf("%s-%s", device.OS, device.Kernel)
-		}(),
+		MachineUUID:    device.UUID,
+		MachineName:    device.Hostname,
+		Auth:           DeviceAuth(),
+		LinuxOSVersion: device.OS,
 		ModelName: func() string {
 			modelName, err := shared.SystemDevice()
 			if err != nil {
