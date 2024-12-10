@@ -52,7 +52,7 @@ EOF
             systemctl daemon-reload
             systemctl enable pareto-linux.socket
             systemctl start pareto-linux.socket
+
         fi
+    fi
 fi
-
-
