@@ -3,6 +3,8 @@ package check
 import (
 	"os/exec"
 	"strings"
+
+	"github.com/samber/lo"
 )
 
 type SoftwareUpdates struct {
@@ -36,6 +38,14 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 		}
 	}
 
+	// Check apt
+	if _, err := exec.LookPath("apt"); err == nil {
+		cmd := exec.Command("apt", "list", "--upgradable")
+		output, err := cmd.Output()
+		if err == nil && len(output) > 0 && strings.Contains(string(output), "upgradable") {
+			updates = append(updates, "APT")
+		}
+	}
 	// Check dnf
 	if _, err := exec.LookPath("dnf"); err == nil {
 		cmd := exec.Command("dnf", "check-update", "--quiet")
@@ -58,6 +68,7 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	if len(updates) == 0 {
 		return true, "All packages are up to date"
 	}
+	updates = lo.Uniq(updates)
 	return false, "Updates available for: " + strings.Join(updates, ", ")
 }
 
