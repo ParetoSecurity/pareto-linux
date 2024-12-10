@@ -19,12 +19,12 @@ import (
 const enrollURL = "https://dash.paretosecurity.com/api/v1/team/enroll"
 
 type NewDevice struct {
-	MachineName  string `json:"machineName"`
-	ModelName    string `json:"modelName"`
-	ModelSerial  string `json:"modelSerial"`
-	MacOSVersion string `json:"macOSVersion"`
-	MachineUUID  string `json:"machineUUID"`
-	Auth         string `json:"auth"`
+	MachineName    string `json:"machineName"`
+	ModelName      string `json:"modelName"`
+	ModelSerial    string `json:"modelSerial"`
+	LinuxOSVersion string `json:"LinuxOSVersion"`
+	MachineUUID    string `json:"machineUUID"`
+	Auth           string `json:"auth"`
 }
 
 type LinkingResponse struct {
@@ -132,12 +132,12 @@ func AddDevice() error {
 
 	res := ""
 	newDevice := NewDevice{
-		MachineName:  device.MachineName,
-		ModelName:    device.ModelName,
-		ModelSerial:  device.ModelSerial,
-		MacOSVersion: device.MacOSVersion,
-		MachineUUID:  device.MachineUUID,
-		Auth:         device.Auth,
+		MachineName:    device.MachineName,
+		ModelName:      device.ModelName,
+		ModelSerial:    device.ModelSerial,
+		LinuxOSVersion: device.LinuxOSVersion,
+		MachineUUID:    device.MachineUUID,
+		Auth:           device.Auth,
 	}
 	log.Debug(spew.Sdump(newDevice))
 	err := requests.URL(reportURL).

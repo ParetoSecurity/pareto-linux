@@ -57,18 +57,3 @@ func SystemSerial() (string, error) {
 
 	return serialNumber, nil
 }
-
-func MacOSVersion() (string, error) {
-	cmd := exec.Command("sw_vers", "-productVersion")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-
-	version := strings.TrimSpace(string(output))
-	if version == "" {
-		return "", fmt.Errorf("unable to retrieve macOS version")
-	}
-
-	return version, nil
-}

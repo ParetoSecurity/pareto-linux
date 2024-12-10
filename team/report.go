@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
-	"runtime"
 	"time"
 
 	"github.com/caarlos0/log"
@@ -19,12 +18,12 @@ import (
 const reportURL = "https://dash.paretosecurity.com"
 
 type ReportingDevice struct {
-	MachineUUID  string `json:"machineUUID"`
-	MachineName  string `json:"machineName"`
-	Auth         string `json:"auth"`
-	MacOSVersion string `json:"macOSVersion"`
-	ModelName    string `json:"modelName"`
-	ModelSerial  string `json:"modelSerial"`
+	MachineUUID    string `json:"machineUUID"`
+	MachineName    string `json:"machineName"`
+	Auth           string `json:"auth"`
+	LinuxOSVersion string `json:"LinuxOSVersion"`
+	ModelName      string `json:"modelName"`
+	ModelSerial    string `json:"modelSerial"`
 }
 
 func CurrentReportingDevice() ReportingDevice {
@@ -37,14 +36,8 @@ func CurrentReportingDevice() ReportingDevice {
 		MachineUUID: device.UUID,
 		MachineName: device.Hostname,
 		Auth:        DeviceAuth(),
-		MacOSVersion: func() string {
-			if runtime.GOOS == "darwin" {
-				version, err := shared.MacOSVersion()
-				if err == nil {
-					return version
-				}
-			}
-			return fmt.Sprintf("%s %s", device.OS, device.OSVersion)
+		LinuxOSVersion: func() string {
+			return fmt.Sprintf("%s-%s", device.OS, device.Kernel)
 		}(),
 		ModelName: func() string {
 			modelName, err := shared.SystemDevice()
