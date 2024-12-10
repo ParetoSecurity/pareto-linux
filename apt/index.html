@@ -23,7 +23,7 @@ curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/sha
 echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
 
 # Install paretosecurity CLI
-sudo apt update && sudo apt install paretosecurity
+sudo apt update && sudo apt install pareto-linux && paretosecurity --help
         </pre>
     </div>
 </body>
