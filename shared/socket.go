@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/caarlos0/log"
+	"github.com/davecgh/go-spew/spew"
 )
 
 var (
@@ -18,13 +19,14 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	rateLimit.Lock()
 	defer rateLimit.Unlock()
 
-	if time.Since(lastCall) < time.Second*2 {
-		return false, nil
+	for time.Since(lastCall) < time.Second*2 {
+		time.Sleep(time.Millisecond * 100)
 	}
 	lastCall = time.Now()
 
-	conn, err := net.Dial("unix", "/var/run/pareto-linux.sock")
+	conn, err := net.Dial("unix", "/run/pareto.sock")
 	if err != nil {
+		log.WithError(err).Warn("Failed to connect to helper")
 		return false, err
 	}
 	defer conn.Close()
@@ -32,6 +34,7 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	// Send UUID
 	input := map[string]string{"uuid": uuid}
 	encoder := json.NewEncoder(conn)
+	log.WithField("input", spew.Sdump(input)).Debug("Sending input to helper")
 	if err := encoder.Encode(input); err != nil {
 		log.WithError(err).Warn("Failed to encode JSON")
 		return false, err

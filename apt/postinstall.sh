@@ -22,7 +22,7 @@ if [[ -f /etc/os-release ]]; then
 Description=Socket for pareto-linux
 
 [Socket]
-ListenStream=/var/run/pareto-linux.sock
+ListenStream=/run/pareto.sock
 SocketMode=0666
 Accept=no
 
