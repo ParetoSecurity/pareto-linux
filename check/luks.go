@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/caarlos0/log"
+	"github.com/davecgh/go-spew/spew"
 	"paretosecurity.com/auditor/shared"
 )
 
@@ -93,7 +94,7 @@ func (f *EncryptingFS) Run() error {
 		}
 		crypttab.Close()
 	}
-	log.WithField("encryptedDevices", encryptedDevices).Debug("Found encrypted devices")
+	log.WithField("encryptedDevices", spew.Sdump(encryptedDevices)).Debug("Found encrypted devices")
 	cmd := exec.Command("blkid")
 	output, err := cmd.Output()
 	if err != nil {
@@ -106,8 +107,8 @@ func (f *EncryptingFS) Run() error {
 		line := scanner.Text()
 		if strings.Contains(line, `TYPE="crypto_LUKS"`) {
 			log.WithField("line", line).Debug("Found encrypted device")
-			for device := range encryptedDevices {
-				if strings.Contains(line, device) {
+			for _, uuid := range encryptedDevices {
+				if strings.Contains(line, uuid) {
 					f.passed = true
 					f.status = f.PassedMessage()
 					return nil

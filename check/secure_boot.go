@@ -3,6 +3,9 @@ package check
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/caarlos0/log"
+	"paretosecurity.com/auditor/shared"
 )
 
 type SecureBoot struct {
@@ -17,6 +20,16 @@ func (f *SecureBoot) Name() string {
 
 // Run executes the check
 func (f *SecureBoot) Run() error {
+	if f.RequiresRoot() && !shared.IsRoot() {
+		// Run as root
+		passed, err := shared.RunCheckViaHelper(f.UUID())
+		if err != nil {
+			log.WithError(err).Warn("Failed to run check via helper")
+			return err
+		}
+		f.passed = passed
+		return nil
+	}
 	// Check if we're even running on a UEFI system
 	if _, err := os.Stat("/sys/firmware/efi"); os.IsNotExist(err) {
 		f.passed = false
