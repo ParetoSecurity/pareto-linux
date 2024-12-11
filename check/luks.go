@@ -93,7 +93,7 @@ func (f *EncryptingFS) Run() error {
 		}
 		crypttab.Close()
 	}
-
+	log.WithField("encryptedDevices", encryptedDevices).Debug("Found encrypted devices")
 	cmd := exec.Command("blkid")
 	output, err := cmd.Output()
 	if err != nil {
@@ -105,6 +105,7 @@ func (f *EncryptingFS) Run() error {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(line, `TYPE="crypto_LUKS"`) {
+			log.WithField("line", line).Debug("Found encrypted device")
 			for device := range encryptedDevices {
 				if strings.Contains(line, device) {
 					f.passed = true
