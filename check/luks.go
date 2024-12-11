@@ -52,11 +52,6 @@ func (f *EncryptingFS) FailedMessage() string {
 	return "Block device encryption is disabled"
 }
 
-// Status returns the status of the check
-func (f *EncryptingFS) Status() string {
-	return f.status
-}
-
 // RequiresRoot returns whether the check requires root access
 func (f *EncryptingFS) RequiresRoot() bool {
 	return true
@@ -121,4 +116,12 @@ func (f *EncryptingFS) Run() error {
 	f.status = f.FailedMessage()
 
 	return nil
+}
+
+// Status returns the status of the check
+func (f *EncryptingFS) Status() string {
+	if f.Passed() {
+		return f.PassedMessage()
+	}
+	return f.FailedMessage()
 }

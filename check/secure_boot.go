@@ -3,9 +3,6 @@ package check
 import (
 	"os"
 	"path/filepath"
-
-	"github.com/caarlos0/log"
-	"paretosecurity.com/auditor/shared"
 )
 
 type SecureBoot struct {
@@ -20,22 +17,6 @@ func (f *SecureBoot) Name() string {
 
 // Run executes the check
 func (f *SecureBoot) Run() error {
-	if f.RequiresRoot() && !shared.IsRoot() {
-		// Run as root
-		passed, err := shared.RunCheckViaHelper(f.UUID())
-		if err != nil {
-			log.WithError(err).Warn("Failed to run check via helper")
-			return err
-		}
-		f.passed = passed
-		return nil
-	}
-	// Check if we're even running on a UEFI system
-	if _, err := os.Stat("/sys/firmware/efi"); os.IsNotExist(err) {
-		f.passed = false
-		f.status = "System is not running in UEFI mode"
-		return nil
-	}
 
 	// Find and read the SecureBoot EFI variable
 	pattern := "/sys/firmware/efi/efivars/SecureBoot-*"
@@ -59,10 +40,9 @@ func (f *SecureBoot) Run() error {
 	if len(data) >= 5 && data[4] == 1 {
 		f.passed = true
 		f.status = f.PassedMessage()
-	} else {
-		f.passed = false
-		f.status = f.FailedMessage()
 	}
+	f.passed = false
+	f.status = f.FailedMessage()
 
 	return nil
 }
@@ -74,7 +54,11 @@ func (f *SecureBoot) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *SecureBoot) IsRunnable() bool {
-	return true
+	if _, err := os.Stat("/sys/firmware/efi"); os.IsNotExist(err) {
+		f.status = "System is not running in UEFI mode"
+		return true
+	}
+	return false
 }
 
 // UUID returns the UUID of the check
@@ -99,7 +83,7 @@ func (f *SecureBoot) FailedMessage() string {
 
 // RequiresRoot returns whether the check requires root access
 func (f *SecureBoot) RequiresRoot() bool {
-	return true
+	return false
 }
 
 // Status returns the status of the check
