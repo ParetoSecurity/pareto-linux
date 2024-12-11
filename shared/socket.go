@@ -5,6 +5,8 @@ import (
 	"net"
 	"sync"
 	"time"
+
+	"github.com/caarlos0/log"
 )
 
 var (
@@ -31,6 +33,7 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	input := map[string]string{"uuid": uuid}
 	encoder := json.NewEncoder(conn)
 	if err := encoder.Encode(input); err != nil {
+		log.WithError(err).Warn("Failed to encode JSON")
 		return false, err
 	}
 
@@ -38,8 +41,9 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	decoder := json.NewDecoder(conn)
 	var status map[string]bool
 	if err := decoder.Decode(&status); err != nil {
+		log.WithError(err).Warn("Failed to decode JSON")
 		return false, err
 	}
-
+	log.WithField("status", status).Debug("Received status from helper")
 	return status[uuid], nil
 }
