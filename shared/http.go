@@ -64,7 +64,7 @@ func createSafeHTTPClient() *http.Client {
 func transport() http.RoundTripper {
 	baseTrans := createSafeHTTPClient().Transport
 	if testing.Testing() {
-		return reqtest.Record(baseTrans, "fixtures")
+		return reqtest.Caching(baseTrans, "fixtures")
 	}
 	logger := func(req *http.Request, res *http.Response, err error, d time.Duration) {
 		log.Debugf("method=%q url=%q err=%v status=%q duration=%v\n",
