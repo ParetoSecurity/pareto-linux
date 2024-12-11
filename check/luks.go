@@ -2,6 +2,7 @@ package check
 
 import (
 	"bufio"
+	"bytes"
 	"os"
 	"os/exec"
 	"strings"
@@ -63,13 +64,6 @@ func (f *EncryptingFS) RequiresRoot() bool {
 // Run executes the check
 func (f *EncryptingFS) Run() error {
 
-	// Check if cryptsetup is available
-	if _, err := exec.LookPath("cryptsetup"); err != nil {
-		f.passed = false
-		f.status = "cryptsetup not found"
-		return nil
-	}
-
 	if f.RequiresRoot() && !shared.IsRoot() {
 		// Run as root
 		passed, err := shared.RunCheckViaHelper(f.UUID())
@@ -82,7 +76,6 @@ func (f *EncryptingFS) Run() error {
 	}
 
 	encryptedDevices := make(map[string]string)
-	mountPoints := make(map[string]string)
 
 	// Read crypttab to get encrypted devices
 	crypttab, err := os.Open("/etc/crypttab")
@@ -95,57 +88,35 @@ func (f *EncryptingFS) Run() error {
 			}
 			fields := strings.Fields(line)
 			if len(fields) >= 2 {
-				encryptedDevices[fields[0]] = fields[1]
+				encryptedDevices[fields[0]] = strings.TrimPrefix(strings.Trim(fields[1], `"`), "UUID=")
 			}
 		}
 		crypttab.Close()
 	}
 
-	// Read fstab to get mount points
-	fstab, err := os.Open("/etc/fstab")
-	if err == nil {
-		scanner := bufio.NewScanner(fstab)
-		for scanner.Scan() {
-			line := scanner.Text()
-			if strings.HasPrefix(line, "#") || line == "" {
-				continue
-			}
-			fields := strings.Fields(line)
-			if len(fields) >= 2 {
-				if strings.HasPrefix(fields[0], "/dev/mapper/") {
-					mountPoints[fields[1]] = fields[0]
+	cmd := exec.Command("blkid")
+	output, err := cmd.Output()
+	if err != nil {
+		log.WithError(err).Warn("Failed to run blkid")
+		return err
+	}
+
+	scanner := bufio.NewScanner(bytes.NewReader(output))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(line, `TYPE="crypto_LUKS"`) {
+			for device := range encryptedDevices {
+				if strings.Contains(line, device) {
+					f.passed = true
+					f.status = f.PassedMessage()
+					return nil
 				}
 			}
 		}
-		fstab.Close()
 	}
 
-	rootEncrypted := false
-	homeEncrypted := false
-
-	// Check if root and home are encrypted
-	for mp := range mountPoints {
-		if mp == "/" {
-			rootEncrypted = true
-		}
-		if mp == "/home" {
-			homeEncrypted = true
-		}
-	}
-
-	if rootEncrypted && homeEncrypted {
-		f.passed = true
-		f.status = "Both root and home are LUKS encrypted"
-	} else if rootEncrypted {
-		f.passed = true
-		f.status = "Only root is LUKS encrypted"
-	} else if homeEncrypted {
-		f.passed = true
-		f.status = "Only home is LUKS encrypted"
-	} else {
-		f.passed = false
-		f.status = "Neither root nor home are LUKS encrypted"
-	}
+	f.passed = false
+	f.status = f.FailedMessage()
 
 	return nil
 }
