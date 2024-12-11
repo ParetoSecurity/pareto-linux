@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/caarlos0/log"
 	"github.com/pterm/pterm"
@@ -107,7 +106,7 @@ func Check() {
 	if _, err := multi.Stop(); err != nil {
 		log.WithError(err).Warn("failed to stop multi printer")
 	}
-	time.Sleep(1 * time.Second)
+
 	log.Info("Checks completed.")
 	if err := shared.SaveConfig(); err != nil {
 		log.WithError(err).Warn("cannot save config")

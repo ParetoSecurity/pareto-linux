@@ -5,6 +5,7 @@ import "paretosecurity.com/auditor/check"
 var All = []Claim{
 	{"Access Security", []check.Check{
 		check.Register(&check.Autologin{}),
+		check.Register(&check.DockerAccess{}),
 		check.Register(&check.PasswordToUnlock{}),
 		check.Register(&check.SSHKeys{}),
 		check.Register(&check.SSHKeysAlgo{}),
@@ -14,9 +15,9 @@ var All = []Claim{
 	}},
 	{"Firewall & Sharing", []check.Check{
 		check.Register(&check.Firewall{}),
+		check.Register(&check.Printer{}),
 		check.Register(&check.RemoteLogin{}),
 		check.Register(&check.Sharing{}),
-		check.Register(&check.Printer{}),
 	}},
 
 	{"System Integrity", []check.Check{

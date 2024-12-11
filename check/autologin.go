@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 type Autologin struct {
@@ -51,7 +50,6 @@ func (f *Autologin) Run() error {
 		}
 	}
 
-	time.Sleep(time.Duration(1 * time.Second))
 	return nil
 }
 
