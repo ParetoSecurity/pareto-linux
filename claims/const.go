@@ -16,6 +16,7 @@ var All = []Claim{
 		check.Register(&check.Firewall{}),
 		check.Register(&check.RemoteLogin{}),
 		check.Register(&check.Sharing{}),
+		check.Register(&check.Printer{}),
 	}},
 
 	{"System Integrity", []check.Check{

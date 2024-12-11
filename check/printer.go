@@ -53,7 +53,7 @@ func (f *Printer) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *Printer) UUID() string {
-	return "b96524e0-150b-4bb8-abc7-517051b6c14e"
+	return "c85524e0-150b-4bb8-abc7-517051b6c14e"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled

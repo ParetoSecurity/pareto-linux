@@ -63,7 +63,7 @@ func (f *SecureBoot) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *SecureBoot) UUID() string {
-	return "b96524e0-850b-4bb9-abc7-517051b6c14e"
+	return "c96524f2-850b-4bb9-abc7-517051b6c14e"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled
