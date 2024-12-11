@@ -10,7 +10,7 @@ import (
 
 var unlinkCmd = &cobra.Command{
 	Use:   "unlink",
-	Short: "Unlink team",
+	Short: "Unlink this device from the team",
 	Run: func(cc *cobra.Command, args []string) {
 		log.Info("Unlinking device ...")
 		shared.Config.TeamID = ""

@@ -37,7 +37,7 @@ Description=Service for pareto-linux
 Requires=pareto-linux.socket
 
 [Service]
-ExecStart=/usr/bin/paretosecurity helper
+ExecStart=/usr/bin/paretosecurity helper --verbose --socket /var/run/pareto-linux.sock
 User=root
 Group=root
 StandardInput=socket
@@ -48,6 +48,8 @@ StartLimitBurst=100
 ReadOnlyPaths=/
 ProtectSystem=full
 ProtectHome=yes
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

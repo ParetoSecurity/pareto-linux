@@ -17,11 +17,12 @@ import (
 
 var checkCmd = &cobra.Command{
 	Use:   "check [--json] [--schema] [--install]",
-	Short: "Check system status",
+	Short: "Run checks",
 	Run: func(cc *cobra.Command, args []string) {
 		jsonOutput, _ := cc.Flags().GetBool("json")
 		schemaOutput, _ := cc.Flags().GetBool("schema")
 		installFlag, _ := cc.Flags().GetBool("install")
+
 		if installFlag {
 			installUserTimer()
 			return

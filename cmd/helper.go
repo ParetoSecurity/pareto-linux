@@ -2,27 +2,30 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
 
 	"github.com/caarlos0/log"
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"paretosecurity.com/auditor/claims"
+	"paretosecurity.com/auditor/shared"
 )
 
-const socketContent = `[Unit]
+func socketContent() string {
+	return `[Unit]
 Description=Socket for pareto-linux
 
 [Socket]
-ListenStream=/var/run/pareto-linux.sock
+ListenStream=` + shared.SocketPath + `
 SocketMode=0666
 Accept=no
 
 [Install]
 WantedBy=sockets.target`
+}
 
 const serviceContent = `[Unit]
 Description=Service for pareto-linux
@@ -113,15 +116,20 @@ func handleConnection(conn net.Conn) {
 }
 
 var helperCmd = &cobra.Command{
-	Use:   "helper [--install]",
+	Use:   "helper [--install] [--socket]",
 	Short: "A root helper",
 	Long:  `A root helper that listens on a Unix domain socket and responds to authenticated requests.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		installFlag, _ := cmd.Flags().GetBool("install")
+		socketFlag, _ := cmd.Flags().GetString("socket")
 		if installFlag {
 			installSystemdHelper()
 			return
 		}
+		if lo.IsNotEmpty(socketFlag) {
+			shared.SocketPath = socketFlag
+		}
+
 		runHelper()
 	},
 }
@@ -129,6 +137,7 @@ var helperCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(helperCmd)
 	helperCmd.Flags().Bool("install", false, "install root helper")
+	helperCmd.Flags().Bool("socket", false, "socket path")
 }
 
 func installSystemdHelper() {
@@ -142,7 +151,7 @@ func installSystemdHelper() {
 
 	// Create socket file
 	socketPath := filepath.Join(systemdPath, "pareto-linux.socket")
-	if err := os.WriteFile(socketPath, []byte(socketContent), 0644); err != nil {
+	if err := os.WriteFile(socketPath, []byte(socketContent()), 0644); err != nil {
 		log.Infof("Failed to create socket file: %v\n", err)
 		return
 	}
@@ -150,7 +159,7 @@ func installSystemdHelper() {
 	// Create service file
 	servicePath := filepath.Join(systemdPath, "pareto-linux@.service")
 	if err := os.WriteFile(servicePath, []byte(serviceContent), 0644); err != nil {
-		fmt.Printf("Failed to create service file: %v\n", err)
+		log.Infof("Failed to create service file: %v\n", err)
 		return
 	}
 

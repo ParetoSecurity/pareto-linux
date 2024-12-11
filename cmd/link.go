@@ -11,7 +11,7 @@ import (
 
 var linkCmd = &cobra.Command{
 	Use:   "link",
-	Short: "Link team to this device",
+	Short: "Link team with this device",
 	Run: func(cc *cobra.Command, args []string) {
 		if team.IsLinked() {
 			log.Warn("Already linked to a team")

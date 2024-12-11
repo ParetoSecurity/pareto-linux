@@ -3,28 +3,20 @@ package shared
 import (
 	"encoding/json"
 	"net"
-	"sync"
-	"time"
 
 	"github.com/caarlos0/log"
 	"github.com/davecgh/go-spew/spew"
+	"go.uber.org/ratelimit"
 )
 
-var (
-	rateLimit sync.Mutex
-	lastCall  time.Time
-)
+var SocketPath = "/var/run/pareto-linux.sock"
+var rateLimitCall = ratelimit.New(1)
 
 func RunCheckViaHelper(uuid string) (bool, error) {
-	rateLimit.Lock()
-	defer rateLimit.Unlock()
 
-	for time.Since(lastCall) < time.Second*2 {
-		time.Sleep(time.Millisecond * 100)
-	}
-	lastCall = time.Now()
+	rateLimitCall.Take()
 
-	conn, err := net.Dial("unix", "/var/run/pareto-linux.sock")
+	conn, err := net.Dial("unix", SocketPath)
 	if err != nil {
 		log.WithError(err).Warn("Failed to connect to helper")
 		return false, err

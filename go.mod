@@ -15,6 +15,7 @@ require (
 	atomicgo.dev/keyboard v0.2.9 // indirect
 	atomicgo.dev/schedule v0.1.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
 	github.com/charmbracelet/x/ansi v0.5.2 // indirect
 	github.com/containerd/console v1.0.4 // indirect
@@ -46,4 +47,5 @@ require (
 	github.com/samber/lo v1.47.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/automaxprocs v1.6.0
+	go.uber.org/ratelimit v0.3.1
 )
