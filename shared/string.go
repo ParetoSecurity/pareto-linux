@@ -21,7 +21,7 @@ func Sanitize(s string) string {
 			(r >= '0' && r <= '9') ||
 			r == '.' || r == '!' || r == '-' ||
 			r == '\'' || r == '"' || r == '_' ||
-			r == ','
+			r == ',' || r == ' '
 	}
 
 	result := make([]byte, 0, len(ascii))
