@@ -23,7 +23,7 @@ Description=Service for pareto-linux
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/paretosecurity
+ExecStart=/usr/bin/paretosecurity check
 StandardInput=null
 
 [Install]
