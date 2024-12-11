@@ -3,9 +3,24 @@ package shared
 import (
 	"encoding/json"
 	"net"
+	"sync"
+	"time"
+)
+
+var (
+	rateLimit sync.Mutex
+	lastCall  time.Time
 )
 
 func RunCheckViaHelper(uuid string) (bool, error) {
+	rateLimit.Lock()
+	defer rateLimit.Unlock()
+
+	if time.Since(lastCall) < time.Second*2 {
+		return false, nil
+	}
+	lastCall = time.Now()
+
 	conn, err := net.Dial("unix", "/var/run/pareto-linux.sock")
 	if err != nil {
 		return false, err

@@ -35,6 +35,8 @@ Group=root
 StandardInput=socket
 Type=oneshot
 RemainAfterExit=no
+StartLimitInterval=1
+StartLimitBurst=100
 
 [Install]
 WantedBy=multi-user.target`
