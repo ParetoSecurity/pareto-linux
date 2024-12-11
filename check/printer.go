@@ -27,15 +27,31 @@ func (f *Printer) Run() error {
 	}
 
 	for port, service := range shareServices {
-		// Check localhost first
-		addr := fmt.Sprintf("0.0.0.0:%d", port)
-		conn, err := net.DialTimeout("tcp", addr, 1*time.Second)
-		if err == nil {
-			f.passed = false
-			f.ports[port] = service
-			conn.Close()
+		// Check all interfaces
+		addrs, err := net.InterfaceAddrs()
+		if err != nil {
+			return err
 		}
 
+		for _, addr := range addrs {
+			ip, _, err := net.ParseCIDR(addr.String())
+			if err != nil {
+				continue
+			}
+
+			// Filter out 127.0.0.1
+			if ip.IsLoopback() {
+				continue
+			}
+
+			address := fmt.Sprintf("%s:%d", ip.String(), port)
+			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+			if err == nil {
+				f.passed = false
+				f.ports[port] = service
+				conn.Close()
+			}
+		}
 	}
 
 	return nil

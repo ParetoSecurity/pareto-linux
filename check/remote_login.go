@@ -36,6 +36,7 @@ func (f *RemoteLogin) Run() error {
 	portsToCheck := map[int]string{
 		22:   "SSH",
 		3389: "RDP",
+		3390: "RDP",
 		5900: "VNC",
 	}
 

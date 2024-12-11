@@ -27,6 +27,8 @@ func (f *Sharing) Run() error {
 		445:  "SMB",
 		2049: "NFS",
 		111:  "RPC",
+		8200: "DLNA",
+		1900: "UPnP",
 	}
 
 	for port, service := range shareServices {
