@@ -45,6 +45,9 @@ Type=oneshot
 RemainAfterExit=no
 StartLimitInterval=1
 StartLimitBurst=100
+ReadOnlyPaths=/
+ProtectSystem=full
+ProtectHome=yes
 
 [Install]
 WantedBy=multi-user.target

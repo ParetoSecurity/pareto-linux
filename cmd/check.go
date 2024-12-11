@@ -81,6 +81,14 @@ func Check() {
 						Text:  "✓",
 					},
 				}
+
+				// Skip checks that are not runnable
+				if !chk.IsRunnable() {
+					spinner.Warning(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Yellow("skipped"))
+					wg.Done()
+					return
+				}
+
 				if err := chk.Run(); err != nil {
 					spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(err.Error()))
 				}
