@@ -24,7 +24,7 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	}
 	lastCall = time.Now()
 
-	conn, err := net.Dial("unix", "/run/pareto.sock")
+	conn, err := net.Dial("unix", "/var/run/pareto-linux.sock")
 	if err != nil {
 		log.WithError(err).Warn("Failed to connect to helper")
 		return false, err
