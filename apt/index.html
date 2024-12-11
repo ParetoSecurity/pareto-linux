@@ -8,54 +8,55 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-black text-white">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-center mb-8">ParetoSecurity Packages</h1>
-        <p class="text-center text-gray-400 mb-12">
+<body class="bg-slate-50 text-slate-800">
+    <div class="container mx-auto px-4 py-12">
+        <h1 class="text-4xl font-bold text-center text-slate-900 mb-8">ParetoSecurity Packages</h1>
+        <p class="text-center text-slate-500 mb-12">
             Secure your systems with ParetoSecurity CLI tools. Learn more on our
-            <a href="https://github.com/ParetoSecurity/pareto-linux/" class="text-blue-500 underline">
+            <a href="https://github.com/ParetoSecurity/pareto-linux/attestations"
+                class="text-blue-500 hover:text-blue-600 underline">
                 GitHub repository
             </a>.
         </p>
 
         <div class="grid md:grid-cols-2 gap-8 mx-auto max-w-5xl">
             <!-- macOS Section -->
-            <div class="text-center border border-gray-700 rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">macOS</h2>
-                <p class="text-gray-400 mb-6">Version 10.14+</p>
+            <div class="text-center border border-slate-200 rounded-lg p-6 bg-white shadow-sm">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-4">macOS</h2>
+                <p class="text-slate-500 mb-6">Version 10.14+</p>
                 <a href="https://github.com/ParetoSecurity/pareto-mac/releases/latest/download/ParetoSecurity.dmg"
-                    class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                    class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow">
                     Download for Mac
                 </a>
             </div>
 
             <!-- Linux Section -->
-            <div class="text-center border border-gray-700 rounded-lg p-6">
-                <h2 class="text-2xl font-semibold mb-4">Linux</h2>
-                <p class="text-gray-400 mb-6">Debian, Ubuntu, Red Hat, Fedora</p>
-                <div class="bg-gray-800 p-4 rounded-lg">
+            <div class="text-center border border-slate-200 rounded-lg p-6 bg-white shadow-sm">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-4">Linux</h2>
+                <p class="text-slate-500 mb-6">Debian, Ubuntu, Red Hat, Fedora</p>
+                <div class="bg-slate-100 p-4 rounded-lg shadow-inner">
                     <div class="flex justify-between items-center mb-2">
-                        <span>.deb</span>
+                        <span class="text-slate-700 font-medium">.deb</span>
                         <div>
                             <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_amd64.deb"
-                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded mr-2">
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded shadow-sm mr-2">
                                 x64
                             </a>
                             <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_arm64.deb"
-                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded">
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded shadow-sm">
                                 ARM64
                             </a>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mb-2">
-                        <span>.rpm</span>
+                        <span class="text-slate-700 font-medium">.rpm</span>
                         <div>
                             <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_amd64.rpm"
-                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded mr-2">
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded shadow-sm mr-2">
                                 x64
                             </a>
                             <a href="https://github.com/ParetoSecurity/pareto-linux/releases/latest/download/paretosecurity_arm64.rpm"
-                                class="bg-gray-700 hover:bg-gray-800 text-white py-1 px-3 rounded">
+                                class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded shadow-sm">
                                 ARM64
                             </a>
                         </div>
@@ -64,7 +65,38 @@
             </div>
         </div>
 
-        <footer class="text-center text-gray-500 mt-12">
+        <!-- NixOS Section -->
+        <div class="mt-12">
+            <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">NixOS</h2>
+            <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold text-blue-600 mb-4">Using Nix</h3>
+                <p class="text-slate-500 mb-4">
+                    The recommended way to install Pareto Linux is through the Nix package manager:
+                </p>
+                <div class="bg-slate-100 text-slate-700 font-mono p-4 rounded shadow-inner mb-4">
+                    nix profile install --accept-flake-config github:paretosecurity/pareto-linux
+                </div>
+                <h3 class="text-lg font-semibold text-blue-600 mb-4">Quick Start</h3>
+                <p class="text-slate-500 mb-4">
+                    To run a one-time security audit without installation:
+                </p>
+                <div class="bg-slate-100 text-slate-700 font-mono p-4 rounded shadow-inner mb-4">
+                    nix run github:paretosecurity/pareto-linux -- check
+                </div>
+                <p class="text-slate-500 mb-4">
+                    Or if running from a local repo with JSON reporter:
+                </p>
+                <div class="bg-slate-100 text-slate-700 font-mono p-4 rounded shadow-inner">
+                    nix run . -- check --json
+                </div>
+                <p class="text-slate-500 mt-4">
+                    This will analyze your system and provide a security report highlighting potential improvements and
+                    vulnerabilities.
+                </p>
+            </div>
+        </div>
+
+        <footer class="text-center text-slate-500 mt-12">
             © 2024 ParetoSecurity. All rights reserved.
         </footer>
     </div>
