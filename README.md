@@ -32,7 +32,7 @@ nix run . -- check --json
 
 This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
 
-### Using Debian/Ubuntu/Pop_OS!
+### Using Debian/Ubuntu/Pop!_OS
 
 See [https://pkg.paretosecurity.com](https://pkg.paretosecurity.com) for install steps.
 
