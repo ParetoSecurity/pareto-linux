@@ -30,7 +30,7 @@ func (f *Sharing) Run() error {
 		2049: "NFS",
 		111:  "RPC",
 		8200: "DLNA",
-		1900: "UPnP",
+		1900: "Ubuntu Media Sharing",
 	}
 
 	for port, service := range shareServices {
@@ -52,12 +52,20 @@ func (f *Sharing) Run() error {
 			}
 
 			address := fmt.Sprintf("%s:%d", ip.String(), port)
-			log.WithField("address", address).Debug("Checking port")
-			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+			log.WithField("address", address).Debug("Checking TCP port")
+			tcpConn, err := net.DialTimeout("tcp", address, 1*time.Second)
 			if err == nil {
 				f.passed = false
 				f.ports[port] = service
-				conn.Close()
+				tcpConn.Close()
+			}
+
+			log.WithField("address", address).Debug("Checking UDP port")
+			udpConn, err := net.DialTimeout("udp", address, 1*time.Second)
+			if err == nil {
+				f.passed = false
+				f.ports[port] = service
+				udpConn.Close()
 			}
 		}
 	}
