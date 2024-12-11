@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/caarlos0/log"
 )
 
 type Printer struct {
@@ -45,6 +47,7 @@ func (f *Printer) Run() error {
 			}
 
 			address := fmt.Sprintf("%s:%d", ip.String(), port)
+			log.WithField("address", address).Debug("Checking port")
 			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
 			if err == nil {
 				f.passed = false
@@ -95,11 +98,11 @@ func (f *Printer) RequiresRoot() bool {
 // Status returns the status of the check
 func (f *Printer) Status() string {
 	if !f.Passed() {
-		msg := "Printer/sharing services found running on ports:"
+		msg := "Printer sharing services found running on ports:"
 		for port, service := range f.ports {
 			msg += fmt.Sprintf(" %s(%d)", service, port)
 		}
 		return msg
 	}
-	return "No printer or file sharing services found running"
+	return f.PassedMessage()
 }

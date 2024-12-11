@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"time"
+
+	"github.com/caarlos0/log"
 )
 
 type RemoteLogin struct {
@@ -18,13 +20,32 @@ func (f *RemoteLogin) Name() string {
 
 // checkPort tests if a port is open
 func (f *RemoteLogin) checkPort(port int) bool {
-	addr := fmt.Sprintf("0.0.0.0:%d", port)
-	conn, err := net.DialTimeout("tcp", addr, 100*time.Millisecond)
+	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return false
 	}
-	conn.Close()
-	return true
+
+	for _, addr := range addrs {
+		ip, _, err := net.ParseCIDR(addr.String())
+		if err != nil {
+			continue
+		}
+
+		// Filter out 127.0.0.1
+		if ip.IsLoopback() {
+			continue
+		}
+
+		address := fmt.Sprintf("%s:%d", ip.String(), port)
+		log.WithField("address", address).Debug("Checking port")
+		conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+		if err == nil {
+			conn.Close()
+			return true
+		}
+	}
+
+	return false
 }
 
 // Run executes the check
