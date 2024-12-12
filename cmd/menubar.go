@@ -52,7 +52,7 @@ func getIcon() []byte {
 
 func addOptions() {
 	mOptions := systray.AddMenuItem("Options", "Settings")
-	mauto := mOptions.AddSubMenuItemCheckbox("Auto Start", "Toggle auto start", isUserTimerInstalled())
+	mauto := mOptions.AddSubMenuItemCheckbox("Run checks every hour", "Toggle running checks every hour", isUserTimerInstalled())
 	mlink := mOptions.AddSubMenuItemCheckbox("Send reports to the dashboard", "Configure sending device reports to the team", shared.IsLinked())
 	go func() {
 		for range mauto.ClickedCh {
