@@ -52,9 +52,8 @@ func (f *ParetoUpdated) Run() error {
 		ToJSON(&res).
 		Fetch(context.Background())
 	if err != nil {
-
 		log.WithError(err).
-			Warnf("Failed to report to team: %s", shared.Config.TeamID)
+			Warnf("Failed to check for updates")
 		return err
 	}
 
