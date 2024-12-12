@@ -93,12 +93,12 @@ func (f *RemoteLogin) ReportIfDisabled() bool {
 
 // PassedMessage returns the message to return if the check passed
 func (f *RemoteLogin) PassedMessage() string {
-	return "Remote access services are found running"
+	return "No remote access services found running"
 }
 
 // FailedMessage returns the message to return if the check failed
 func (f *RemoteLogin) FailedMessage() string {
-	return "No remote access services found running"
+	return "Remote access services found running"
 }
 
 // RequiresRoot returns whether the check requires root access
@@ -115,5 +115,5 @@ func (f *RemoteLogin) Status() string {
 		}
 		return msg
 	}
-	return "No remote access services found running"
+	return f.PassedMessage()
 }
