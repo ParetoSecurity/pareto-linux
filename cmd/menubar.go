@@ -24,7 +24,6 @@ func addQuitItem() {
 		systray.Quit()
 		os.Exit(0)
 	}()
-	systray.AddSeparator()
 }
 
 func checkStatusToIcon(status bool) string {
