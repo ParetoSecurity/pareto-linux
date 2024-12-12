@@ -64,7 +64,7 @@ jobs:
           name: build
       - name: Display structure of downloaded files
         run: mkdir -p pkg && mv *.deb pkg && mv *.rpm pkg && ls -l pkg
-      - run : git add dist -f
+      - run : git add pkg -f
       - uses: ./.github/actions/devenv
         with:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
