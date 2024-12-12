@@ -65,6 +65,15 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 		}
 	}
 
+	// Check snap
+	if _, err := exec.LookPath("snap"); err == nil {
+		cmd := exec.Command("snap", "refresh", "--list")
+		output, err := cmd.Output()
+		if err == nil && len(output) > 0 && !strings.Contains(string(output), "All snaps up to date.") {
+			updates = append(updates, "Snap")
+		}
+	}
+
 	if len(updates) == 0 {
 		return true, "All packages are up to date"
 	}
@@ -92,7 +101,7 @@ func (f *SoftwareUpdates) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *SoftwareUpdates) UUID() string {
-	return "940e7a88-2dd4-4a50-bf9c-3d842e0a2c94"
+	return "05a103af-6031-42b7-8ff4-655f9a27ddf2"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled
