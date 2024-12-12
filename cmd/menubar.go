@@ -46,11 +46,52 @@ func getIcon() []byte {
 	return shared.IconWhite
 }
 
+func addOptions() {
+	mOptions := systray.AddMenuItem("Options", "Settings")
+	mauto := mOptions.AddSubMenuItemCheckbox("Auto Start", "Toggle auto start", isUserTimerInstalled())
+	mlink := mOptions.AddSubMenuItemCheckbox("Send reports to the dashboard", "Configure sending device reports to the team", shared.IsLinked())
+	go func() {
+		for range mauto.ClickedCh {
+			if isUserTimerInstalled() {
+				// execute the command to toggle auto start
+				err := exec.Command("paretosecurity", "check", "--install").Run()
+				if err != nil {
+					log.WithError(err).Error("failed to run toggle-autostart command")
+				}
+			} else {
+				// execute the command to toggle auto start
+				err := exec.Command("paretosecurity", "check", "--uninstall").Run()
+				if err != nil {
+					log.WithError(err).Error("failed to run toggle-autostart command")
+				}
+			}
+		}
+	}()
+	go func() {
+		for range mlink.ClickedCh {
+			if shared.IsLinked() {
+				// execute the command in the system terminal
+				err := exec.Command("paretosecurity", "link").Run()
+				if err != nil {
+					log.WithError(err).Error("failed to run link command")
+				}
+			} else {
+				// execute the command in the system terminal
+				err := exec.Command("paretosecurity", "unlink").Run()
+				if err != nil {
+					log.WithError(err).Error("failed to run unlink command")
+				}
+			}
+		}
+	}()
+}
+
 func onReady() {
 	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
 	systray.AddMenuItem("Pareto Security", "").Disable()
+	addOptions()
 	systray.AddSeparator()
 	for _, claim := range claims.All {
 		mClaim := systray.AddMenuItem(claim.Title, "")
