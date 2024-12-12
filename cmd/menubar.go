@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"os/exec"
 
@@ -15,12 +16,15 @@ import (
 	"paretosecurity.com/auditor/shared"
 )
 
+var globalUpdate = make(chan struct{})
+
 func addQuitItem() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the Pareto Security")
 	mQuit.Enable()
 	go func() {
 		<-mQuit.ClickedCh
 		systray.Quit()
+		os.Exit(0)
 	}()
 	systray.AddSeparator()
 }
@@ -102,13 +106,15 @@ func onReady() {
 	systray.SetTooltip("Pareto Security")
 	systray.AddMenuItem("Pareto Security", "").Disable()
 	rcheck := systray.AddMenuItem("Run Checks", "")
-	go func() {
-		<-rcheck.ClickedCh
-		err := exec.Command("paretosecurity", "check").Run()
-		if err != nil {
-			log.WithError(err).Error("failed to run check command")
+	go func(rcheck *systray.MenuItem) {
+		for range rcheck.ClickedCh {
+			err := exec.Command("paretosecurity", "check").Run()
+			if err != nil {
+				log.WithError(err).Error("failed to run check command")
+			}
+			globalUpdate <- struct{}{}
 		}
-	}()
+	}(rcheck)
 	addOptions()
 	systray.AddSeparator()
 	for _, claim := range claims.All {
@@ -123,6 +129,20 @@ func onReady() {
 
 		mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
 
+		go func(mClaim *systray.MenuItem) {
+			for range globalUpdate {
+				allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
+					checkStatus, found, _ := shared.GetLastState(item.UUID())
+					if !item.IsRunnable() {
+						return acc && true
+					}
+					return acc && checkStatus.State && found
+				}, true)
+
+				mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
+			}
+		}(mClaim)
+
 		for _, chk := range claim.Checks {
 			checkStatus, found, _ := shared.GetLastState(chk.UUID())
 			state := chk.Passed()
@@ -133,6 +153,18 @@ func onReady() {
 			if !chk.IsRunnable() {
 				mCheck.Disable()
 			}
+
+			go func(chk check.Check, mCheck *systray.MenuItem) {
+				for range globalUpdate {
+					checkStatus, found, _ := shared.GetLastState(chk.UUID())
+					state := chk.Passed()
+					if found {
+						state = checkStatus.State
+					}
+					mCheck.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()))
+				}
+			}(chk, mCheck)
+
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					err := exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()

@@ -14,15 +14,6 @@ in {
   languages.nix.enable = true;
   languages.go.enable = true;
 
-  scripts.buildIcon.exec = ''
-    # Build the icon for the appropriate platform.
-    echo "Generating platform icon..."
-    go get github.com/cratonica/2goarray
-    cat "assets/icon_black.png" | go run github.com/cratonica/2goarray IconBlack shared > shared/icon_black_unix.go
-    cat "assets/icon_white.png" | go run github.com/cratonica/2goarray IconWhite shared > shared/icon_white_unix.go
-    go mod tidy
-  '';
-
   # https://devenv.sh/tests/
   enterTest = ''
     go mod verify
