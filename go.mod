@@ -15,9 +15,9 @@ require (
 	atomicgo.dev/keyboard v0.2.9 // indirect
 	atomicgo.dev/schedule v0.1.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/benbjohnson/clock v1.3.0 // indirect
+	github.com/benbjohnson/clock v1.3.5 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
-	github.com/charmbracelet/x/ansi v0.5.2 // indirect
+	github.com/charmbracelet/x/ansi v0.6.0 // indirect
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/elliotchance/orderedmap/v2 v2.6.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
