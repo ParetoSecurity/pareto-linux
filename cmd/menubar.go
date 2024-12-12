@@ -1,6 +1,3 @@
-//go:build menubar
-// +build menubar
-
 package cmd
 
 import (
@@ -18,8 +15,6 @@ import (
 	"paretosecurity.com/auditor/claims"
 	"paretosecurity.com/auditor/shared"
 )
-
-var globalUpdate = make(chan struct{})
 
 func addQuitItem() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the Pareto Security")
@@ -104,6 +99,7 @@ func addOptions() {
 }
 
 func onReady() {
+	broadcaster := shared.NewBroadcaster()
 	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
@@ -117,11 +113,12 @@ func onReady() {
 				log.WithError(err).Error("failed to run check command")
 			}
 			log.Info("Checks completed")
-			globalUpdate <- struct{}{}
+			broadcaster.Send("update")
 		}
 	}(rcheck)
 	addOptions()
 	systray.AddSeparator()
+
 	for _, claim := range claims.All {
 		mClaim := systray.AddMenuItem(claim.Title, "")
 		allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
@@ -135,7 +132,7 @@ func onReady() {
 		mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
 
 		go func(mClaim *systray.MenuItem) {
-			for range globalUpdate {
+			for range broadcaster.Register() {
 				log.WithField("claim", claim.Title).Info("Updating claim status")
 				allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
 					checkStatus, found, _ := shared.GetLastState(item.UUID())
@@ -160,9 +157,8 @@ func onReady() {
 				mCheck.Disable()
 				mCheck.SetTitle(fmt.Sprintf("🚫 %s", chk.Name()))
 			}
-
 			go func(chk check.Check, mCheck *systray.MenuItem) {
-				for range globalUpdate {
+				for range broadcaster.Register() {
 					log.WithField("check", chk.Name()).Info("Updating check status")
 					checkStatus, found, _ := shared.GetLastState(chk.UUID())
 					state := chk.Passed()
