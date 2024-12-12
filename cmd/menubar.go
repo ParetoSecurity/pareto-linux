@@ -1,3 +1,6 @@
+//go:build menubar
+// +build menubar
+
 package cmd
 
 import (
