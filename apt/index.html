@@ -34,6 +34,8 @@
             <div class="text-center border border-slate-200 rounded-lg p-6 bg-white shadow-sm">
                 <h2 class="text-2xl font-semibold text-slate-800 mb-4">Linux</h2>
                 <p class="text-slate-500 mb-6">Debian, Ubuntu, Red Hat, Fedora</p>
+
+
                 <div class="bg-slate-100 p-4 rounded-lg shadow-inner">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-slate-700 font-medium">.deb</span>
@@ -65,6 +67,76 @@
             </div>
         </div>
 
+        <!-- Debian- and Ubuntu-based distributions -->
+        <div class="mt-12 max-w-5xl mx-auto">
+            <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">Debian- and Ubuntu-based distributions
+            </h2>
+            <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
+
+                <p class="text-slate-500 mb-4">
+                    The easiest way to install ParetoSecurity is to download the x64 .deb package or ARM64 .deb
+                    package. After downloading, you can install the package with:
+                </p>
+                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    sudo apt install ./paretosecurity_{amd64||arm64}.deb
+                </div>
+                <p class="text-slate-500 mb-4">
+                    Installing the .deb package will automatically set up the ParetoSecurity APT repository and
+                    signing key needed to automatically update ParetoSecurity and verify the integrity of the
+                    downloaded packages.
+                </p>
+                <p class="text-slate-500 mb-4">
+                    Alternatively, you can manually configure the ParetoSecurity APT repository and install
+                    ParetoSecurity by running the following commands:
+                </p>
+                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    sudo apt-get install wget gpg<br>
+                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee
+                    /usr/share/keyrings/paretosecurity.gpg >/dev/null<br>
+                    echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg]
+                    https://pkg.paretosecurity.com/debian stable main' | sudo tee
+                    /etc/apt/sources.list.d/pareto.list<br>
+                    sudo apt update && sudo apt install paretosecurity
+                </div>
+            </div>
+        </div>
+
+        <!-- RHEL-, Fedora-, and CentOS-based distributions -->
+        <div class="mt-12 max-w-5xl mx-auto">
+            <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">RHEL-, Fedora-, and CentOS-based
+                distributions</h2>
+            <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
+
+                <p class="text-slate-500 mb-4">
+                    The easiest way to install ParetoSecurity is to download the x64 .rpm package or ARM64 .rpm
+                    package. After downloading, you can install the package with:
+                </p>
+                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    sudo dnf install ./paretosecurity_{amd64||arm64}.rpm
+                </div>
+                <p class="text-slate-500 mb-4">
+                    Installing the .rpm package will automatically set up the ParetoSecurity yum repository. On
+                    first update, dnf will retrieve the signing key needed to verify the integrity of the downloaded
+                    packages.
+                </p>
+                <p class="text-slate-500 mb-4">
+                    Alternatively, you can manually configure the ParetoSecurity yum repository and install
+                    ParetoSecurity by running the following commands:
+                </p>
+                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    sudo rpm --import https://pkg.paretosecurity.com/pareto.asc
+                    sudo sh -c 'echo -e \
+                    [paretosecurity]
+                    name=paretosecurity
+                    baseurl=https://pkg.paretosecurity.com/rpm/stable
+                    enabled=1
+                    gpgcheck=1
+                    gpgkey=https://pkg.paretosecurity.com/pareto.asc \
+                    > /etc/yum.repos.d/paretosecurity.repo'
+                    sudo dnf install paretosecurity
+                </div>
+            </div>
+        </div>
         <!-- NixOS Section -->
         <div class="mt-12 max-w-5xl mx-auto">
             <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">NixOS</h2>
