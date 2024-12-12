@@ -80,7 +80,7 @@ func (f *ParetoUpdated) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *ParetoUpdated) UUID() string {
-	return "05a103af-6031-42b7-8ff4-655f9a27ddf2"
+	return "44e4754a-0b42-4964-9cc2-b88b2023cb1e"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled

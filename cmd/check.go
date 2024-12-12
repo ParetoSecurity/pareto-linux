@@ -98,11 +98,19 @@ func Check() {
 				} else {
 					spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(chk.Status()))
 				}
+				shared.UpdateLastState(shared.LastState{
+					UUID:    chk.UUID(),
+					State:   chk.Passed(),
+					Details: chk.Status(),
+				})
 				wg.Done()
 			}(claim, chk)
 		}
 	}
 	wg.Wait()
+	if err := shared.CommitLastState(); err != nil {
+		log.WithError(err).Warn("failed to commit last state")
+	}
 	if _, err := multi.Stop(); err != nil {
 		log.WithError(err).Warn("failed to stop multi printer")
 	}

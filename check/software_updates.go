@@ -101,7 +101,7 @@ func (f *SoftwareUpdates) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *SoftwareUpdates) UUID() string {
-	return "05a103af-6031-42b7-8ff4-655f9a27ddf2"
+	return "7436553a-ae52-479b-937b-2ae14d15a520"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled
