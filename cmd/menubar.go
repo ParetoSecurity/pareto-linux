@@ -9,7 +9,7 @@ import (
 	"os/exec"
 
 	"fyne.io/systray"
-	"fyne.io/systray/example/icon"
+
 	"github.com/caarlos0/log"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
@@ -36,7 +36,7 @@ func checkStatusToIcon(status bool) string {
 }
 
 func onReady() {
-	systray.SetTemplateIcon(icon.Data, icon.Data)
+	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
 	systray.SetTooltip("Pareto Security")
 
 	for _, claim := range claims.All {
@@ -57,7 +57,10 @@ func onReady() {
 			mCheck := mClaim.AddSubMenuItem(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()), "")
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
-					exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()
+					err := exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()
+					if err != nil {
+						log.WithError(err).Error("failed to open check URL")
+					}
 				}
 			}(chk, mCheck)
 		}
