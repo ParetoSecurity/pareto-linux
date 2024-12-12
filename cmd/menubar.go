@@ -108,10 +108,12 @@ func onReady() {
 	rcheck := systray.AddMenuItem("Run Checks", "")
 	go func(rcheck *systray.MenuItem) {
 		for range rcheck.ClickedCh {
+			log.Info("Running checks...")
 			err := exec.Command("paretosecurity", "check").Run()
 			if err != nil {
 				log.WithError(err).Error("failed to run check command")
 			}
+			log.Info("Checks completed")
 			globalUpdate <- struct{}{}
 		}
 	}(rcheck)
@@ -131,6 +133,7 @@ func onReady() {
 
 		go func(mClaim *systray.MenuItem) {
 			for range globalUpdate {
+				log.WithField("claim", claim.Title).Info("Updating claim status")
 				allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
 					checkStatus, found, _ := shared.GetLastState(item.UUID())
 					if !item.IsRunnable() {
@@ -156,6 +159,7 @@ func onReady() {
 
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range globalUpdate {
+					log.WithField("check", chk.Name()).Info("Updating check status")
 					checkStatus, found, _ := shared.GetLastState(chk.UUID())
 					state := chk.Passed()
 					if found {
@@ -167,6 +171,7 @@ func onReady() {
 
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
+					log.WithField("check", chk.Name()).Info("Opening check URL")
 					err := exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()
 					if err != nil {
 						log.WithError(err).Error("failed to open check URL")
