@@ -155,6 +155,7 @@ func onReady() {
 			mCheck := mClaim.AddSubMenuItem(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()), "")
 			if !chk.IsRunnable() {
 				mCheck.Disable()
+				mCheck.SetTitle(fmt.Sprintf("🚫 %s", chk.Name()))
 			}
 
 			go func(chk check.Check, mCheck *systray.MenuItem) {
