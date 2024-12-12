@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/caarlos0/log"
 	"github.com/pterm/pterm"
@@ -35,15 +38,30 @@ var checkCmd = &cobra.Command{
 			CheckJSON()
 			return
 		}
-		Check()
-		if shared.IsLinked() {
-			err := team.ReportToTeam()
-			if err != nil {
-				log.WithError(err).Warn("failed to report to team")
+
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+		defer cancel()
+
+		done := make(chan struct{})
+		go func() {
+			Check(ctx)
+			close(done)
+		}()
+
+		select {
+		case <-done:
+			if shared.IsLinked() {
+				err := team.ReportToTeam()
+				if err != nil {
+					log.WithError(err).Warn("failed to report to team")
+				}
 			}
-		}
-		if !isUserTimerInstalled() {
-			log.Info("To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
+			if !isUserTimerInstalled() {
+				log.Info("To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
+			}
+		case <-ctx.Done():
+			log.Warn("Check run timed out")
+			os.Exit(1)
 		}
 	},
 }
@@ -55,7 +73,7 @@ func init() {
 	checkCmd.Flags().Bool("install", false, "setup hourly checks")
 }
 
-func Check() {
+func Check(ctx context.Context) {
 	multi := pterm.DefaultMultiPrinter
 	var wg sync.WaitGroup
 	log.Info("Starting checks...")
@@ -66,44 +84,48 @@ func Check() {
 		for _, chk := range claim.Checks {
 			wg.Add(1)
 			go func(claim claims.Claim, chk check.Check) {
-				spinner, _ := pterm.DefaultSpinner.WithWriter(multi.NewWriter()).Start(fmt.Sprintf("%s: %s", claim.Title, chk.Name()))
-				spinner.FailPrinter = &pterm.PrefixPrinter{
-					MessageStyle: &pterm.Style{pterm.FgLightRed},
-					Prefix: pterm.Prefix{
-						Style: &pterm.Style{pterm.BgRed, pterm.FgLightRed},
-						Text:  "✗",
-					},
-				}
-				spinner.SuccessPrinter = &pterm.PrefixPrinter{
-					MessageStyle: &pterm.Style{pterm.FgLightGreen},
-					Prefix: pterm.Prefix{
-						Style: &pterm.Style{pterm.BgGreen, pterm.FgLightGreen},
-						Text:  "✓",
-					},
-				}
-
-				// Skip checks that are not runnable
-				if !chk.IsRunnable() {
-					spinner.Warning(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Yellow("skipped"))
-					wg.Done()
+				defer wg.Done()
+				select {
+				case <-ctx.Done():
 					return
-				}
+				default:
+					spinner, _ := pterm.DefaultSpinner.WithWriter(multi.NewWriter()).Start(fmt.Sprintf("%s: %s", claim.Title, chk.Name()))
+					spinner.FailPrinter = &pterm.PrefixPrinter{
+						MessageStyle: &pterm.Style{pterm.FgLightRed},
+						Prefix: pterm.Prefix{
+							Style: &pterm.Style{pterm.BgRed, pterm.FgLightRed},
+							Text:  "✗",
+						},
+					}
+					spinner.SuccessPrinter = &pterm.PrefixPrinter{
+						MessageStyle: &pterm.Style{pterm.FgLightGreen},
+						Prefix: pterm.Prefix{
+							Style: &pterm.Style{pterm.BgGreen, pterm.FgLightGreen},
+							Text:  "✓",
+						},
+					}
 
-				if err := chk.Run(); err != nil {
-					spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(err.Error()))
-				}
+					// Skip checks that are not runnable
+					if !chk.IsRunnable() {
+						spinner.Warning(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Yellow("skipped"))
+						return
+					}
 
-				if chk.Passed() {
-					spinner.Success(pterm.White(claim.Title), pterm.White(": "), pterm.Green(chk.Status()))
-				} else {
-					spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(chk.Status()))
+					if err := chk.Run(); err != nil {
+						spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(err.Error()))
+					}
+
+					if chk.Passed() {
+						spinner.Success(pterm.White(claim.Title), pterm.White(": "), pterm.Green(chk.Status()))
+					} else {
+						spinner.Fail(pterm.White(claim.Title), pterm.White(": "), pterm.Blue(fmt.Sprintf("%s > ", chk.Name())), pterm.Red(chk.Status()))
+					}
+					shared.UpdateLastState(shared.LastState{
+						UUID:    chk.UUID(),
+						State:   chk.Passed(),
+						Details: chk.Status(),
+					})
 				}
-				shared.UpdateLastState(shared.LastState{
-					UUID:    chk.UUID(),
-					State:   chk.Passed(),
-					Details: chk.Status(),
-				})
-				wg.Done()
 			}(claim, chk)
 		}
 	}
