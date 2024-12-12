@@ -10,60 +10,22 @@ import (
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
 	"github.com/davecgh/go-spew/spew"
+
 	"paretosecurity.com/auditor/claims"
 	"paretosecurity.com/auditor/shared"
 )
 
 const reportURL = "https://dash.paretosecurity.com"
 
-type ReportingDevice struct {
-	MachineUUID    string `json:"machineUUID"`
-	MachineName    string `json:"machineName"`
-	Auth           string `json:"auth"`
-	LinuxOSVersion string `json:"linuxOSVersion"`
-	ModelName      string `json:"modelName"`
-	ModelSerial    string `json:"modelSerial"`
-}
-
-func CurrentReportingDevice() ReportingDevice {
-	device, err := NewLinkingDevice()
-	if err != nil {
-		log.WithError(err).Fatal("Failed to get device information")
-	}
-
-	return ReportingDevice{
-		MachineUUID:    device.UUID,
-		MachineName:    device.Hostname,
-		Auth:           DeviceAuth(),
-		LinuxOSVersion: device.OS,
-		ModelName: func() string {
-			modelName, err := shared.SystemDevice()
-			if err != nil {
-				return "Unknown"
-			}
-
-			return modelName
-		}(),
-		ModelSerial: func() string {
-			serial, err := shared.SystemSerial()
-			if err != nil {
-				return "Unknown"
-			}
-
-			return serial
-		}(),
-	}
-}
-
 type Report struct {
-	PassedCount       int               `json:"passedCount"`
-	FailedCount       int               `json:"failedCount"`
-	DisabledCount     int               `json:"disabledCount"`
-	Device            ReportingDevice   `json:"device"`
-	Version           string            `json:"version"`
-	LastCheck         string            `json:"lastCheck"`
-	SignificantChange string            `json:"significantChange"`
-	State             map[string]string `json:"state"`
+	PassedCount       int                    `json:"passedCount"`
+	FailedCount       int                    `json:"failedCount"`
+	DisabledCount     int                    `json:"disabledCount"`
+	Device            shared.ReportingDevice `json:"device"`
+	Version           string                 `json:"version"`
+	LastCheck         string                 `json:"lastCheck"`
+	SignificantChange string                 `json:"significantChange"`
+	State             map[string]string      `json:"state"`
 }
 
 func NowReport() Report {
@@ -102,7 +64,7 @@ func NowReport() Report {
 		PassedCount:       passed,
 		FailedCount:       failed,
 		DisabledCount:     disabled,
-		Device:            CurrentReportingDevice(),
+		Device:            shared.CurrentReportingDevice(),
 		Version:           shared.Version,
 		LastCheck:         time.Now().Format(time.RFC3339),
 		SignificantChange: hex.EncodeToString(significantChange[:]),

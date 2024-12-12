@@ -13,7 +13,7 @@ var linkCmd = &cobra.Command{
 	Use:   "link",
 	Short: "Link team with this device",
 	Run: func(cc *cobra.Command, args []string) {
-		if team.IsLinked() {
+		if shared.IsLinked() {
 			log.Warn("Already linked to a team")
 			log.Warn("Unlink first with `pareto unlink`")
 			log.Infof("Team ID: %s", shared.Config.TeamID)

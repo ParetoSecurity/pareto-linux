@@ -48,7 +48,7 @@ type TicketResponse struct {
 // Returns an error if any step in the process fails.
 func LinkAndWaitForTicket() error {
 	var wg sync.WaitGroup
-	device, err := NewLinkingDevice()
+	device, err := shared.NewLinkingDevice()
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func LinkAndWaitForTicket() error {
 
 // AddDevice reports the device to the team.
 func AddDevice() error {
-	device := CurrentReportingDevice()
+	device := shared.CurrentReportingDevice()
 
 	res := ""
 	errRes := ""

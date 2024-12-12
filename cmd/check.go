@@ -36,7 +36,7 @@ var checkCmd = &cobra.Command{
 			return
 		}
 		Check()
-		if team.IsLinked() {
+		if shared.IsLinked() {
 			err := team.ReportToTeam()
 			if err != nil {
 				log.WithError(err).Warn("failed to report to team")

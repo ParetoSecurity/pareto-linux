@@ -12,6 +12,7 @@ var All = []Claim{
 	}},
 	{"System Updates", []check.Check{
 		check.Register(&check.SoftwareUpdates{}),
+		check.Register(&check.ParetoUpdated{}),
 	}},
 	{"Firewall & Sharing", []check.Check{
 		check.Register(&check.Firewall{}),
@@ -19,7 +20,6 @@ var All = []Claim{
 		check.Register(&check.RemoteLogin{}),
 		check.Register(&check.Sharing{}),
 	}},
-
 	{"System Integrity", []check.Check{
 		check.Register(&check.SecureBoot{}),
 		check.Register(&check.EncryptingFS{}),

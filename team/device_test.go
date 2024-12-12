@@ -45,7 +45,7 @@ func TestDeviceAuth(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			shared.Config.AuthToken = tt.authToken
-			result := DeviceAuth()
+			result := shared.DeviceAuth()
 			assert.Equal(t, tt.expected, result)
 		})
 	}
