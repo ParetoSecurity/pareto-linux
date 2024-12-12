@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"os/exec"
 
@@ -35,16 +34,16 @@ func checkStatusToIcon(status bool) string {
 
 func getIcon() []byte {
 
-	isDark, err := exec.Command("gsettings", "get", "org.gnome.desktop.interface", "color-scheme").Output()
-	if err == nil && strings.Contains(string(isDark), "prefer-dark") {
-		return shared.IconWhite
-	}
-	isKDE, err := exec.Command("kreadconfig5", "--group", "General", "--key", "ColorScheme").Output()
-	if err == nil && strings.Contains(string(isKDE), "Dark") {
-		return shared.IconWhite
-	}
+	// isDark, err := exec.Command("gsettings", "get", "org.gnome.desktop.interface", "color-scheme").Output()
+	// if err == nil && strings.Contains(string(isDark), "prefer-dark") {
+	// 	return shared.IconWhite
+	// }
+	// isKDE, err := exec.Command("kreadconfig5", "--group", "General", "--key", "ColorScheme").Output()
+	// if err == nil && strings.Contains(string(isKDE), "Dark") {
+	// 	return shared.IconWhite
+	// }
 
-	return shared.IconBlack
+	return shared.IconWhite
 }
 
 func onReady() {
