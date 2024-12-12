@@ -38,11 +38,15 @@ func checkStatusToIcon(status bool) string {
 func onReady() {
 	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
 	systray.SetTooltip("Pareto Security")
-
+	systray.AddMenuItem("Pareto Security", "").Disable()
+	systray.AddSeparator()
 	for _, claim := range claims.All {
 		mClaim := systray.AddMenuItem(claim.Title, "")
 		allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
 			checkStatus, found, _ := shared.GetLastState(item.UUID())
+			if !item.IsRunnable() {
+				return acc && true
+			}
 			return acc && checkStatus.State && found
 		}, true)
 
@@ -55,6 +59,9 @@ func onReady() {
 				state = checkStatus.State
 			}
 			mCheck := mClaim.AddSubMenuItem(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()), "")
+			if !chk.IsRunnable() {
+				mCheck.Disable()
+			}
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					err := exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()
