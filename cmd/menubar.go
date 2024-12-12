@@ -31,9 +31,9 @@ func addQuitItem() {
 
 func checkStatusToIcon(status bool) string {
 	if status {
-		return "✔"
+		return "✅"
 	}
-	return "✘"
+	return "❌"
 }
 
 func getIcon() []byte {
