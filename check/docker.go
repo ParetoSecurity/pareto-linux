@@ -8,7 +8,7 @@ type DockerAccess struct {
 
 // Name returns the name of the check
 func (f *DockerAccess) Name() string {
-	return "Docker status"
+	return "Access to Docker is restricted"
 }
 
 // Run executes the check
