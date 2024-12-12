@@ -106,5 +106,8 @@ func (f *ParetoUpdated) RequiresRoot() bool {
 
 // Status returns the status of the check
 func (f *ParetoUpdated) Status() string {
-	return f.details
+	if f.passed {
+		return f.PassedMessage()
+	}
+	return f.FailedMessage()
 }
