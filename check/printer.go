@@ -15,7 +15,7 @@ type Printer struct {
 
 // Name returns the name of the check
 func (f *Printer) Name() string {
-	return "Printer sharing is disabled"
+	return "Sharing printers is off"
 }
 
 // Run executes the check
@@ -72,7 +72,7 @@ func (f *Printer) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *Printer) UUID() string {
-	return "c90dafde-0c5d-4d76-bb35-9de6aadc8bc1"
+	return "b96524e0-150b-4bb8-abc7-517051b6c14e"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled
@@ -82,12 +82,12 @@ func (f *Printer) ReportIfDisabled() bool {
 
 // PassedMessage returns the message to return if the check passed
 func (f *Printer) PassedMessage() string {
-	return "Printer sharing is disabled"
+	return "Sharing printers is off"
 }
 
 // FailedMessage returns the message to return if the check failed
 func (f *Printer) FailedMessage() string {
-	return "Printer sharing is enabled"
+	return "Sharing printers is on"
 }
 
 // RequiresRoot returns whether the check requires root access
