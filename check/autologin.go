@@ -12,7 +12,7 @@ type Autologin struct {
 
 // Name returns the name of the check
 func (f *Autologin) Name() string {
-	return "Autologin status"
+	return "Automatic login is disabled"
 }
 
 // Run executes the check

@@ -15,7 +15,7 @@ type Firewall struct {
 
 // Name returns the name of the check
 func (f *Firewall) Name() string {
-	return "Firewall status"
+	return "Firewall is on"
 }
 
 func (f *Firewall) isUbuntu() bool {

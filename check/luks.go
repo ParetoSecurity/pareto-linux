@@ -19,7 +19,7 @@ type EncryptingFS struct {
 
 // Name returns the name of the check
 func (f *EncryptingFS) Name() string {
-	return "Block device encryption"
+	return "Filesystem encryption is enabled"
 }
 
 // Passed returns the status of the check
