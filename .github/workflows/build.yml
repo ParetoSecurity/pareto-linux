@@ -16,10 +16,10 @@ on:
     branches:
       - main
 
-# Prevent multiple jobs running after fast subsequent pushes
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: false
+# Remove concurrency group to allow all matrix jobs to run without canceling
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: false
 
 jobs:
   build:
