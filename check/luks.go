@@ -34,7 +34,7 @@ func (f *EncryptingFS) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *EncryptingFS) UUID() string {
-	return "a3aff29a-f16d-4573-a861-b3ba0d860067"
+	return "21830a4e-84f1-48fe-9c5b-beab436b2cdb"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled

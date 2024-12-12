@@ -41,7 +41,7 @@ func (f *DockerAccess) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *DockerAccess) UUID() string {
-	return "f123c423-fdf5-428a-a57a-816abc9b253e"
+	return "25443ceb-c1ec-408c-b4f3-2328ea0c84e1"
 }
 
 // ReportIfDisabled returns whether the check should report if it is disabled
