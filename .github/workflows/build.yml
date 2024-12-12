@@ -19,7 +19,7 @@ on:
 # Prevent multiple jobs running after fast subsequent pushes
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -55,7 +55,8 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [ubuntu, debian, fedora, nixos]
+        # os: [ubuntu, debian, fedora, nixos]
+        os: [nixos, ubuntu]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -63,6 +64,7 @@ jobs:
           name: build
       - name: Display structure of downloaded files
         run: mkdir -p pkg && mv *.deb pkg && mv *.rpm pkg && ls -l pkg
+      - run : git add dist -f
       - uses: ./.github/actions/devenv
         with:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
