@@ -65,6 +65,11 @@ func addOptions() {
 					log.WithError(err).Error("failed to run toggle-autostart command")
 				}
 			}
+			if isUserTimerInstalled() {
+				mauto.Check()
+			} else {
+				mauto.Uncheck()
+			}
 		}
 	}()
 	go func() {
@@ -82,6 +87,11 @@ func addOptions() {
 					log.WithError(err).Error("failed to run unlink command")
 				}
 			}
+			if shared.IsLinked() {
+				mlink.Check()
+			} else {
+				mlink.Uncheck()
+			}
 		}
 	}()
 }
@@ -91,6 +101,14 @@ func onReady() {
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
 	systray.AddMenuItem("Pareto Security", "").Disable()
+	rcheck := systray.AddMenuItem("Run Checks", "")
+	go func() {
+		<-rcheck.ClickedCh
+		err := exec.Command("paretosecurity", "check").Run()
+		if err != nil {
+			log.WithError(err).Error("failed to run check command")
+		}
+	}()
 	addOptions()
 	systray.AddSeparator()
 	for _, claim := range claims.All {
