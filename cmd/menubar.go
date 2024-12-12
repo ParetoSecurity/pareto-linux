@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"os/exec"
 
@@ -99,6 +100,14 @@ func addOptions() {
 
 func onReady() {
 	broadcaster := shared.NewBroadcaster()
+	go func() {
+		ticker := time.NewTicker(1 * time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			log.Info("Periodic update")
+			broadcaster.Send()
+		}
+	}()
 	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
@@ -112,7 +121,7 @@ func onReady() {
 				log.WithError(err).Error("failed to run check command")
 			}
 			log.Info("Checks completed")
-			broadcaster.Send("update")
+			broadcaster.Send()
 		}
 	}(rcheck)
 	addOptions()
@@ -120,54 +129,24 @@ func onReady() {
 
 	for _, claim := range claims.All {
 		mClaim := systray.AddMenuItem(claim.Title, "")
-		allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
-			checkStatus, found, _ := shared.GetLastState(item.UUID())
-			if !item.IsRunnable() {
-				return acc && true
-			}
-			return acc && checkStatus.State && found
-		}, true)
-
-		mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
+		updateClaim(claim, mClaim)
 
 		go func(mClaim *systray.MenuItem) {
 			for range broadcaster.Register() {
 				log.WithField("claim", claim.Title).Info("Updating claim status")
-				allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
-					checkStatus, found, _ := shared.GetLastState(item.UUID())
-					if !item.IsRunnable() {
-						return acc && true
-					}
-					return acc && checkStatus.State && found
-				}, true)
-
-				mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
+				updateClaim(claim, mClaim)
 			}
 		}(mClaim)
 
 		for _, chk := range claim.Checks {
-			checkStatus, found, _ := shared.GetLastState(chk.UUID())
-			state := chk.Passed()
-			if found {
-				state = checkStatus.State
-			}
-			mCheck := mClaim.AddSubMenuItem(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()), "")
-			if !chk.IsRunnable() {
-				mCheck.Disable()
-				mCheck.SetTitle(fmt.Sprintf("🚫 %s", chk.Name()))
-			}
+			mCheck := mClaim.AddSubMenuItem(chk.Name(), "")
+			updateCheck(chk, mCheck)
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range broadcaster.Register() {
 					log.WithField("check", chk.Name()).Info("Updating check status")
-					checkStatus, found, _ := shared.GetLastState(chk.UUID())
-					state := chk.Passed()
-					if found {
-						state = checkStatus.State
-					}
-					mCheck.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()))
+					updateCheck(chk, mCheck)
 				}
 			}(chk, mCheck)
-
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					log.WithField("check", chk.Name()).Info("Opening check URL")
@@ -183,6 +162,33 @@ func onReady() {
 	addQuitItem()
 }
 
+func updateCheck(chk check.Check, mCheck *systray.MenuItem) {
+	if !chk.IsRunnable() {
+		mCheck.Disable()
+		mCheck.SetTitle(fmt.Sprintf("🚫 %s", chk.Name()))
+		return
+	}
+	mCheck.Enable()
+	checkStatus, found, _ := shared.GetLastState(chk.UUID())
+	state := chk.Passed()
+	if found {
+		state = checkStatus.State
+	}
+	mCheck.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(state), chk.Name()))
+}
+
+func updateClaim(claim claims.Claim, mClaim *systray.MenuItem) {
+	allStatus := lo.Reduce(claim.Checks, func(acc bool, item check.Check, index int) bool {
+		checkStatus, found, _ := shared.GetLastState(item.UUID())
+		if !item.IsRunnable() {
+			return acc && true
+		}
+		return acc && checkStatus.State && found
+	}, true)
+
+	mClaim.SetTitle(fmt.Sprintf("%s %s", checkStatusToIcon(allStatus), claim.Title))
+}
+
 var menubarCmd = &cobra.Command{
 	Use:   "menubar",
 	Short: "Show the checks in the menubar",
@@ -190,6 +196,7 @@ var menubarCmd = &cobra.Command{
 		onExit := func() {
 			log.Info("Exiting...")
 		}
+
 		systray.Run(onReady, onExit)
 	},
 }

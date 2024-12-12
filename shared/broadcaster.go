@@ -40,8 +40,8 @@ func (b *Broadcaster) Unregister(ch chan string) {
 }
 
 // Send sends a message to the broadcaster's input channel
-func (b *Broadcaster) Send(msg string) {
-	b.input <- msg
+func (b *Broadcaster) Send() {
+	b.input <- "update"
 }
 
 // startBroadcasting listens to the input channel and broadcasts messages
