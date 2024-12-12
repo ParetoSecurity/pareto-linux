@@ -41,7 +41,11 @@ nfpms:
       - curl
     scripts:
       postinstall: "apt/postinstall.sh"
-
+    contents:
+      - src: apt/ParetoSecurity.desktop
+        dst: /usr/share/applications/ParetoSecurity.desktop
+      - src: assets/Mac_512pt@2x.png
+        dst: /usr/share/icons/hicolor/512x512/apps/ParetoSecurity.png
 changelog:
   sort: asc
   filters:

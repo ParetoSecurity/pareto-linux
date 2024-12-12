@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/paretosecurity menubar
+Icon=ParetoSecurity
+Hidden=false
+NoDisplay=false
+Terminal=false
+Name=Pareto Security
+Comment=Launch Pareto Security
+Categories=Utility;
