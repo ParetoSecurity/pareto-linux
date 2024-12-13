@@ -18,15 +18,20 @@ import (
 )
 
 var checkCmd = &cobra.Command{
-	Use:   "check [--json] [--schema] [--install]",
+	Use:   "check [--json] [--schema] [--install] [--uninstall]",
 	Short: "Run checks",
 	Run: func(cc *cobra.Command, args []string) {
 		jsonOutput, _ := cc.Flags().GetBool("json")
 		schemaOutput, _ := cc.Flags().GetBool("schema")
 		installFlag, _ := cc.Flags().GetBool("install")
+		uninstallFlag, _ := cc.Flags().GetBool("uninstall")
 
 		if installFlag {
 			installUserTimer()
+			return
+		}
+		if uninstallFlag {
+			uninstallUserTimer()
 			return
 		}
 		if schemaOutput {
@@ -71,6 +76,7 @@ func init() {
 	checkCmd.Flags().Bool("json", false, "output JSON")
 	checkCmd.Flags().Bool("schema", false, "output schema for all checks")
 	checkCmd.Flags().Bool("install", false, "setup hourly checks")
+	checkCmd.Flags().Bool("uninstall", false, "remove hourly checks")
 }
 
 func Check(ctx context.Context) {

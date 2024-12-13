@@ -83,3 +83,37 @@ func installUserTimer() {
 	log.Info("Timer installed successfully, to enable it run:")
 	log.Infof("sudo loginctl enable-linger %s", os.Getenv("USER"))
 }
+
+func uninstallUserTimer() {
+	// Logic to uninstall the user timer
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("Failed to get home directory:", err)
+		return
+	}
+
+	systemdPath := filepath.Join(homeDir, ".config", "systemd", "user")
+	if err := os.MkdirAll(systemdPath, 0755); err != nil {
+		log.Fatalf("Failed to create systemd user directory:", err)
+		return
+	}
+
+	// Create timer file
+	timerPath := filepath.Join(systemdPath, "pareto-linux.timer")
+	if err := os.Remove(timerPath); err != nil {
+		log.Fatalf("Failed to remove timer file:", err)
+		return
+	}
+
+	// Create service file
+	servicePath := filepath.Join(systemdPath, "pareto-linux.service")
+	if err := os.Remove(servicePath); err != nil {
+		log.Fatalf("Failed to remove service file:", err)
+		return
+	}
+	// Execute commands
+	if err := exec.Command("systemctl", "--user", "daemon-reload").Run(); err != nil {
+		log.Fatalf("Failed to reload systemd:", err)
+		return
+	}
+}

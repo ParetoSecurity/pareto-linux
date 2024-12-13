@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net"
 	"os"
-	"os/exec"
-	"path/filepath"
 
 	"github.com/caarlos0/log"
 	"github.com/samber/lo"
@@ -13,39 +11,6 @@ import (
 	"paretosecurity.com/auditor/claims"
 	"paretosecurity.com/auditor/shared"
 )
-
-func socketContent() string {
-	return `[Unit]
-Description=Socket for pareto-linux
-
-[Socket]
-ListenStream=` + shared.SocketPath + `
-SocketMode=0666
-Accept=no
-
-[Install]
-WantedBy=sockets.target`
-}
-
-const serviceContent = `[Unit]
-Description=Service for pareto-linux
-Requires=pareto-linux.socket
-
-[Service]
-ExecStart=/usr/bin/paretosecurity helper
-User=root
-Group=root
-StandardInput=socket
-Type=oneshot
-RemainAfterExit=no
-StartLimitInterval=1
-StartLimitBurst=100
-ReadOnlyPaths=/
-ProtectSystem=full
-ProtectHome=yes
-
-[Install]
-WantedBy=multi-user.target`
 
 func runHelper() {
 	// Get the socket from file descriptor 0
@@ -120,12 +85,8 @@ var helperCmd = &cobra.Command{
 	Short: "A root helper",
 	Long:  `A root helper that listens on a Unix domain socket and responds to authenticated requests.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		installFlag, _ := cmd.Flags().GetBool("install")
+
 		socketFlag, _ := cmd.Flags().GetString("socket")
-		if installFlag {
-			installSystemdHelper()
-			return
-		}
 		if lo.IsNotEmpty(socketFlag) {
 			shared.SocketPath = socketFlag
 		}
@@ -136,44 +97,5 @@ var helperCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(helperCmd)
-	helperCmd.Flags().Bool("install", false, "install root helper")
 	helperCmd.Flags().Bool("socket", false, "socket path")
-}
-
-func installSystemdHelper() {
-	systemdPath := "/etc/systemd/system"
-
-	//ensure the user is root
-	if os.Geteuid() != 0 {
-		log.Fatal("This command must be run as root")
-		return
-	}
-
-	// Create socket file
-	socketPath := filepath.Join(systemdPath, "pareto-linux.socket")
-	if err := os.WriteFile(socketPath, []byte(socketContent()), 0644); err != nil {
-		log.Infof("Failed to create socket file: %v\n", err)
-		return
-	}
-
-	// Create service file
-	servicePath := filepath.Join(systemdPath, "pareto-linux@.service")
-	if err := os.WriteFile(servicePath, []byte(serviceContent), 0644); err != nil {
-		log.Infof("Failed to create service file: %v\n", err)
-		return
-	}
-
-	// Execute commands
-	if err := exec.Command("systemctl", "daemon-reload").Run(); err != nil {
-		log.Infof("Failed to reload systemd: %v\n", err)
-		return
-	}
-	if err := exec.Command("systemctl", "enable", "pareto-linux.socket").Run(); err != nil {
-		log.Infof("Failed to enable socket: %v\n", err)
-		return
-	}
-	if err := exec.Command("systemctl", "start", "pareto-linux.socket").Run(); err != nil {
-		log.Infof("Failed to start socket: %v\n", err)
-		return
-	}
 }

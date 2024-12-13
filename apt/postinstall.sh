@@ -51,7 +51,10 @@ Type=oneshot
 RemainAfterExit=no
 StartLimitInterval=1
 StartLimitBurst=100
-ReadOnlyPaths=/
+
+# Disabled to allow cehcking firewall rules
+#ReadOnlyPaths=/
+
 ProtectSystem=full
 ProtectHome=yes
 StandardOutput=journal
