@@ -9,15 +9,21 @@ if [[ -f /etc/os-release ]]; then
         mkdir -p --mode=0755 /usr/share/keyrings
 
         # Download and install GPG key
-        curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
+        curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | tee /usr/share/keyrings/paretosecurity.gpg >/dev/null
 
         # Add Pareto repository
-        echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian stable main' | sudo tee /etc/apt/sources.list.d/pareto.list
+        echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian stable main' | tee /etc/apt/sources.list.d/pareto.list >/dev/null
+    elif [[ "$ID_LIKE" == *"rhel"* || "$ID_LIKE" == *"fedora"* ]]; then
+        # Download and install GPG key
+        rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg
+        curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | tee /etc/yum.repos.d/paretosecurity.repo >/dev/null
+    fi
+fi
 
-        # Check for systemd
-        if command -v systemctl >/dev/null 2>&1; then
-            # Create socket unit
-            cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.socket > /dev/null
+# Check for systemd
+if command -v systemctl >/dev/null 2>&1; then
+    # Create socket unit
+    cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.socket > /dev/null
 [Unit]
 Description=Socket for pareto-linux
 
@@ -30,8 +36,8 @@ Accept=no
 WantedBy=sockets.target
 EOF
 
-            # Create service unit
-            cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.service > /dev/null
+    # Create service unit
+    cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.service > /dev/null
 [Unit]
 Description=Service for pareto-linux
 Requires=pareto-linux.socket
@@ -55,11 +61,8 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
-            # Reload systemd and enable socket
-            systemctl daemon-reload
-            systemctl enable pareto-linux.socket
-            systemctl start pareto-linux.socket
-
-        fi
-    fi
+        # Reload systemd and enable socket
+        systemctl daemon-reload
+        systemctl enable pareto-linux.socket
+        systemctl start pareto-linux.socket
 fi

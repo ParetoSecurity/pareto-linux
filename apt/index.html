@@ -132,15 +132,9 @@
                     ParetoSecurity by running the following commands:
                 </p>
                 <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
-                    sudo rpm --import https://pkg.paretosecurity.com/pareto.asc
-                    sudo sh -c 'echo -e \
-                    [paretosecurity]
-                    name=paretosecurity
-                    baseurl=https://pkg.paretosecurity.com/rpm/stable
-                    enabled=1
-                    gpgcheck=1
-                    gpgkey=https://pkg.paretosecurity.com/pareto.asc \
-                    > /etc/yum.repos.d/paretosecurity.repo'
+                    sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg
+                    curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee
+                    /etc/yum.repos.d/paretosecurity.repo
                     sudo dnf install paretosecurity
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>

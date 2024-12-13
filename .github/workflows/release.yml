@@ -55,6 +55,10 @@ jobs:
       - name: Install reprepro
         run: sudo apt install -y reprepro
       - run: reprepro -b apt includedeb stable dist/*.deb
+
+      - name: Create RPM repository
+        run: mv dist/*.rpm apt/rpm && createrepo_c apt/rpm
+
       - name: Host repository for testing
         uses: Eun/http-server-action@856e467dda36cd5d30e93bd7dd168cf3e1676301 # v1
         with:
