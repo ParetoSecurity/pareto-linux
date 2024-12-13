@@ -69,11 +69,6 @@ func (f *Sharing) Run() error {
 			log.WithField("check", f.Name()).WithField("port:tcp", port).WithField("service", service).Debug("Port open")
 			f.ports[port] = service
 		}
-		if f.checkPort(port, "udp") {
-			f.passed = false
-			log.WithField("check", f.Name()).WithField("port:udp", port).WithField("service", service).Debug("Port open")
-			f.ports[port] = service
-		}
 	}
 
 	return nil
