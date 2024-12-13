@@ -5,7 +5,6 @@ import (
 	"net"
 
 	"github.com/caarlos0/log"
-	"github.com/davecgh/go-spew/spew"
 	"go.uber.org/ratelimit"
 )
 
@@ -26,7 +25,7 @@ func RunCheckViaHelper(uuid string) (bool, error) {
 	// Send UUID
 	input := map[string]string{"uuid": uuid}
 	encoder := json.NewEncoder(conn)
-	log.WithField("input", spew.Sdump(input)).Debug("Sending input to helper")
+	log.WithField("input", input).Debug("Sending input to helper")
 	if err := encoder.Encode(input); err != nil {
 		log.WithError(err).Warn("Failed to encode JSON")
 		return false, err
