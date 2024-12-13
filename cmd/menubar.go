@@ -8,8 +8,8 @@ import (
 	"os/exec"
 
 	"fyne.io/systray"
-
 	"github.com/caarlos0/log"
+	"github.com/pkg/browser"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"paretosecurity.com/auditor/check"
@@ -150,8 +150,9 @@ func onReady() {
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					log.WithField("check", chk.Name()).Info("Opening check URL")
-					err := exec.Command("open", fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())).Run()
-					if err != nil {
+					url := fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())
+
+					if err := browser.OpenURL(url); err != nil {
 						log.WithError(err).Error("failed to open check URL")
 					}
 				}
