@@ -39,18 +39,18 @@ func (s *SSHConfigCheck) Run() error {
 	}
 	log.Debug("Running check directly")
 
-	s.passed = true
+	s.passed = false
 	data, err := os.ReadFile("/etc/ssh/sshd_config")
 	if err != nil {
 		return err
 	}
 	config := string(data)
 	if strings.Contains(config, "PasswordAuthentication no") {
-		s.passed = false
+		s.passed = true
 		s.status = "PasswordAuthentication is enabled"
 	}
 	if strings.Contains(config, "PermitRootLogin no") {
-		s.passed = false
+		s.passed = true
 		s.status = "Root login is enabled"
 	}
 	return nil
