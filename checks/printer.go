@@ -18,42 +18,51 @@ func (f *Printer) Name() string {
 	return "Sharing printers is off"
 }
 
+// checkPort tests if a port is open
+func (f *Printer) checkPort(port int, proto string) bool {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return false
+	}
+
+	for _, addr := range addrs {
+		ip, _, err := net.ParseCIDR(addr.String())
+		if err != nil {
+			continue
+		}
+
+		// Filter out 127.0.0.1
+		if ip.IsLoopback() {
+			continue
+		}
+
+		address := fmt.Sprintf("%s:%d", ip.String(), port)
+		conn, err := net.DialTimeout(proto, address, 1*time.Second)
+		if err == nil {
+			defer conn.Close()
+			log.WithField("check", f.Name()).WithField("address", address).WithField("state", true).Debug("Checking port")
+			return true
+		}
+	}
+
+	return false
+}
+
 // Run executes the check
 func (f *Printer) Run() error {
 	f.passed = true
 	f.ports = make(map[int]string)
 
 	// Samba, NFS and CUPS ports to check
-	shareServices := map[int]string{
+	printService := map[int]string{
 		631: "CUPS",
 	}
 
-	for port, service := range shareServices {
-		// Check all interfaces
-		addrs, err := net.InterfaceAddrs()
-		if err != nil {
-			return err
-		}
-
-		for _, addr := range addrs {
-			ip, _, err := net.ParseCIDR(addr.String())
-			if err != nil {
-				continue
-			}
-
-			// Filter out 127.0.0.1
-			if ip.IsLoopback() {
-				continue
-			}
-
-			address := fmt.Sprintf("%s:%d", ip.String(), port)
-			log.WithField("check", f.Name()).WithField("address", address).Debug("Checking port")
-			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
-			if err == nil {
-				f.passed = false
-				f.ports[port] = service
-				conn.Close()
-			}
+	for port, service := range printService {
+		if f.checkPort(port, "tcp") {
+			log.WithField("check", f.Name()).WithField("port", port).WithField("service", service).Debug("Port open")
+			f.passed = false
+			f.ports[port] = service
 		}
 	}
 

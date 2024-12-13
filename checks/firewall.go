@@ -21,7 +21,7 @@ func (f *Firewall) checkUFW() bool {
 	cmd := exec.Command("ufw", "status")
 	output, err := cmd.Output()
 	if err != nil {
-		log.WithError(err).Warn("Failed to check UFW status")
+		log.WithError(err).WithField("output", string(output)).Warn("Failed to check UFW status")
 		return false
 	}
 	log.WithField("output", string(output)).Debug("UFW status")
@@ -32,11 +32,11 @@ func (f *Firewall) checkFirewalld() bool {
 	cmd := exec.Command("systemctl", "is-active", "firewalld")
 	output, err := cmd.Output()
 	if err != nil {
-		log.WithError(err).Warn("Failed to check firewalld status")
+		log.WithError(err).WithField("output", string(output)).Warn("Failed to check firewalld status")
 		return false
 	}
 	log.WithField("output", string(output)).Debug("Firewalld status")
-	return strings.TrimSpace(string(output)) == "active"
+	return strings.Contains(string(output), "active")
 }
 
 // Run executes the check

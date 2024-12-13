@@ -19,7 +19,7 @@ func (f *RemoteLogin) Name() string {
 }
 
 // checkPort tests if a port is open
-func (f *RemoteLogin) checkPort(port int) bool {
+func (f *RemoteLogin) checkPort(port int, proto string) bool {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return false
@@ -37,10 +37,10 @@ func (f *RemoteLogin) checkPort(port int) bool {
 		}
 
 		address := fmt.Sprintf("%s:%d", ip.String(), port)
-		log.WithField("address", address).Debug("Checking port")
-		conn, err := net.DialTimeout("tcp", address, 1*time.Second)
+		conn, err := net.DialTimeout(proto, address, 1*time.Second)
 		if err == nil {
-			conn.Close()
+			defer conn.Close()
+			log.WithField("check", f.Name()).WithField("address", address).WithField("state", true).Debug("Checking port")
 			return true
 		}
 	}
@@ -62,7 +62,8 @@ func (f *RemoteLogin) Run() error {
 	}
 
 	for port, service := range portsToCheck {
-		if f.checkPort(port) {
+		if f.checkPort(port, "tcp") {
+			log.WithField("check", f.Name()).WithField("port", port).WithField("service", service).Debug("Remote access service found")
 			f.passed = false
 			f.ports[port] = service
 		}

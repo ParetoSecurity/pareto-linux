@@ -18,6 +18,36 @@ func (f *Sharing) Name() string {
 	return "File Sharing is disabled"
 }
 
+// checkPort tests if a port is open
+func (f *Sharing) checkPort(port int, proto string) bool {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return false
+	}
+
+	for _, addr := range addrs {
+		ip, _, err := net.ParseCIDR(addr.String())
+		if err != nil {
+			continue
+		}
+
+		// Filter out 127.0.0.1
+		if ip.IsLoopback() {
+			continue
+		}
+
+		address := fmt.Sprintf("%s:%d", ip.String(), port)
+		conn, err := net.DialTimeout(proto, address, 1*time.Second)
+		if err == nil {
+			defer conn.Close()
+			log.WithField("check", f.Name()).WithField("address:"+proto, address).WithField("state", true).Debug("Checking port")
+			return true
+		}
+	}
+
+	return false
+}
+
 // Run executes the check
 func (f *Sharing) Run() error {
 	f.passed = true
@@ -34,39 +64,15 @@ func (f *Sharing) Run() error {
 	}
 
 	for port, service := range shareServices {
-		// Check all interfaces
-		addrs, err := net.InterfaceAddrs()
-		if err != nil {
-			return err
+		if f.checkPort(port, "tcp") {
+			f.passed = false
+			log.WithField("check", f.Name()).WithField("port:tcp", port).WithField("service", service).Debug("Port open")
+			f.ports[port] = service
 		}
-
-		for _, addr := range addrs {
-			ip, _, err := net.ParseCIDR(addr.String())
-			if err != nil {
-				continue
-			}
-
-			// Filter out 127.0.0.1
-			if ip.IsLoopback() {
-				continue
-			}
-
-			address := fmt.Sprintf("%s:%d", ip.String(), port)
-			log.WithField("check", f.Name()).WithField("address", address).WithField("protocol", "TCP").Debug("Checking port")
-			tcpConn, err := net.DialTimeout("tcp", address, 500*time.Millisecond)
-			if err == nil {
-				defer tcpConn.Close()
-				f.passed = false
-				f.ports[port] = service
-			}
-			log.WithField("check", f.Name()).WithField("address", address).WithField("protocol", "UDP").Debug("Checking port")
-			udpConn, err := net.DialTimeout("udp", address, 500*time.Millisecond)
-			if err == nil {
-				defer udpConn.Close()
-				f.passed = false
-				f.ports[port] = service
-			}
-
+		if f.checkPort(port, "udp") {
+			f.passed = false
+			log.WithField("check", f.Name()).WithField("port:udp", port).WithField("service", service).Debug("Port open")
+			f.ports[port] = service
 		}
 	}
 
