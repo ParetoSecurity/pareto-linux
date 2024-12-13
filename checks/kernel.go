@@ -62,9 +62,9 @@ func (k *KernelParamsCheck) UUID() string {
 
 func (k *KernelParamsCheck) Status() string {
 	if k.Passed() {
-		return "passed"
+		return k.PassedMessage()
 	}
-	return "failed"
+	return k.status
 }
 
 func (k *KernelParamsCheck) RequiresRoot() bool {
