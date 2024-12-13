@@ -28,16 +28,16 @@ func CurrentReportingDevice() ReportingDevice {
 
 	return ReportingDevice{
 		MachineUUID:    device.UUID,
-		MachineName:    device.Hostname,
+		MachineName:    Sanitize(device.Hostname),
 		Auth:           DeviceAuth(),
-		LinuxOSVersion: device.OS,
+		LinuxOSVersion: Sanitize(device.OS),
 		ModelName: func() string {
 			modelName, err := SystemDevice()
 			if err != nil {
 				return "Unknown"
 			}
 
-			return modelName
+			return Sanitize(modelName)
 		}(),
 		ModelSerial: func() string {
 			serial, err := SystemSerial()

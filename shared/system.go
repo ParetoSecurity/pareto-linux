@@ -17,6 +17,12 @@ func SystemUUID() (string, error) {
 	}
 
 	for _, iface := range interfaces {
+
+		// Skip loopback interfaces
+		if iface.Flags&net.FlagLoopback != 0 {
+			continue
+		}
+
 		if len(iface.HardwareAddr) >= 6 {
 			hwAddr := iface.HardwareAddr
 			// Create a namespace UUID from hardware address
