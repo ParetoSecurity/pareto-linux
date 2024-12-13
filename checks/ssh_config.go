@@ -14,7 +14,7 @@ type SSHConfigCheck struct {
 }
 
 func (s *SSHConfigCheck) Name() string {
-	return "SSH Config Check"
+	return "SSH Server Configuration is Secure"
 }
 
 func (s *SSHConfigCheck) PassedMessage() string {
