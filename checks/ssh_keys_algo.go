@@ -114,6 +114,16 @@ func (f *SSHKeysAlgo) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *SSHKeysAlgo) IsRunnable() bool {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return false
+	}
+
+	sshPath := filepath.Join(home, ".ssh")
+	if _, err := os.Stat(sshPath); os.IsNotExist(err) {
+		return false
+	}
+
 	return true
 }
 
