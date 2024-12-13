@@ -12,6 +12,7 @@ var All = []Claim{
 		check.Register(&checks.PasswordToUnlock{}),
 		check.Register(&checks.SSHKeys{}),
 		check.Register(&checks.SSHKeysAlgo{}),
+		check.Register(&checks.SSHConfigCheck{}),
 	}},
 	{"System Updates", []check.Check{
 		check.Register(&checks.SoftwareUpdates{}),
