@@ -147,11 +147,21 @@ func CheckJSON() {
 	status := make(map[string]string)
 	for _, claim := range claims.All {
 		for _, chk := range claim.Checks {
+
+			if !chk.IsRunnable() {
+				status[chk.UUID()] = "skipped"
+				continue
+			}
+
 			if err := chk.Run(); err != nil {
 				status[chk.UUID()] = err.Error()
 				continue
 			}
-			status[chk.UUID()] = chk.Status()
+			if chk.Passed() {
+				status[chk.UUID()] = "passed"
+			} else {
+				status[chk.UUID()] = "failed"
+			}
 		}
 	}
 	if err := shared.SaveConfig(); err != nil {
