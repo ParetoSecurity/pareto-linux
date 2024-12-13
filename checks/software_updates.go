@@ -1,9 +1,10 @@
-package check
+package checks
 
 import (
 	"os/exec"
 	"strings"
 
+	"github.com/caarlos0/log"
 	"github.com/samber/lo"
 )
 
@@ -24,17 +25,9 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	if _, err := exec.LookPath("flatpak"); err == nil {
 		cmd := exec.Command("flatpak", "remote-ls", "--updates")
 		output, err := cmd.Output()
+		log.WithField("output", string(output)).Debug("Flatpak updates")
 		if err == nil && len(output) > 0 {
 			updates = append(updates, "Flatpak")
-		}
-	}
-
-	// Check apt-get
-	if _, err := exec.LookPath("apt-get"); err == nil {
-		cmd := exec.Command("apt-get", "-s", "upgrade")
-		output, err := cmd.Output()
-		if err == nil && !strings.Contains(string(output), "0 upgraded, 0 newly installed") {
-			updates = append(updates, "APT")
 		}
 	}
 
@@ -42,10 +35,12 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	if _, err := exec.LookPath("apt"); err == nil {
 		cmd := exec.Command("apt", "list", "--upgradable")
 		output, err := cmd.Output()
+		log.WithField("output", string(output)).Debug("APT updates")
 		if err == nil && len(output) > 0 && strings.Contains(string(output), "upgradable") {
 			updates = append(updates, "APT")
 		}
 	}
+
 	// Check dnf
 	if _, err := exec.LookPath("dnf"); err == nil {
 		cmd := exec.Command("dnf", "check-update", "--quiet")
@@ -60,6 +55,7 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	if _, err := exec.LookPath("pacman"); err == nil {
 		cmd := exec.Command("pacman", "-Qu")
 		output, err := cmd.Output()
+		log.WithField("output", string(output)).Debug("Pacman updates")
 		if err == nil && len(output) > 0 {
 			updates = append(updates, "Pacman")
 		}
@@ -69,6 +65,7 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	if _, err := exec.LookPath("snap"); err == nil {
 		cmd := exec.Command("snap", "refresh", "--list")
 		output, err := cmd.Output()
+		log.WithField("output", string(output)).Debug("Snap updates")
 		if err == nil && len(output) > 0 && !strings.Contains(string(output), "All snaps up to date.") {
 			updates = append(updates, "Snap")
 		}

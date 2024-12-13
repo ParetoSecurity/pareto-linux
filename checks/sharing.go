@@ -1,4 +1,4 @@
-package check
+package checks
 
 import (
 	"fmt"
@@ -52,21 +52,21 @@ func (f *Sharing) Run() error {
 			}
 
 			address := fmt.Sprintf("%s:%d", ip.String(), port)
-			log.WithField("address", address).Debug("Checking TCP port")
-			tcpConn, err := net.DialTimeout("tcp", address, 1*time.Second)
+			log.WithField("check", f.Name()).WithField("address", address).WithField("protocol", "TCP").Debug("Checking port")
+			tcpConn, err := net.DialTimeout("tcp", address, 500*time.Millisecond)
 			if err == nil {
+				defer tcpConn.Close()
 				f.passed = false
 				f.ports[port] = service
-				tcpConn.Close()
+			}
+			log.WithField("check", f.Name()).WithField("address", address).WithField("protocol", "UDP").Debug("Checking port")
+			udpConn, err := net.DialTimeout("udp", address, 500*time.Millisecond)
+			if err == nil {
+				defer udpConn.Close()
+				f.passed = false
+				f.ports[port] = service
 			}
 
-			log.WithField("address", address).Debug("Checking UDP port")
-			udpConn, err := net.DialTimeout("udp", address, 1*time.Second)
-			if err == nil {
-				f.passed = false
-				f.ports[port] = service
-				udpConn.Close()
-			}
 		}
 	}
 

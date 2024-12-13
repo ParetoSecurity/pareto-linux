@@ -1,4 +1,4 @@
-package check
+package checks
 
 import (
 	"fmt"
@@ -47,7 +47,7 @@ func (f *Printer) Run() error {
 			}
 
 			address := fmt.Sprintf("%s:%d", ip.String(), port)
-			log.WithField("address", address).Debug("Checking port")
+			log.WithField("check", f.Name()).WithField("address", address).Debug("Checking port")
 			conn, err := net.DialTimeout("tcp", address, 1*time.Second)
 			if err == nil {
 				f.passed = false

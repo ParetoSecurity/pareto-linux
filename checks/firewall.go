@@ -1,4 +1,4 @@
-package check
+package checks
 
 import (
 	"os"
@@ -20,6 +20,7 @@ func (f *Firewall) Name() string {
 
 func (f *Firewall) isUbuntu() bool {
 	if _, err := os.Stat("/etc/lsb-release"); err == nil {
+		log.WithError(err).Debug("Failed to check for Ubuntu")
 		return true
 	}
 	return false
@@ -27,6 +28,7 @@ func (f *Firewall) isUbuntu() bool {
 
 func (f *Firewall) isFedora() bool {
 	if _, err := os.Stat("/etc/fedora-release"); err == nil {
+		log.WithError(err).Debug("Failed to check for Fedora")
 		return true
 	}
 	return false
@@ -57,6 +59,7 @@ func (f *Firewall) checkFirewalld() bool {
 // Run executes the check
 func (f *Firewall) Run() error {
 	if f.RequiresRoot() && !shared.IsRoot() {
+		log.Debug("Running check via helper")
 		// Run as root
 		passed, err := shared.RunCheckViaHelper(f.UUID())
 		if err != nil {
@@ -67,6 +70,7 @@ func (f *Firewall) Run() error {
 		return nil
 	}
 
+	log.Debug("Running check directly")
 	switch {
 	case f.isUbuntu():
 		f.passed = f.checkUFW()

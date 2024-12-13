@@ -1,4 +1,4 @@
-package check
+package checks
 
 import (
 	"bufio"
@@ -61,6 +61,7 @@ func (f *EncryptingFS) RequiresRoot() bool {
 func (f *EncryptingFS) Run() error {
 
 	if f.RequiresRoot() && !shared.IsRoot() {
+		log.Debug("Running check via helper")
 		// Run as root
 		passed, err := shared.RunCheckViaHelper(f.UUID())
 		if err != nil {
@@ -70,7 +71,7 @@ func (f *EncryptingFS) Run() error {
 		f.passed = passed
 		return nil
 	}
-
+	log.Debug("Running check directly")
 	encryptedDevices := make(map[string]string)
 
 	// Read crypttab to get encrypted devices

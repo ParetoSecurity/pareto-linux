@@ -15,7 +15,7 @@ var rateLimitCall = ratelimit.New(1)
 func RunCheckViaHelper(uuid string) (bool, error) {
 
 	rateLimitCall.Take()
-
+	log.WithField("uuid", uuid).Debug("Running check via helper")
 	conn, err := net.Dial("unix", SocketPath)
 	if err != nil {
 		log.WithError(err).Warn("Failed to connect to helper")

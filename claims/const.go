@@ -1,27 +1,30 @@
 package claims
 
-import "paretosecurity.com/auditor/check"
+import (
+	"paretosecurity.com/auditor/check"
+	"paretosecurity.com/auditor/checks"
+)
 
 var All = []Claim{
 	{"Access Security", []check.Check{
-		check.Register(&check.Autologin{}),
-		check.Register(&check.DockerAccess{}),
-		check.Register(&check.PasswordToUnlock{}),
-		check.Register(&check.SSHKeys{}),
-		check.Register(&check.SSHKeysAlgo{}),
+		check.Register(&checks.Autologin{}),
+		check.Register(&checks.DockerAccess{}),
+		check.Register(&checks.PasswordToUnlock{}),
+		check.Register(&checks.SSHKeys{}),
+		check.Register(&checks.SSHKeysAlgo{}),
 	}},
 	{"System Updates", []check.Check{
-		check.Register(&check.SoftwareUpdates{}),
-		check.Register(&check.ParetoUpdated{}),
+		check.Register(&checks.SoftwareUpdates{}),
+		check.Register(&checks.ParetoUpdated{}),
 	}},
 	{"Firewall & Sharing", []check.Check{
-		check.Register(&check.Firewall{}),
-		check.Register(&check.Printer{}),
-		check.Register(&check.RemoteLogin{}),
-		check.Register(&check.Sharing{}),
+		check.Register(&checks.Firewall{}),
+		check.Register(&checks.Printer{}),
+		check.Register(&checks.RemoteLogin{}),
+		check.Register(&checks.Sharing{}),
 	}},
 	{"System Integrity", []check.Check{
-		check.Register(&check.SecureBoot{}),
-		check.Register(&check.EncryptingFS{}),
+		check.Register(&checks.SecureBoot{}),
+		check.Register(&checks.EncryptingFS{}),
 	}},
 }
