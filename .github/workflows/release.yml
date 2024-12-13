@@ -94,4 +94,4 @@ jobs:
           subject-path: 'dist/*.deb'
       - uses: actions/attest-build-provenance@v1
         with:
-          subject-path: 'dist/*.rpm'
+          subject-path: 'apt/rpm/*.rpm'
