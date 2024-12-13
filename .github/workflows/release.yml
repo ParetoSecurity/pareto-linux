@@ -52,9 +52,11 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Install reprepro
-        run: sudo apt install -y reprepro
-      - run: reprepro -b apt includedeb stable dist/*.deb
+      - name: Install repo tools
+        run: sudo apt install -y reprepro createrepo-c
+
+      - name: Create Debian repository
+        run: reprepro -b apt includedeb stable dist/*.deb
 
       - name: Create RPM repository
         run: mv dist/*.rpm apt/rpm && createrepo_c apt/rpm
