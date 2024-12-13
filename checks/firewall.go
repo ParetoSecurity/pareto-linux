@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"os"
 	"os/exec"
 	"strings"
 
@@ -16,22 +15,6 @@ type Firewall struct {
 // Name returns the name of the check
 func (f *Firewall) Name() string {
 	return "Firewall is on"
-}
-
-func (f *Firewall) isUbuntu() bool {
-	if _, err := os.Stat("/etc/lsb-release"); err == nil {
-		log.WithError(err).Debug("Failed to check for Ubuntu")
-		return true
-	}
-	return false
-}
-
-func (f *Firewall) isFedora() bool {
-	if _, err := os.Stat("/etc/fedora-release"); err == nil {
-		log.WithError(err).Debug("Failed to check for Fedora")
-		return true
-	}
-	return false
 }
 
 func (f *Firewall) checkUFW() bool {
@@ -71,14 +54,16 @@ func (f *Firewall) Run() error {
 	}
 
 	log.Debug("Running check directly")
-	switch {
-	case f.isUbuntu():
+	f.passed = false
+
+	if !f.passed {
 		f.passed = f.checkUFW()
-	case f.isFedora():
-		f.passed = f.checkFirewalld()
-	default:
-		f.passed = false
 	}
+
+	if !f.passed {
+		f.passed = f.checkFirewalld()
+	}
+
 	return nil
 }
 
