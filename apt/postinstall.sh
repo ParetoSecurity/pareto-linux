@@ -23,7 +23,7 @@ fi
 # Check for systemd
 if command -v systemctl >/dev/null 2>&1; then
     # Create socket unit
-    cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.socket > /dev/null
+    cat << 'EOF' | tee /etc/systemd/system/pareto-linux.socket > /dev/null
 [Unit]
 Description=Socket for pareto-linux
 
@@ -37,7 +37,7 @@ WantedBy=sockets.target
 EOF
 
     # Create service unit
-    cat << 'EOF' | sudo tee /etc/systemd/system/pareto-linux.service > /dev/null
+    cat << 'EOF' | tee /etc/systemd/system/pareto-linux.service > /dev/null
 [Unit]
 Description=Service for pareto-linux
 Requires=pareto-linux.socket
