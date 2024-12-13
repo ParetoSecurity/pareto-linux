@@ -18,11 +18,11 @@ func (k *KernelParamsCheck) Name() string {
 }
 
 func (k *KernelParamsCheck) PassedMessage() string {
-	return "All critical kernel parameters are set correctly."
+	return "Critical kernel parameters are correct"
 }
 
 func (k *KernelParamsCheck) FailedMessage() string {
-	return "Some critical kernel parameters are not set correctly."
+	return "Critical kernel parameters are not correct"
 }
 
 func (k *KernelParamsCheck) Run() error {
