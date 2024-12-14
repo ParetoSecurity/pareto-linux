@@ -56,13 +56,13 @@ func addOptions() {
 		for range mauto.ClickedCh {
 			if isUserTimerInstalled() {
 				// execute the command to toggle auto start
-				err := exec.Command("paretosecurity", "check", "--install").Run()
+				err := exec.Command(shared.SelfExe(), "check", "--install").Run()
 				if err != nil {
 					log.WithError(err).Error("failed to run toggle-autostart command")
 				}
 			} else {
 				// execute the command to toggle auto start
-				err := exec.Command("paretosecurity", "check", "--uninstall").Run()
+				err := exec.Command(shared.SelfExe(), "check", "--uninstall").Run()
 				if err != nil {
 					log.WithError(err).Error("failed to run toggle-autostart command")
 				}
@@ -78,13 +78,13 @@ func addOptions() {
 		for range mlink.ClickedCh {
 			if shared.IsLinked() {
 				// execute the command in the system terminal
-				err := exec.Command("paretosecurity", "link").Run()
+				err := exec.Command(shared.SelfExe(), "link").Run()
 				if err != nil {
 					log.WithError(err).Error("failed to run link command")
 				}
 			} else {
 				// execute the command in the system terminal
-				err := exec.Command("paretosecurity", "unlink").Run()
+				err := exec.Command(shared.SelfExe(), "unlink").Run()
 				if err != nil {
 					log.WithError(err).Error("failed to run unlink command")
 				}
@@ -112,11 +112,14 @@ func onReady() {
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
 	systray.AddMenuItem("Pareto Security", "").Disable()
+
+	addOptions()
+	systray.AddSeparator()
 	rcheck := systray.AddMenuItem("Run Checks", "")
 	go func(rcheck *systray.MenuItem) {
 		for range rcheck.ClickedCh {
 			log.Info("Running checks...")
-			err := exec.Command("paretosecurity", "check").Run()
+			err := exec.Command(shared.SelfExe(), "check").Run()
 			if err != nil {
 				log.WithError(err).Error("failed to run check command")
 			}
@@ -124,8 +127,15 @@ func onReady() {
 			broadcaster.Send()
 		}
 	}(rcheck)
-	addOptions()
-	systray.AddSeparator()
+	lastUpdated := time.Since(shared.GetModifiedTime()).Round(time.Minute)
+	lCheck := systray.AddMenuItem(fmt.Sprintf("Last check %s ago", lastUpdated), "")
+	lCheck.Disable()
+	go func() {
+		for range broadcaster.Register() {
+			lastUpdated := time.Since(shared.GetModifiedTime()).Round(time.Minute)
+			lCheck.SetTitle(fmt.Sprintf("Last check %s ago", lastUpdated))
+		}
+	}()
 
 	for _, claim := range claims.All {
 		mClaim := systray.AddMenuItem(claim.Title, "")

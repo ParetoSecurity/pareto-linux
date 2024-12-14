@@ -17,8 +17,8 @@ type LastState struct {
 }
 
 var (
-	mutex       sync.Mutex
-	states      map[string]LastState
+	mutex       sync.RWMutex
+	states      = make(map[string]LastState)
 	lastModTime time.Time
 	configPath  string
 )
@@ -27,19 +27,23 @@ func init() {
 	states = make(map[string]LastState)
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.WithError(err).Fatal("failed to get user home directory")
+		log.WithError(err).Warn("failed to get user home directory, using current directory instead")
+		homeDir = "."
 	}
 	configPath = filepath.Join(homeDir, ".cache", "paretosecurity.state")
 }
 
 // Commit writes the current state map to the TOML file.
 func CommitLastState() error {
+	mutex.Lock()
+	defer mutex.Unlock()
+
 	file, err := os.Create(configPath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
-
+	lastModTime = time.Now()
 	encoder := toml.NewEncoder(file)
 	return encoder.Encode(states)
 }
@@ -54,29 +58,48 @@ func UpdateLastState(newState LastState) {
 
 // GetState retrieves the LastState struct by UUID.
 func GetLastState(uuid string) (LastState, bool, error) {
-	mutex.Lock()
-	defer mutex.Unlock()
+	mutex.RLock()
+	defer mutex.RUnlock()
 
+	loadStates()
+
+	state, exists := states[uuid]
+	return state, exists, nil
+}
+
+func GetLastStates() map[string]LastState {
+	mutex.RLock()
+	defer mutex.RUnlock()
+	loadStates()
+
+	return states
+}
+
+func GetModifiedTime() time.Time {
+	mutex.RLock()
+	defer mutex.RUnlock()
+	loadStates()
+
+	return lastModTime
+}
+
+func loadStates() {
 	fileInfo, err := os.Stat(configPath)
 	if err != nil {
-		return LastState{}, false, err
+		return
 	}
 
 	if fileInfo.ModTime().After(lastModTime) {
 		file, err := os.Open(configPath)
 		if err != nil {
-			return LastState{}, false, err
+			return
 		}
 		defer file.Close()
 
 		decoder := toml.NewDecoder(file)
 		if err := decoder.Decode(&states); err != nil {
-			return LastState{}, false, err
+			return
 		}
-
 		lastModTime = fileInfo.ModTime()
 	}
-
-	state, exists := states[uuid]
-	return state, exists, nil
 }

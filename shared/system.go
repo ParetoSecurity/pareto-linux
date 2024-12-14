@@ -64,3 +64,11 @@ func SystemSerial() (string, error) {
 func IsRoot() bool {
 	return os.Geteuid() == 0
 }
+
+func SelfExe() string {
+	exePath, err := os.Executable()
+	if err != nil {
+		return "paretosecurity"
+	}
+	return exePath
+}
