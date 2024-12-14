@@ -1,4 +1,5 @@
 # pareto-linux
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ParetoSecurity/pareto-linux/badge)](https://scorecard.dev/viewer/?uri=github.com/ParetoSecurity/pareto-linux)
 [![Integration Tests](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/build.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/build.yml)
 [![Unit Tests](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/unit.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/unit.yml)
 [![Release](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/release.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/release.yml)
