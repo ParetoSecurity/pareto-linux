@@ -62,7 +62,7 @@ jobs:
         run: mv dist/*.rpm apt/rpm && createrepo_c apt/rpm
 
       - name: Host repository for testing
-        uses: Eun/http-server-action@856e467dda36cd5d30e93bd7dd168cf3e1676301 # v1
+        uses: Eun/http-server-action@f71cec1321f665652a46c40b6852f8e5a68bfcd4 # v1
         with:
             directory: apt
             port: 8000
