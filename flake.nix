@@ -15,10 +15,7 @@
 
       perSystem = {
         config,
-        self',
-        inputs',
         pkgs,
-        system,
         lib,
         ...
       }: let
@@ -28,30 +25,60 @@
 
         checks.test-nixos = pkgs.testers.runNixOSTest {
           name = "pareto";
-
-          nodes.machine = {
-            lib,
-            pkgs,
-            ...
-          }: {
+          nodes.machine = {pkgs, ...}: {
             environment.systemPackages = [flakePackage];
+
+            systemd.sockets."pareto-linux" = {
+              wantedBy = ["sockets.target"];
+              socketConfig = {
+                ListenStream = "/var/run/pareto-linux.sock";
+                SocketMode = "0666";
+              };
+            };
+
+            systemd.services."pareto-linux" = {
+              requires = ["pareto-linux.socket"];
+              after = ["pareto-linux.socket"];
+              wantedBy = ["multi-user.target"];
+              serviceConfig = {
+                ExecStart = ["${flakePackage}/bin/paretosecurity" "helper" "--verbose" "--socket" "/var/run/pareto-linux.sock"];
+                User = "root";
+                Group = "root";
+                StandardInput = "socket";
+                Type = "oneshot";
+                RemainAfterExit = "no";
+                StartLimitInterval = "1s";
+                StartLimitBurst = 100;
+                ProtectSystem = "full";
+                ProtectHome = true;
+                StandardOutput = "journal";
+                StandardError = "journal";
+              };
+            };
+
+            systemd.user.services."pareto-linux-hourly" = {
+              wantedBy = ["timers.target"];
+              serviceConfig = {
+                Type = "oneshot";
+                ExecStart = "${flakePackage}/bin/paretosecurity check";
+                StandardInput = "null";
+              };
+            };
+
+            systemd.user.timers."pareto-linux-hourly" = {
+              wantedBy = ["timers.target"];
+              timerConfig = {
+                OnCalendar = "hourly";
+                Persistent = true;
+              };
+            };
           };
 
-          # To SSH into the generated vm:
-          # $ devenv build outputs.test-pareto.driverInteractive
-          # Copy derivation path on last line of output
-          # $ /nix/store/9m2sny6g7k7i0zln7s14wznmc8hfpcz5-nixos-test-driver-pareto --interactive
-          # >>> start_all()
-          # Now the VM is running, let's SSH to it:
-          # ssh root@localhost -p2222
-
           interactive.nodes.machine = {...}: {
-            services.openssh = {
-              enable = true;
-              settings = {
-                PermitRootLogin = "yes";
-                PermitEmptyPasswords = "yes";
-              };
+            services.openssh.enable = true;
+            services.openssh.settings = {
+              PermitRootLogin = "yes";
+              PermitEmptyPasswords = "yes";
             };
             security.pam.services.sshd.allowNullPassword = true;
             virtualisation.forwardPorts = [
@@ -66,44 +93,35 @@
           testScript = builtins.readFile "${toString ./.}/test/integration/nixos.py";
         };
 
-        packages.test-debian = let
-          vmTest = inputs.nix-vm-test.lib.x86_64-linux.debian."13" {
-            sharedDirs = {
-              packageDir = {
-                source = "${toString ./.}/pkg";
-                target = "/mnt/package";
-              };
+        packages.test-debian =
+          (inputs.nix-vm-test.lib.x86_64-linux.debian."13" {
+            sharedDirs.packageDir = {
+              source = "${toString ./.}/pkg";
+              target = "/mnt/package";
             };
             testScript = builtins.readFile "${toString ./.}/test/integration/debian.py";
-          };
-        in
-          vmTest.driver;
+          })
+          .driver;
 
-        packages.test-fedora = let
-          vmTest = inputs.nix-vm-test.lib.x86_64-linux.fedora."40" {
-            sharedDirs = {
-              packageDir = {
-                source = "${toString ./.}/pkg";
-                target = "/mnt/package";
-              };
+        packages.test-fedora =
+          (inputs.nix-vm-test.lib.x86_64-linux.fedora."40" {
+            sharedDirs.packageDir = {
+              source = "${toString ./.}/pkg";
+              target = "/mnt/package";
             };
             testScript = builtins.readFile "${toString ./.}/test/integration/fedora.py";
-          };
-        in
-          vmTest.driver;
+          })
+          .driver;
 
-        packages.test-ubuntu = let
-          vmTest = inputs.nix-vm-test.lib.x86_64-linux.ubuntu."23_10" {
-            sharedDirs = {
-              packageDir = {
-                source = "${toString ./.}/pkg";
-                target = "/mnt/package";
-              };
+        packages.test-ubuntu =
+          (inputs.nix-vm-test.lib.x86_64-linux.ubuntu."23_10" {
+            sharedDirs.packageDir = {
+              source = "${toString ./.}/pkg";
+              target = "/mnt/package";
             };
             testScript = builtins.readFile "${toString ./.}/test/integration/ubuntu.py";
-          };
-        in
-          vmTest.driver;
+          })
+          .driver;
       };
     };
 }
