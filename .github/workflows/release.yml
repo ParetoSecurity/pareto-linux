@@ -89,9 +89,9 @@ jobs:
           r2-bucket: pareto-apt
           source-dir: apt
           destination-dir: ./
-      - uses: actions/attest-build-provenance@v1
+      - uses: actions/attest-build-provenance@v2
         with:
           subject-path: 'dist/*.deb'
-      - uses: actions/attest-build-provenance@v1
+      - uses: actions/attest-build-provenance@v2
         with:
           subject-path: 'apt/rpm/*.rpm'
