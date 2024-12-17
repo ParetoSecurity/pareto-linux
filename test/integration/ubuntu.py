@@ -5,4 +5,4 @@ vm.succeed(
 )
 res = vm.succeed("auditor check --json")
 fail_count = res.count("fail")
-assert fail_count == 0, f"Found {fail_count} failed checks"
+assert fail_count == 0, f"Found {fail_count} failed checkas"
