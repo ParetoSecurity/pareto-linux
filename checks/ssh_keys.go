@@ -26,7 +26,7 @@ func (f *SSHKeys) hasPassword(privateKeyPath string) bool {
 	}
 
 	_, err = ssh.ParsePrivateKey(keyBytes)
-	return err != nil // if error occurs, key likely has password
+	return err != nil // if error occurs, key likely has password or it's FIDO2 managed key
 }
 
 // Run executes the check
