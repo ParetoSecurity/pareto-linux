@@ -2,9 +2,11 @@ package checks
 
 import (
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/caarlos0/log"
+
 	"paretosecurity.com/auditor/shared"
 )
 
@@ -39,20 +41,30 @@ func (s *SSHConfigCheck) Run() error {
 	}
 	log.Debug("Running check directly")
 
-	s.passed = false
-	data, err := os.ReadFile("/etc/ssh/sshd_config")
+	s.passed = true
+
+	//run sshd -T to get the sshd config
+	configRaw, err := exec.Command("sshd", "-T").CombinedOutput()
+	log.WithField("check", s.Name()).Debugf("sshd -T output: %s", configRaw)
+	config := strings.ToLower(string(configRaw))
 	if err != nil {
-		return err
+		s.passed = false
+		s.status = "Failed to get sshd config"
 	}
-	config := string(data)
-	if strings.Contains(config, "PasswordAuthentication no") {
-		s.passed = true
+
+	if strings.Contains(config, "passwordauthentication yes") {
+		s.passed = false
 		s.status = "PasswordAuthentication is enabled"
 	}
-	if strings.Contains(config, "PermitRootLogin no") {
-		s.passed = true
+	if strings.Contains(config, "permitrootlogin yes") {
+		s.passed = false
 		s.status = "Root login is enabled"
 	}
+	if strings.Contains(config, "permitemptypasswords yes") {
+		s.passed = false
+		s.status = "Empty passwords are allowed"
+	}
+
 	return nil
 }
 
