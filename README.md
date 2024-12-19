@@ -46,8 +46,10 @@ nix run . -- check --json
 
 This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
 
-
-#### Install via nix-channel
+<details>
+<summary>
+  
+### Install via nix-channel
 
 </summary>
 
