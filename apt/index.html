@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParetoSecurity Packages</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800" x-data>
     <div class="container mx-auto px-4 py-12">
         <h1 class="text-4xl font-bold text-center text-slate-900 mb-8">ParetoSecurity Packages</h1>
         <p class="text-center text-slate-500 mb-12">
@@ -77,7 +78,9 @@
                     The easiest way to install ParetoSecurity is to download the x64 .deb package or ARM64 .deb
                     package. After downloading, you can install the package with:
                 </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy\n', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
                     sudo apt install ./paretosecurity_{amd64||arm64}.deb
                 </div>
                 <p class="text-slate-500 mb-4">
@@ -89,13 +92,14 @@
                     Alternatively, you can manually configure the ParetoSecurity APT repository and install
                     ParetoSecurity by running the following commands:
                 </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
                     sudo apt-get install wget gpg<br>
                     curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee
                     /usr/share/keyrings/paretosecurity.gpg >/dev/null<br>
-                    echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg]
-                    https://pkg.paretosecurity.com/debian stable main' | sudo tee
-                    /etc/apt/sources.list.d/pareto.list<br>
+                    echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian
+                    stable main' | sudo tee /etc/apt/sources.list.d/pareto.list<br>
                     sudo apt update && sudo apt install paretosecurity
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
@@ -119,7 +123,9 @@
                     The easiest way to install ParetoSecurity is to download the x64 .rpm package or ARM64 .rpm
                     package. After downloading, you can install the package with:
                 </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
                     sudo dnf install ./paretosecurity_{amd64||arm64}.rpm
                 </div>
                 <p class="text-slate-500 mb-4">
@@ -131,7 +137,9 @@
                     Alternatively, you can manually configure the ParetoSecurity yum repository and install
                     ParetoSecurity by running the following commands:
                 </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
                     sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg
                     curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee
                     /etc/yum.repos.d/paretosecurity.repo
@@ -140,36 +148,6 @@
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
                 <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
                     paretosecurity check
-                </div>
-                <p class="text-slate-500 mt-4">
-                    This will analyze your system and provide a security report highlighting potential improvements and
-                    vulnerabilities.
-                </p>
-            </div>
-        </div>
-        <!-- NixOS Section -->
-        <div class="mt-12 max-w-5xl mx-auto">
-            <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">NixOS</h2>
-            <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
-                <h3 class="text-lg font-semibold text-blue-600 mb-4">Using Nix</h3>
-                <p class="text-slate-500 mb-4">
-                    The recommended way to install Pareto Linux is through the Nix package manager:
-                </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
-                    nix profile install --accept-flake-config github:paretosecurity/pareto-linux
-                </div>
-                <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
-                <p class="text-slate-500 mb-4">
-                    To run a one-time security audit without installation:
-                </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
-                    nix run github:paretosecurity/pareto-linux -- check
-                </div>
-                <p class="text-slate-500 mb-4 mt-4">
-                    Or if running from a local repo with JSON reporter:
-                </p>
-                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
-                    nix run . -- check --json
                 </div>
                 <p class="text-slate-500 mt-4">
                     This will analyze your system and provide a security report highlighting potential improvements and
