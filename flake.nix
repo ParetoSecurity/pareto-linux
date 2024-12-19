@@ -17,11 +17,17 @@
         config,
         pkgs,
         lib,
+        self,
         ...
       }: let
         flakePackage = import ./package.nix {inherit pkgs lib;};
       in {
         packages.default = flakePackage;
+
+        nixosModules.paretosecurity = ./modules/paretosecurity.nix;
+        nixosModules.default = self.nixosModules.paretosecurity;
+
+        overlays.default = import ./overlay.nix;
 
         checks.test-nixos = pkgs.testers.runNixOSTest {
           name = "pareto";
