@@ -74,5 +74,5 @@ pkgs.testers.runNixOSTest {
     ];
   };
 
-  testScript = builtins.readFile "${toString ./.}/test/integration/nixos.py";
+  testScript = builtins.readFile "${toString ./.}/nixos.py";
 }
