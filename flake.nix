@@ -1,17 +1,24 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-vm-test.url = "github:numtide/nix-vm-test";
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = inputs @ {
     flake-parts,
     nixpkgs,
     nix-vm-test,
+    self,
     ...
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = nixpkgs.lib.systems.flakeExposed;
+      flake = {
+        overlays.default = import ./overlay.nix;
+        nixosModules.paretosecurity = ./modules/paretosecurity.nix;
+        nixosModules.default = self.nixosModules.paretosecurity;
+      };
 
       perSystem = {
         config,
@@ -22,42 +29,40 @@
         ...
       }: let
         flakePackage = import ./package.nix {inherit pkgs lib;};
+        testPackage = {
+          distro,
+          version,
+          script,
+        }:
+          (inputs.nix-vm-test.lib.x86_64-linux.${distro}.${version} {
+            sharedDirs.packageDir = {
+              source = "${toString ./.}/pkg";
+              target = "/mnt/package";
+            };
+            testScript = builtins.readFile "${toString ./.}/test/integration/${script}";
+          })
+          .driver;
       in {
         packages.default = flakePackage;
-
         checks.test-nixos = import ./test/integration/nixos.nix {
           inherit pkgs system flakePackage;
         };
 
-        packages.test-debian =
-          (inputs.nix-vm-test.lib.x86_64-linux.debian."13" {
-            sharedDirs.packageDir = {
-              source = "${toString ./.}/pkg";
-              target = "/mnt/package";
-            };
-            testScript = builtins.readFile "${toString ./.}/test/integration/debian.py";
-          })
-          .driver;
-
-        packages.test-fedora =
-          (inputs.nix-vm-test.lib.x86_64-linux.fedora."40" {
-            sharedDirs.packageDir = {
-              source = "${toString ./.}/pkg";
-              target = "/mnt/package";
-            };
-            testScript = builtins.readFile "${toString ./.}/test/integration/fedora.py";
-          })
-          .driver;
-
-        packages.test-ubuntu =
-          (inputs.nix-vm-test.lib.x86_64-linux.ubuntu."23_10" {
-            sharedDirs.packageDir = {
-              source = "${toString ./.}/pkg";
-              target = "/mnt/package";
-            };
-            testScript = builtins.readFile "${toString ./.}/test/integration/ubuntu.py";
-          })
-          .driver;
+        packages.test-debian = testPackage {
+          distro = "debian";
+          version = "13";
+          script = "debian.py";
+        };
+        packages.test-fedora = testPackage {
+          distro = "fedora";
+          version = "40";
+          script = "fedora.py";
+        };
+        packages.test-ubuntu = testPackage {
+          distro = "ubuntu";
+          version = "23_10";
+          script = "ubuntu.py";
+        };
       };
     };
 }
