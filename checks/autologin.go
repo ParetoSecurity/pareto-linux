@@ -2,6 +2,7 @@ package checks
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -48,6 +49,14 @@ func (f *Autologin) Run() error {
 				return nil
 			}
 		}
+	}
+
+	// Check GNOME (GDM) autologin using dconf
+	cmd := exec.Command("dconf", "read", "/org/gnome/login-screen/enable-automatic-login")
+	output, err := cmd.Output()
+	if err == nil && strings.TrimSpace(string(output)) == "true" {
+		f.passed = false
+		return nil
 	}
 
 	return nil
