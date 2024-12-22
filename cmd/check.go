@@ -60,6 +60,8 @@ var checkCmd = &cobra.Command{
 				if err != nil {
 					log.WithError(err).Warn("failed to report to team")
 				}
+			} else {
+				showLinkingMessage()
 			}
 			if !isUserTimerInstalled() {
 				log.Info("To ensure your system is checked every hour, please run `paretosecurity check --install` to set it up.")
@@ -77,6 +79,11 @@ func init() {
 	checkCmd.Flags().Bool("schema", false, "output schema for all checks")
 	checkCmd.Flags().Bool("install", false, "setup hourly checks")
 	checkCmd.Flags().Bool("uninstall", false, "remove hourly checks")
+}
+
+func showLinkingMessage() {
+	log.Info("To link your account with the team, please run `paretosecurity link`.")
+	log.Info("For more information, please visit https://paretosecurity.com/dashboard")
 }
 
 func Check(ctx context.Context) {
