@@ -17,12 +17,11 @@ func runHelper() {
 	file := os.NewFile(0, "socket")
 	listener, err := net.FileListener(file)
 	if err != nil {
-		log.Debugf("Failed to create listener: %v\n", err)
+		log.Error("Failed to create listener, not running in systemd context")
 		os.Exit(1)
 	}
 	defer listener.Close()
-
-	log.Info("Server is listening on Unix domain socket...")
+	log.WithField("socket", shared.SocketPath).WithField("version", shared.Version).Info("Listening on socket")
 
 	for {
 		conn, err := listener.Accept()
