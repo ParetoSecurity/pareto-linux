@@ -74,6 +74,7 @@ func (s *SSHConfigCheck) Passed() bool {
 
 func (s *SSHConfigCheck) IsRunnable() bool {
 	if _, err := os.Stat("/etc/ssh/sshd_config"); os.IsNotExist(err) {
+		s.status = "/etc/ssh/sshd_config not found"
 		return false
 	}
 	return true
@@ -91,7 +92,7 @@ func (s *SSHConfigCheck) Status() string {
 	if s.Passed() {
 		return s.PassedMessage()
 	}
-	return s.FailedMessage()
+	return s.status
 }
 
 func (s *SSHConfigCheck) RequiresRoot() bool {

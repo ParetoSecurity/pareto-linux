@@ -6,6 +6,8 @@ import (
 	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
+var AvailableChecks = 0
+
 type Check interface {
 	Name() string
 	PassedMessage() string

@@ -10,6 +10,7 @@ import (
 
 type Firewall struct {
 	passed bool
+	status string
 }
 
 // Name returns the name of the check
@@ -64,6 +65,10 @@ func (f *Firewall) Run() error {
 		f.passed = f.checkFirewalld()
 	}
 
+	if !f.passed {
+		f.status = f.FailedMessage()
+	}
+
 	return nil
 }
 
@@ -74,6 +79,21 @@ func (f *Firewall) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *Firewall) IsRunnable() bool {
+
+	can := shared.IsSocketServicePresent()
+	if !can {
+		f.status = "Root helper is not available, check cannot run. See https://paretosecurity.com/root-helper for more information."
+		return false
+	}
+
+	// Check if ufw or firewalld are present
+	_, errUFW := exec.LookPath("ufw")
+	_, errFirewalld := exec.LookPath("firewalld")
+	if errUFW != nil && errFirewalld != nil {
+		f.status = "Neither ufw nor firewalld are present, check cannot run"
+		return false
+	}
+
 	return true
 }
 
@@ -107,5 +127,5 @@ func (f *Firewall) Status() string {
 	if f.Passed() {
 		return f.PassedMessage()
 	}
-	return f.FailedMessage()
+	return f.status
 }

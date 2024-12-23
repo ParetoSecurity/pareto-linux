@@ -1,10 +1,11 @@
 package checks
 
 import (
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
 type Autologin struct {
@@ -23,7 +24,7 @@ func (f *Autologin) Run() error {
 	// Check KDE (SDDM) autologin
 	sddmFiles, _ := filepath.Glob("/etc/sddm.conf.d/*.conf")
 	for _, file := range sddmFiles {
-		content, err := os.ReadFile(file)
+		content, err := shared.ReadFile(file)
 		if err == nil {
 			if strings.Contains(string(content), "Autologin=true") {
 				f.passed = false
@@ -33,7 +34,7 @@ func (f *Autologin) Run() error {
 	}
 
 	// Check main SDDM config
-	if content, err := os.ReadFile("/etc/sddm.conf"); err == nil {
+	if content, err := shared.ReadFile("/etc/sddm.conf"); err == nil {
 		if strings.Contains(string(content), "Autologin=true") {
 			f.passed = false
 			return nil
@@ -43,7 +44,7 @@ func (f *Autologin) Run() error {
 	// Check GNOME (GDM) autologin
 	gdmPaths := []string{"/etc/gdm3/custom.conf", "/etc/gdm/custom.conf"}
 	for _, path := range gdmPaths {
-		if content, err := os.ReadFile(path); err == nil {
+		if content, err := shared.ReadFile(path); err == nil {
 			if strings.Contains(string(content), "AutomaticLoginEnable=true") {
 				f.passed = false
 				return nil
