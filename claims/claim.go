@@ -1,6 +1,6 @@
 package claims
 
-import "paretosecurity.com/auditor/check"
+import "github.com/ParetoSecurity/pareto-linux/check"
 
 type Claim struct {
 	Title  string

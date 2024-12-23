@@ -3,10 +3,10 @@ package cmd
 import (
 	"os"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-linux/team"
 	"github.com/caarlos0/log"
 	"github.com/spf13/cobra"
-	"paretosecurity.com/auditor/shared"
-	"paretosecurity.com/auditor/team"
 )
 
 var linkCmd = &cobra.Command{

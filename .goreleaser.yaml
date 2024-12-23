@@ -22,7 +22,7 @@ builds:
     gcflags:
       - all=-trimpath=${GOPATH}
     ldflags:
-      - -s -w -X paretosecurity.com/auditor/shared.Version={{.Version}} -X paretosecurity.com/auditor/shared.Commit={{.Commit}} -X paretosecurity.com/auditor/shared.Date={{.Date}}
+      - -s -w -X github.com/ParetoSecurity/pareto-linux/shared.Version={{.Version}} -X github.com/ParetoSecurity/pareto-linux/shared.Commit={{.Commit}} -X github.com/ParetoSecurity/pareto-linux/shared.Date={{.Date}}
     binary: paretosecurity
 
 archives:

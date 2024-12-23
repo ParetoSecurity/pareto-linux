@@ -4,8 +4,8 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
-	"paretosecurity.com/auditor/shared"
 )
 
 type Firewall struct {

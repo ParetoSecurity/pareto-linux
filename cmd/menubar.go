@@ -8,13 +8,13 @@ import (
 	"os/exec"
 
 	"fyne.io/systray"
+	"github.com/ParetoSecurity/pareto-linux/check"
+	"github.com/ParetoSecurity/pareto-linux/claims"
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/pkg/browser"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"paretosecurity.com/auditor/check"
-	"paretosecurity.com/auditor/claims"
-	"paretosecurity.com/auditor/shared"
 )
 
 func addQuitItem() {

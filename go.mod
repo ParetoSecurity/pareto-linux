@@ -1,4 +1,4 @@
-module paretosecurity.com/auditor
+module github.com/ParetoSecurity/pareto-linux
 
 go 1.23.0
 

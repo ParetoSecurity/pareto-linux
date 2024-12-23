@@ -3,7 +3,7 @@ package check
 import (
 	"time"
 
-	"paretosecurity.com/auditor/shared"
+	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
 type Check interface {

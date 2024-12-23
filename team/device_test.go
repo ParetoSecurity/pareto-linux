@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/stretchr/testify/assert"
-	"paretosecurity.com/auditor/shared"
 )
 
 func TestDeviceAuth(t *testing.T) {

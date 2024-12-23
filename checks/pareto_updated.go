@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
-	"paretosecurity.com/auditor/shared"
 )
 
 type ParetoReleases []struct {

@@ -8,13 +8,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ParetoSecurity/pareto-linux/check"
+	"github.com/ParetoSecurity/pareto-linux/claims"
+	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-linux/team"
 	"github.com/caarlos0/log"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
-	"paretosecurity.com/auditor/check"
-	"paretosecurity.com/auditor/claims"
-	"paretosecurity.com/auditor/shared"
-	"paretosecurity.com/auditor/team"
 )
 
 var checkCmd = &cobra.Command{

@@ -3,9 +3,9 @@ package cmd
 import (
 	"os"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/spf13/cobra"
-	"paretosecurity.com/auditor/shared"
 )
 
 var unlinkCmd = &cobra.Command{

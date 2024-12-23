@@ -4,8 +4,8 @@ import (
 	"github.com/caarlos0/log"
 	"go.uber.org/automaxprocs/maxprocs"
 
-	"paretosecurity.com/auditor/cmd"
-	"paretosecurity.com/auditor/shared"
+	"github.com/ParetoSecurity/pareto-linux/cmd"
+	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
 func init() {

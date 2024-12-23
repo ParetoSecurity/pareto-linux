@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
 	"github.com/davecgh/go-spew/spew"
-	"paretosecurity.com/auditor/shared"
 )
 
 const enrollURL = "https://dash.paretosecurity.com/api/v1/team/enroll"

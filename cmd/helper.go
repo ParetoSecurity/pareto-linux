@@ -5,11 +5,11 @@ import (
 	"net"
 	"os"
 
+	"github.com/ParetoSecurity/pareto-linux/claims"
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"paretosecurity.com/auditor/claims"
-	"paretosecurity.com/auditor/shared"
 )
 
 func runHelper() {
