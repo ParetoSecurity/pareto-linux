@@ -54,7 +54,7 @@ func (f *SecureBoot) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *SecureBoot) IsRunnable() bool {
-	if _, err := os.Stat("/sys/firmware/efi"); os.IsNotExist(err) {
+	if _, err := os.Stat("/sys/firmware/efi/efivars"); os.IsNotExist(err) {
 		f.status = "System is not running in UEFI mode"
 		return true
 	}
