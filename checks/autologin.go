@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -10,6 +9,7 @@ import (
 
 type Autologin struct {
 	passed bool
+	status string
 }
 
 // Name returns the name of the check
@@ -28,6 +28,7 @@ func (f *Autologin) Run() error {
 		if err == nil {
 			if strings.Contains(string(content), "Autologin=true") {
 				f.passed = false
+				f.status = "Autologin=true in SDDM is enabled"
 				return nil
 			}
 		}
@@ -37,6 +38,7 @@ func (f *Autologin) Run() error {
 	if content, err := shared.ReadFile("/etc/sddm.conf"); err == nil {
 		if strings.Contains(string(content), "Autologin=true") {
 			f.passed = false
+			f.status = "Autologin=true in SDDM is enabled"
 			return nil
 		}
 	}
@@ -47,16 +49,17 @@ func (f *Autologin) Run() error {
 		if content, err := shared.ReadFile(path); err == nil {
 			if strings.Contains(string(content), "AutomaticLoginEnable=true") {
 				f.passed = false
+				f.status = "AutomaticLoginEnable=true in GDM is enabled"
 				return nil
 			}
 		}
 	}
 
 	// Check GNOME (GDM) autologin using dconf
-	cmd := exec.Command("dconf", "read", "/org/gnome/login-screen/enable-automatic-login")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("dconf", "read", "/org/gnome/login-screen/enable-automatic-login")
 	if err == nil && strings.TrimSpace(string(output)) == "true" {
 		f.passed = false
+		f.status = "Automatic login is enabled in GNOME"
 		return nil
 	}
 
@@ -101,7 +104,7 @@ func (f *Autologin) RequiresRoot() bool {
 // Status returns the status of the check
 func (f *Autologin) Status() string {
 	if !f.Passed() {
-		return f.FailedMessage()
+		return f.status
 	}
 	return f.PassedMessage()
 }

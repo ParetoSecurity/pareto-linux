@@ -1,24 +1,30 @@
 package shared
 
 import (
+	"errors"
 	"os"
 	"testing"
 )
 
+// ReadFileMocks is a map that simulates file reading operations by mapping
+// file paths (as keys) to their corresponding file contents (as values).
+// This can be used for testing purposes to mock the behavior of reading files
+// without actually accessing the file system.
+var ReadFileMocks map[string]string
+
+// ReadFile reads the content of the file specified by the given name.
+// If the code is running in a testing environment, it will return the content
+// from the ReadFileMocks map instead of reading from the actual file system.
+// If the file name is not found in the ReadFileMocks map, it returns an error.
+// Otherwise, it reads the file content from the file system.
 func ReadFile(name string) ([]byte, error) {
 	if testing.Testing() {
-		fixturePath := "fixtures/" + name
-		if _, err := os.Stat(fixturePath); os.IsNotExist(err) {
-			content, err := os.ReadFile(name)
-			if err != nil {
-				return nil, err
-			}
-			if err := os.WriteFile(fixturePath, content, 0644); err != nil {
-				return nil, err
-			}
-			return content, nil
+		fixtureFile, ok := ReadFileMocks[name]
+		if !ok {
+			return []byte(""), errors.New("ReadFile fixture not found: " + name)
 		}
-		return os.ReadFile(fixturePath)
+		return []byte(fixtureFile), nil
+
 	}
 	return os.ReadFile(name)
 }

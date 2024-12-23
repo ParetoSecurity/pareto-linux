@@ -19,25 +19,23 @@ func (f *Firewall) Name() string {
 }
 
 func (f *Firewall) checkUFW() bool {
-	cmd := exec.Command("ufw", "status")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("ufw", "status")
 	if err != nil {
-		log.WithError(err).WithField("output", string(output)).Warn("Failed to check UFW status")
+		log.WithError(err).WithField("output", output).Warn("Failed to check UFW status")
 		return false
 	}
-	log.WithField("output", string(output)).Debug("UFW status")
-	return strings.Contains(string(output), "active")
+	log.WithField("output", output).Debug("UFW status")
+	return strings.Contains(output, "Status: active")
 }
 
 func (f *Firewall) checkFirewalld() bool {
-	cmd := exec.Command("systemctl", "is-active", "firewalld")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("systemctl", "is-active", "firewalld")
 	if err != nil {
-		log.WithError(err).WithField("output", string(output)).Warn("Failed to check firewalld status")
+		log.WithError(err).WithField("output", output).Warn("Failed to check firewalld status")
 		return false
 	}
-	log.WithField("output", string(output)).Debug("Firewalld status")
-	return strings.Contains(string(output), "active")
+	log.WithField("output", output).Debug("Firewalld status")
+	return output == "active"
 }
 
 // Run executes the check
