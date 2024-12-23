@@ -22,7 +22,7 @@ type NewDevice struct {
 	MachineName    string `json:"machineName"`
 	ModelName      string `json:"modelName"`
 	ModelSerial    string `json:"modelSerial"`
-	LinuxOSVersion string `json:"LinuxOSVersion"`
+	LinuxOSVersion string `json:"linuxOSVersion"`
 	MachineUUID    string `json:"machineUUID"`
 	Auth           string `json:"auth"`
 }
