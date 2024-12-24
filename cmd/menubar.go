@@ -161,7 +161,7 @@ func onReady() {
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					log.WithField("check", chk.Name()).Info("Opening check URL")
-					url := fmt.Sprintf("https://paretosecurity.com/check/%s?platform=linux&details=%s", chk.UUID(), url.QueryEscape(chk.Status()))
+					url := fmt.Sprintf("https://paretosecurity.com/check-linux/%s?details=%s", chk.UUID(), url.QueryEscape(chk.Status()))
 
 					if err := browser.OpenURL(url); err != nil {
 						log.WithError(err).Error("failed to open check URL")
