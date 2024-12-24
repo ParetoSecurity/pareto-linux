@@ -64,7 +64,11 @@ func (k *KernelParamsCheck) Passed() bool {
 }
 
 func (k *KernelParamsCheck) IsRunnable() bool {
-	return true
+	can := shared.IsSocketServicePresent()
+	if !can {
+		k.status = "Root helper is not available, check cannot run. See https://paretosecurity.com/root-helper for more information."
+	}
+	return can
 }
 
 func (k *KernelParamsCheck) ReportIfDisabled() bool {

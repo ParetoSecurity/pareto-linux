@@ -3,6 +3,7 @@ package shared
 import (
 	"encoding/json"
 	"net"
+	"os/exec"
 
 	"github.com/caarlos0/log"
 	"go.uber.org/ratelimit"
@@ -11,10 +12,17 @@ import (
 var SocketPath = "/var/run/pareto-linux.sock"
 var rateLimitCall = ratelimit.New(1)
 
+func IsSocketServicePresent() bool {
+	cmd := exec.Command("systemctl", "is-enabled", "--quiet", "pareto-linux.socket")
+	err := cmd.Run()
+	return err == nil
+}
+
 func RunCheckViaHelper(uuid string) (bool, error) {
 
 	rateLimitCall.Take()
 	log.WithField("uuid", uuid).Debug("Running check via helper")
+
 	conn, err := net.Dial("unix", SocketPath)
 	if err != nil {
 		log.WithError(err).Warn("Failed to connect to helper")

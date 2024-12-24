@@ -4,6 +4,7 @@ import "os/exec"
 
 type DockerAccess struct {
 	passed bool
+	status string
 }
 
 // Name returns the name of the check
@@ -36,7 +37,12 @@ func (f *DockerAccess) Passed() bool {
 func (f *DockerAccess) IsRunnable() bool {
 	cmd := exec.Command("docker", "version")
 	err := cmd.Run()
-	return err == nil
+	if err != nil {
+		f.status = "Docker is not installed"
+		return false
+	}
+
+	return true
 }
 
 // UUID returns the UUID of the check

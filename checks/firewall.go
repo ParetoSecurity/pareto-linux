@@ -10,6 +10,7 @@ import (
 
 type Firewall struct {
 	passed bool
+	status string
 }
 
 // Name returns the name of the check
@@ -18,25 +19,23 @@ func (f *Firewall) Name() string {
 }
 
 func (f *Firewall) checkUFW() bool {
-	cmd := exec.Command("ufw", "status")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("ufw", "status")
 	if err != nil {
-		log.WithError(err).WithField("output", string(output)).Warn("Failed to check UFW status")
+		log.WithError(err).WithField("output", output).Warn("Failed to check UFW status")
 		return false
 	}
-	log.WithField("output", string(output)).Debug("UFW status")
-	return strings.Contains(string(output), "active")
+	log.WithField("output", output).Debug("UFW status")
+	return strings.Contains(output, "Status: active")
 }
 
 func (f *Firewall) checkFirewalld() bool {
-	cmd := exec.Command("systemctl", "is-active", "firewalld")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("systemctl", "is-active", "firewalld")
 	if err != nil {
-		log.WithError(err).WithField("output", string(output)).Warn("Failed to check firewalld status")
+		log.WithError(err).WithField("output", output).Warn("Failed to check firewalld status")
 		return false
 	}
-	log.WithField("output", string(output)).Debug("Firewalld status")
-	return strings.Contains(string(output), "active")
+	log.WithField("output", output).Debug("Firewalld status")
+	return output == "active"
 }
 
 // Run executes the check
@@ -64,6 +63,10 @@ func (f *Firewall) Run() error {
 		f.passed = f.checkFirewalld()
 	}
 
+	if !f.passed {
+		f.status = f.FailedMessage()
+	}
+
 	return nil
 }
 
@@ -74,6 +77,21 @@ func (f *Firewall) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *Firewall) IsRunnable() bool {
+
+	can := shared.IsSocketServicePresent()
+	if !can {
+		f.status = "Root helper is not available, check cannot run. See https://paretosecurity.com/root-helper for more information."
+		return false
+	}
+
+	// Check if ufw or firewalld are present
+	_, errUFW := exec.LookPath("ufw")
+	_, errFirewalld := exec.LookPath("firewalld")
+	if errUFW != nil && errFirewalld != nil {
+		f.status = "Neither ufw nor firewalld are present, check cannot run"
+		return false
+	}
+
 	return true
 }
 
@@ -107,5 +125,5 @@ func (f *Firewall) Status() string {
 	if f.Passed() {
 		return f.PassedMessage()
 	}
-	return f.FailedMessage()
+	return f.status
 }

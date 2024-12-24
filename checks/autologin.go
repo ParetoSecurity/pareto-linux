@@ -1,14 +1,15 @@
 package checks
 
 import (
-	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
 type Autologin struct {
 	passed bool
+	status string
 }
 
 // Name returns the name of the check
@@ -23,19 +24,21 @@ func (f *Autologin) Run() error {
 	// Check KDE (SDDM) autologin
 	sddmFiles, _ := filepath.Glob("/etc/sddm.conf.d/*.conf")
 	for _, file := range sddmFiles {
-		content, err := os.ReadFile(file)
+		content, err := shared.ReadFile(file)
 		if err == nil {
 			if strings.Contains(string(content), "Autologin=true") {
 				f.passed = false
+				f.status = "Autologin=true in SDDM is enabled"
 				return nil
 			}
 		}
 	}
 
 	// Check main SDDM config
-	if content, err := os.ReadFile("/etc/sddm.conf"); err == nil {
+	if content, err := shared.ReadFile("/etc/sddm.conf"); err == nil {
 		if strings.Contains(string(content), "Autologin=true") {
 			f.passed = false
+			f.status = "Autologin=true in SDDM is enabled"
 			return nil
 		}
 	}
@@ -43,19 +46,20 @@ func (f *Autologin) Run() error {
 	// Check GNOME (GDM) autologin
 	gdmPaths := []string{"/etc/gdm3/custom.conf", "/etc/gdm/custom.conf"}
 	for _, path := range gdmPaths {
-		if content, err := os.ReadFile(path); err == nil {
+		if content, err := shared.ReadFile(path); err == nil {
 			if strings.Contains(string(content), "AutomaticLoginEnable=true") {
 				f.passed = false
+				f.status = "AutomaticLoginEnable=true in GDM is enabled"
 				return nil
 			}
 		}
 	}
 
 	// Check GNOME (GDM) autologin using dconf
-	cmd := exec.Command("dconf", "read", "/org/gnome/login-screen/enable-automatic-login")
-	output, err := cmd.Output()
+	output, err := shared.RunCommand("dconf", "read", "/org/gnome/login-screen/enable-automatic-login")
 	if err == nil && strings.TrimSpace(string(output)) == "true" {
 		f.passed = false
+		f.status = "Automatic login is enabled in GNOME"
 		return nil
 	}
 
@@ -100,7 +104,7 @@ func (f *Autologin) RequiresRoot() bool {
 // Status returns the status of the check
 func (f *Autologin) Status() string {
 	if !f.Passed() {
-		return f.FailedMessage()
+		return f.status
 	}
 	return f.PassedMessage()
 }

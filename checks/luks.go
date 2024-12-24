@@ -28,7 +28,11 @@ func (f *EncryptingFS) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *EncryptingFS) IsRunnable() bool {
-	return true
+	can := shared.IsSocketServicePresent()
+	if !can {
+		f.status = "Root helper is not available, check cannot run. See https://paretosecurity.com/root-helper for more information."
+	}
+	return can
 }
 
 // UUID returns the UUID of the check
@@ -123,5 +127,5 @@ func (f *EncryptingFS) Status() string {
 	if f.Passed() {
 		return f.PassedMessage()
 	}
-	return f.FailedMessage()
+	return f.status
 }
