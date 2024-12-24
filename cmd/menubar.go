@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
@@ -160,7 +161,7 @@ func onReady() {
 			go func(chk check.Check, mCheck *systray.MenuItem) {
 				for range mCheck.ClickedCh {
 					log.WithField("check", chk.Name()).Info("Opening check URL")
-					url := fmt.Sprintf("https://paretosecurity.com/checks/%s?details=None", chk.UUID())
+					url := fmt.Sprintf("https://paretosecurity.com/check/%s?details=%s", chk.UUID(), url.QueryEscape(chk.Status()))
 
 					if err := browser.OpenURL(url); err != nil {
 						log.WithError(err).Error("failed to open check URL")
