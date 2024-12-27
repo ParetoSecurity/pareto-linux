@@ -3,6 +3,8 @@ package checks
 import (
 	"os/exec"
 	"strings"
+
+	"github.com/ParetoSecurity/pareto-linux/shared"
 )
 
 type PasswordToUnlock struct {
@@ -15,8 +17,8 @@ func (f *PasswordToUnlock) Name() string {
 }
 
 func (f *PasswordToUnlock) checkGnome() bool {
-	cmd := exec.Command("gsettings", "get", "org.gnome.desktop.screensaver", "lock-enabled")
-	out, err := cmd.Output()
+
+	out, err := shared.RunCommand("gsettings", "get", "org.gnome.desktop.screensaver", "lock-enabled")
 	if err != nil {
 		return false
 	}
@@ -24,8 +26,7 @@ func (f *PasswordToUnlock) checkGnome() bool {
 }
 
 func (f *PasswordToUnlock) checkKDE() bool {
-	cmd := exec.Command("kreadconfig5", "--file", "kscreenlockerrc", "--group", "Daemon", "--key", "Autolock")
-	out, err := cmd.Output()
+	out, err := shared.RunCommand("kreadconfig5", "--file", "kscreenlockerrc", "--group", "Daemon", "--key", "Autolock")
 	if err != nil {
 		return false
 	}
