@@ -1,6 +1,11 @@
 package checks
 
-import "os/exec"
+import (
+	"strings"
+
+	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/samber/lo"
+)
 
 type DockerAccess struct {
 	passed bool
@@ -14,17 +19,21 @@ func (f *DockerAccess) Name() string {
 
 // Run executes the check
 func (f *DockerAccess) Run() error {
-	cmd := exec.Command("docker", "run", "--rm", "hello-world")
-	err := cmd.Run()
-	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			if exitError.ExitCode() == 1 {
-				f.passed = true
-				return nil
-			}
-		}
+	output, err := shared.RunCommand("docker", "info", "--format", "{{.SecurityOptions}}")
+	if err != nil || lo.IsEmpty(output) {
+		f.passed = false
+		f.status = "Failed to get Docker info"
+		return err
 	}
-	f.passed = false
+
+	if !strings.Contains(output, "rootless") {
+		f.passed = false
+		f.status = f.FailedMessage()
+		return nil
+	}
+
+	f.passed = true
+
 	return nil
 }
 
@@ -35,8 +44,8 @@ func (f *DockerAccess) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *DockerAccess) IsRunnable() bool {
-	cmd := exec.Command("docker", "version")
-	err := cmd.Run()
+
+	_, err := shared.RunCommand("docker", "version")
 	if err != nil {
 		f.status = "Docker is not installed"
 		return false
@@ -57,12 +66,12 @@ func (f *DockerAccess) ReportIfDisabled() bool {
 
 // PassedMessage returns the message to return if the check passed
 func (f *DockerAccess) PassedMessage() string {
-	return "Access to Docker is restricted"
+	return "Docker is not running in rootless mode"
 }
 
 // FailedMessage returns the message to return if the check failed
 func (f *DockerAccess) FailedMessage() string {
-	return "Access to Docker is not restricted"
+	return "Docker is running in rootless mode"
 }
 
 // RequiresRoot returns whether the check requires root access
@@ -73,7 +82,7 @@ func (f *DockerAccess) RequiresRoot() bool {
 // Status returns the status of the check
 func (f *DockerAccess) Status() string {
 	if !f.Passed() {
-		return f.FailedMessage()
+		return f.status
 	}
 	return f.PassedMessage()
 }
