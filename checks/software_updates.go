@@ -4,6 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
 	"github.com/samber/lo"
 )
@@ -22,9 +23,8 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	updates := []string{}
 
 	// Check flatpak
-	if _, err := exec.LookPath("flatpak"); err == nil {
-		cmd := exec.Command("flatpak", "remote-ls", "--updates")
-		output, err := cmd.Output()
+	if _, err := lookPath("flatpak"); err == nil {
+		output, err := shared.RunCommand("flatpak", "remote-ls", "--updates")
 		log.WithField("output", string(output)).Debug("Flatpak updates")
 		if err == nil && len(output) > 0 {
 			updates = append(updates, "Flatpak")
@@ -32,9 +32,8 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	}
 
 	// Check apt
-	if _, err := exec.LookPath("apt"); err == nil {
-		cmd := exec.Command("apt", "list", "--upgradable")
-		output, err := cmd.Output()
+	if _, err := lookPath("apt"); err == nil {
+		output, err := shared.RunCommand("apt", "list", "--upgradable")
 		log.WithField("output", string(output)).Debug("APT updates")
 		if err == nil && len(output) > 0 && strings.Contains(string(output), "upgradable") {
 			updates = append(updates, "APT")
@@ -42,9 +41,8 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	}
 
 	// Check dnf
-	if _, err := exec.LookPath("dnf"); err == nil {
-		cmd := exec.Command("dnf", "check-update", "--quiet")
-		if err := cmd.Run(); err != nil {
+	if _, err := lookPath("dnf"); err == nil {
+		if _, err := shared.RunCommand("dnf", "check-update", "--quiet"); err != nil {
 			if exitErr, ok := err.(*exec.ExitError); ok && exitErr.ExitCode() == 100 {
 				updates = append(updates, "DNF")
 			}
@@ -52,9 +50,8 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	}
 
 	// Check pacman
-	if _, err := exec.LookPath("pacman"); err == nil {
-		cmd := exec.Command("pacman", "-Qu")
-		output, err := cmd.Output()
+	if _, err := lookPath("pacman"); err == nil {
+		output, err := shared.RunCommand("pacman", "-Qu")
 		log.WithField("output", string(output)).Debug("Pacman updates")
 		if err == nil && len(output) > 0 {
 			updates = append(updates, "Pacman")
@@ -62,9 +59,8 @@ func (f *SoftwareUpdates) checkUpdates() (bool, string) {
 	}
 
 	// Check snap
-	if _, err := exec.LookPath("snap"); err == nil {
-		cmd := exec.Command("snap", "refresh", "--list")
-		output, err := cmd.Output()
+	if _, err := lookPath("snap"); err == nil {
+		output, err := shared.RunCommand("snap", "refresh", "--list")
 		log.WithField("output", string(output)).Debug("Snap updates")
 		if err == nil && len(output) > 0 && !strings.Contains(string(output), "All snaps up to date.") {
 			updates = append(updates, "Snap")

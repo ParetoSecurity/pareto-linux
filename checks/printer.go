@@ -3,6 +3,7 @@ package checks
 import (
 	"fmt"
 	"net"
+	"testing"
 	"time"
 
 	"github.com/caarlos0/log"
@@ -20,6 +21,11 @@ func (f *Printer) Name() string {
 
 // checkPort tests if a port is open
 func (f *Printer) checkPort(port int, proto string) bool {
+
+	if testing.Testing() {
+		return checkPortMock(port, proto)
+	}
+
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return false
