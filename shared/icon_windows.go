@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	//go:embed icon_white.ico
+	//go:embed icon.ico
 	IconWhite []byte
 
-	//go:embed icon_black.ico
+	//go:embed icon.ico
 	IconBlack []byte
 )
