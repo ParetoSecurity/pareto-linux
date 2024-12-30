@@ -11,15 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type ReportingDevice struct {
-	MachineUUID    string `json:"machineUUID"` // e.g. 123e4567-e89b-12d3-a456-426614174000
-	MachineName    string `json:"machineName"` // e.g. MacBook-Pro.local
-	Auth           string `json:"auth"`
-	LinuxOSVersion string `json:"linuxOSVersion"` // e.g. Ubuntu 20.04
-	ModelName      string `json:"modelName"`      // e.g. MacBook Pro
-	ModelSerial    string `json:"modelSerial"`    // e.g. C02C1234
-}
-
 func CurrentReportingDevice() ReportingDevice {
 	device, err := NewLinkingDevice()
 	if err != nil {
@@ -27,10 +18,10 @@ func CurrentReportingDevice() ReportingDevice {
 	}
 
 	return ReportingDevice{
-		MachineUUID:    device.UUID,
-		MachineName:    Sanitize(device.Hostname),
-		Auth:           DeviceAuth(),
-		LinuxOSVersion: Sanitize(device.OS),
+		MachineUUID: device.UUID,
+		MachineName: Sanitize(device.Hostname),
+		Auth:        DeviceAuth(),
+		OSVersion:   Sanitize(device.OS),
 		ModelName: func() string {
 			modelName, err := SystemDevice()
 			if err != nil {

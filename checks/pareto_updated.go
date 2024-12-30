@@ -2,6 +2,7 @@ package checks
 
 import (
 	"context"
+	"runtime"
 	"time"
 
 	"github.com/ParetoSecurity/pareto-linux/shared"
@@ -34,13 +35,19 @@ func (f *ParetoUpdated) Run() error {
 	f.passed = false
 	res := ParetoReleases{}
 	device := shared.CurrentReportingDevice()
-
+	platform := "linux"
+	if runtime.GOOS == "darwin" {
+		platform = "macos"
+	}
+	if runtime.GOOS == "windows" {
+		platform = "windows"
+	}
 	// uuid=REDACTED&version=1.7.91&os_version=15.1.1&distribution=app-live-setapp"
 	err := requests.URL("https://paretosecurity.com/api/updates").
 		Param("uuid", device.MachineUUID).
 		Param("version", shared.Version).
-		Param("os_version", device.LinuxOSVersion).
-		Param("platform", "linux").
+		Param("os_version", device.OSVersion).
+		Param("platform", platform).
 		Param("app", "auditor").
 		Param("distribution", func() string {
 			if shared.IsLinked() {
