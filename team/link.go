@@ -18,15 +18,6 @@ import (
 
 const enrollURL = "https://dash.paretosecurity.com/api/v1/team/enroll"
 
-type NewDevice struct {
-	MachineName    string `json:"machineName"`
-	ModelName      string `json:"modelName"`
-	ModelSerial    string `json:"modelSerial"`
-	LinuxOSVersion string `json:"linuxOSVersion"`
-	MachineUUID    string `json:"machineUUID"`
-	Auth           string `json:"auth"`
-}
-
 type LinkingResponse struct {
 	Team string `json:"team"`
 	Auth string `json:"auth"`
@@ -128,18 +119,10 @@ func LinkAndWaitForTicket() error {
 
 // AddDevice reports the device to the team.
 func AddDevice() error {
-	device := shared.CurrentReportingDevice()
-
+	newDevice := shared.CurrentReportingDevice()
 	res := ""
 	errRes := ""
-	newDevice := NewDevice{
-		MachineName:    device.MachineName,
-		ModelName:      device.ModelName,
-		ModelSerial:    device.ModelSerial,
-		LinuxOSVersion: device.LinuxOSVersion,
-		MachineUUID:    device.MachineUUID,
-		Auth:           device.Auth,
-	}
+
 	log.Debug(spew.Sdump(newDevice))
 	err := requests.URL(reportURL).
 		Pathf("/api/v1/team/%s/device", shared.Config.TeamID).
