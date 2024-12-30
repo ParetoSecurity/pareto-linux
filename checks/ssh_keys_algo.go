@@ -124,7 +124,21 @@ func (f *SSHKeysAlgo) IsRunnable() bool {
 		return false
 	}
 
-	return true
+	//check if there are any private keys in the .ssh directory
+	files, err := os.ReadDir(sshPath)
+	if err != nil {
+		return false
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".pub") {
+			privateKeyPath := filepath.Join(sshPath, strings.TrimSuffix(file.Name(), ".pub"))
+			if _, err := os.Stat(privateKeyPath); err == nil {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // UUID returns the UUID of the check
