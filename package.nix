@@ -6,7 +6,7 @@ pkgs.buildGoModule rec {
   pname = "paretosecurity";
   version = "${builtins.hashFile "sha256" "${toString ./go.sum}"}";
   src = ./.;
-  vendorHash = "sha256-0HN9SXsioXdfd7p2SFaQ/oT4fy8pzSM34NiGL67g8es=";
+  vendorHash = "sha256-Cq1Ia+GV+bbFfRPlmpn0ITW/lAYLPqyf1ESw6Km83wQ=";
   subPackages = ["."];
   postInstall = ''
     mv $out/bin/pareto-linux $out/bin/paretosecurity

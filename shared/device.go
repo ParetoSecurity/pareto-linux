@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/caarlos0/log"
+	"github.com/elastic/go-sysinfo"
 	"github.com/google/uuid"
-	"github.com/zcalusic/sysinfo"
 )
 
 type ReportingDevice struct {
@@ -66,25 +66,34 @@ type LinkingDevice struct {
 // Returns a pointer to the LinkingDevice and an error if any occurs during the process.
 func NewLinkingDevice() (*LinkingDevice, error) {
 
-	sysinfo := sysinfo.SysInfo{}
-	sysinfo.GetSysInfo()
+	hostInfo, err := sysinfo.Host()
+	if err != nil {
+		log.Warn("Failed to get process information")
+		return nil, err
+	}
+	envInfo := hostInfo.Info()
+
 	systemUUID, err := SystemUUID()
 	if err != nil {
+		log.Warn("Failed to get system UUID")
 		return nil, err
 	}
 	ticket, err := uuid.NewRandom()
 	if err != nil {
+		log.Warn("Failed to generate ticket")
 		return nil, err
 	}
 	hostname, err := os.Hostname()
 	if err != nil {
+		log.Warn("Failed to get hostname")
 		return nil, err
 	}
+
 	return &LinkingDevice{
 		Hostname:  hostname,
-		OS:        sysinfo.OS.Name,
-		OSVersion: sysinfo.OS.Release,
-		Kernel:    sysinfo.Kernel.Release,
+		OS:        envInfo.OS.Name,
+		OSVersion: envInfo.OS.Version,
+		Kernel:    envInfo.OS.Build,
 		UUID:      systemUUID,
 		Ticket:    ticket.String(),
 	}, nil
