@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"runtime"
 	"time"
 
 	"os/exec"
@@ -109,7 +110,9 @@ func onReady() {
 			broadcaster.Send()
 		}
 	}()
-	systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
+	if runtime.GOOS == "windows" {
+		systray.SetTemplateIcon(shared.IconBlack, shared.IconBlack)
+	}
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
 	systray.AddMenuItem("Pareto Security", "").Disable()
