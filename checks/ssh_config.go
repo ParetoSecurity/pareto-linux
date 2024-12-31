@@ -2,7 +2,6 @@ package checks
 
 import (
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/caarlos0/log"
@@ -44,7 +43,7 @@ func (s *SSHConfigCheck) Run() error {
 	s.passed = true
 
 	//run sshd -T to get the sshd config
-	configRaw, err := exec.Command("sshd", "-T").CombinedOutput()
+	configRaw, err := shared.RunCommand("sshd", "-T")
 	log.WithField("check", s.Name()).Debugf("sshd -T output: %s", configRaw)
 	config := strings.ToLower(string(configRaw))
 	if err != nil {

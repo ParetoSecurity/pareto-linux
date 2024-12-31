@@ -35,7 +35,7 @@ func SystemUUID() (string, error) {
 }
 
 func SystemDevice() (string, error) {
-	content, err := os.ReadFile("/sys/devices/virtual/dmi/id/product_name")
+	content, err := ReadFile("/sys/devices/virtual/dmi/id/product_name")
 	if err != nil {
 		return "", err
 	}
@@ -49,7 +49,7 @@ func SystemDevice() (string, error) {
 }
 
 func SystemSerial() (string, error) {
-	content, err := os.ReadFile("/sys/devices/virtual/dmi/id/product_serial")
+	content, err := ReadFile("/sys/devices/virtual/dmi/id/product_serial")
 	if err != nil {
 		return "", err
 	}
