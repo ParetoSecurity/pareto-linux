@@ -78,7 +78,7 @@ aurs:
       install -Dm 0644 "${srcdir}"/README.md "${pkgdir}"/usr/share/doc/$pkgname/README.md
 
       # Create socket unit
-      cat << 'EOF' | tee /etc/systemd/system/pareto-linux.socket > /dev/null
+      cat << 'EOF' | tee ${pkgdir}/usr/lib/systemd/system/pareto-linux.socket > /dev/null
       [Unit]
       Description=Socket for pareto-linux
 
@@ -92,7 +92,7 @@ aurs:
       EOF
 
       # Create service unit
-      cat << 'EOF' | tee /etc/systemd/system/pareto-linux.service > /dev/null
+      cat << 'EOF' | tee ${pkgdir}/usr/lib/systemd/system/pareto-linux.service > /dev/null
       [Unit]
       Description=Service for pareto-linux
       Requires=pareto-linux.socket
