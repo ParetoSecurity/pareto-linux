@@ -72,7 +72,7 @@ aurs:
       - "paretosecurity"
     license: GPL3
     private_key: "{{ .Env.AUR_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/nctl-bin.git"
+    git_url: "ssh://aur@aur.archlinux.org/paretosecurity.git"
     commit_author:
       name: paretosecurity Bot
       email: paretosecurity-bot@users.noreply.github.com
