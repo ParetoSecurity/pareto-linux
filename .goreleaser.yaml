@@ -14,11 +14,15 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
+      - windows
     goarch:
       - amd64
       - arm64
     tags:
       - menubar
+    flags:
+      - -v
+      - -trimpath
     gcflags:
       - all=-trimpath=${GOPATH}
     ldflags:
@@ -30,7 +34,12 @@ builds:
 
 archives:
   - builds: [pareto]
-
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README*
 nfpms:
   - vendor: niteo.co
     homepage: https://github.com/paretosecurity/pareto-linux
@@ -57,7 +66,7 @@ changelog:
       - "^test:"
 
 aurs:
-  - name: paretosecurity
+  - name: paretosecurity-bin
     homepage: "https://github.com/paretosecurity/pareto-linux"
     description: Automatically audit your Linux machine for basic security hygiene.
     maintainers:
