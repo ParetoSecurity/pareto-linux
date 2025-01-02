@@ -28,13 +28,7 @@ builds:
       - -X github.com/ParetoSecurity/pareto-linux/shared.Date={{.Date}}
     binary: paretosecurity
 
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-
 archives:
-  - files:
-      - LICENSE
-      - README.md
   - builds: [pareto]
 
 nfpms:
