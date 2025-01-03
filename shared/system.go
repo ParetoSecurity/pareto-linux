@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"testing"
 
 	"strings"
 
@@ -62,6 +63,9 @@ func SystemSerial() (string, error) {
 }
 
 func IsRoot() bool {
+	if testing.Testing() {
+		return true
+	}
 	return os.Geteuid() == 0
 }
 

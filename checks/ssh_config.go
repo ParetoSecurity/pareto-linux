@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"os"
 	"strings"
 
 	"github.com/caarlos0/log"
@@ -72,11 +71,31 @@ func (s *SSHConfigCheck) Passed() bool {
 }
 
 func (s *SSHConfigCheck) IsRunnable() bool {
-	if _, err := os.Stat("/etc/ssh/sshd_config"); os.IsNotExist(err) {
-		s.status = "/etc/ssh/sshd_config not found"
-		return false
+
+	// Check if sshd service is running via systemd
+	sshdStatus, err := shared.RunCommand("systemctl", "is-active", "sshd")
+	if err != nil || strings.TrimSpace(string(sshdStatus)) == "active" {
+		return true
 	}
-	return true
+
+	// Check if ssh service is running via systemd
+	sshStatus, err := shared.RunCommand("systemctl", "is-active", "ssh")
+	if err != nil || strings.TrimSpace(string(sshStatus)) == "active" {
+		return true
+	}
+	// Check if ssh socket service is enabled via systemd
+	sshSocketStatus, err := shared.RunCommand("systemctl", "is-enabled", "sshd.socket")
+	if err != nil || strings.TrimSpace(string(sshSocketStatus)) == "enabled" {
+		return true
+	}
+
+	// Check if ssh socket service is enabled via systemd
+	sshSocketStatus, err = shared.RunCommand("systemctl", "is-enabled", "ssh.socket")
+	if err != nil || strings.TrimSpace(string(sshSocketStatus)) == "enabled" {
+		return true
+	}
+
+	return false
 }
 
 func (s *SSHConfigCheck) ReportIfDisabled() bool {
