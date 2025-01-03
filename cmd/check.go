@@ -26,6 +26,10 @@ var checkCmd = &cobra.Command{
 		installFlag, _ := cc.Flags().GetBool("install")
 		uninstallFlag, _ := cc.Flags().GetBool("uninstall")
 
+		if shared.IsRoot() {
+			log.Fatal("Please run this command as a normal user")
+		}
+
 		if installFlag {
 			installUserTimer()
 			return
