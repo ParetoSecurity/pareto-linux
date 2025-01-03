@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"os"
 	"runtime"
 
 	"github.com/ParetoSecurity/pareto-linux/shared"
 	"github.com/caarlos0/log"
+	"github.com/elastic/go-sysinfo"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +24,18 @@ var versionCmd = &cobra.Command{
 		log.Infof("OS Version: %s", device.OSVersion)
 		log.Infof("Model Name: %s", device.ModelName)
 		log.Infof("Model Serial: %s", device.ModelSerial)
+
+		hostInfo, err := sysinfo.Host()
+		if err != nil {
+			log.Warn("Failed to get process information")
+		}
+		envInfo := hostInfo.Info()
+		jsonOutput, err := json.MarshalIndent(envInfo, "", "  ")
+		if err != nil {
+			log.Warn("Failed to marshal host info")
+		}
+		log.Infof("Host Info: %s", string(jsonOutput))
+
 		os.Exit(0)
 	},
 }
