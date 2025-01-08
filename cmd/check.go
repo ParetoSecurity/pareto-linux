@@ -27,7 +27,7 @@ var checkCmd = &cobra.Command{
 		uninstallFlag, _ := cc.Flags().GetBool("uninstall")
 
 		if shared.IsRoot() {
-			log.Fatal("Please run this command as a normal user")
+			log.Warn("Please run this command as a normal user, as it won't report all checks correctly.")
 		}
 
 		if installFlag {
