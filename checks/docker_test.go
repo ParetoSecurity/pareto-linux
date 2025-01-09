@@ -24,7 +24,7 @@ func TestDockerAccess_Run(t *testing.T) {
 			name:           "Docker not running in rootless mode",
 			commandOutput:  "seccomp",
 			expectedPassed: false,
-			expectedStatus: "Docker is running in rootless mode",
+			expectedStatus: "Docker is not running in rootless mode",
 		},
 		{
 			name:           "Docker running in rootless mode",
