@@ -67,18 +67,18 @@ jobs:
           sudo apt-get -qq --yes install pacman-package-manager libarchive-tools
           mkdir -p apt/arch/
           for file in dist/*.pkg.tar.zst ; do \
-            arch=$(basename $file .pkg.tar.zst | sed 's/.*-//') ; \
+            arch=$(basename $file .pkg.tar.zst | sed 's/.*_\(.*\)\.archlinux\.pkg\.tar\.zst/\1/') ; \
             echo "Processing arch $arch..." && \
             mkdir -p apt/aur/stable/$arch && \
-            cp dist/*-$arch.pkg.tar.zst apt/aur/stable/$arch && \
+            cp dist/*-$arch.archlinux.pkg.tar.zst apt/aur/stable/$arch && \
             repo-add \
               --verify \
               --sign \
               --new \
               --remove \
               --prevent-downgrade \
-              apt/aur/stable/$arch/manala.db.tar.gz apt/aur/stable/$arch/*-$arch.pkg.tar.zst && \
-            gpg --detach-sign --no-armor --batch --yes apt/aur/stable/$arch/*-$arch.pkg.tar.zst ; \
+              apt/aur/stable/$arch/paretosecurity.db.tar.gz apt/aur/stable/$arch/*-$arch.archlinux.pkg.tar.zst && \
+            gpg --detach-sign --no-armor --batch --yes apt/aur/stable/$arch/*-$arch.archlinux.pkg.tar.zst ; \
           done
 
       - name: Host repository for testing
