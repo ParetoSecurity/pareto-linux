@@ -66,12 +66,12 @@ func (f *DockerAccess) ReportIfDisabled() bool {
 
 // PassedMessage returns the message to return if the check passed
 func (f *DockerAccess) PassedMessage() string {
-	return "Docker is not running in rootless mode"
+	return "Docker is running in rootless mode"
 }
 
 // FailedMessage returns the message to return if the check failed
 func (f *DockerAccess) FailedMessage() string {
-	return "Docker is running in rootless mode"
+	return "Docker is not running in rootless mode"
 }
 
 // RequiresRoot returns whether the check requires root access
