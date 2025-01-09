@@ -115,7 +115,7 @@ func onReady() {
 	}
 	systray.SetTemplateIcon(getIcon(), getIcon())
 	systray.SetTooltip("Pareto Security")
-	systray.AddMenuItem("Pareto Security", "").Disable()
+	systray.AddMenuItem(fmt.Sprintf("Pareto Security - %s", shared.Version), "").Disable()
 
 	addOptions()
 	systray.AddSeparator()
