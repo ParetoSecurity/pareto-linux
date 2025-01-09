@@ -20,6 +20,20 @@ if [[ -f /etc/os-release ]]; then
     fi
 fi
 
+#Arch Linux
+if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+    if [[ "$ID_LIKE" == "arch" ]]; then
+        # Download and install GPG key
+        curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | pacman-key --add -
+        # Add Pareto repository if not already present
+        if ! grep -q "\[pareto\]" /etc/pacman.conf; then
+            echo '[pareto]' | tee -a /etc/pacman.conf >/dev/null
+            echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | tee -a /etc/pacman.conf >/dev/null
+        fi
+    fi
+fi
+
 # Check for systemd
 if command -v systemctl >/dev/null 2>&1; then
     # Create socket unit
