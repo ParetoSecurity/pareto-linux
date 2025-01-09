@@ -19,13 +19,13 @@ func CurrentReportingDevice() ReportingDevice {
 		log.WithError(err).Fatal("Failed to get device information")
 	}
 
-	osVersion := Sanitize(device.OS)
+	osVersion := device.OS
 	if runtime.GOOS == "windows" {
-		osVersion = Sanitize(strings.ReplaceAll(osVersion, "Microsoft", ""))
+		osVersion = strings.ReplaceAll(osVersion, "Microsoft", "")
 		osVersion = fmt.Sprintf("%s %s", osVersion, device.OSVersion)
 	}
 
-	osVersion = fmt.Sprintf("%s %s", osVersion, device.OSVersion)
+	osVersion = Sanitize(fmt.Sprintf("%s %s", osVersion, device.OSVersion))
 
 	return ReportingDevice{
 		MachineUUID: device.UUID,
