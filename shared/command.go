@@ -2,9 +2,12 @@ package shared
 
 import (
 	"errors"
+
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/caarlos0/log"
 )
 
 // RunCommandMocks is a map that stores mock command outputs.
@@ -28,5 +31,6 @@ func RunCommand(name string, arg ...string) (string, error) {
 
 	cmd := exec.Command(name, arg...)
 	output, err := cmd.CombinedOutput()
+	log.WithField("cmd", string(name+" "+strings.Join(arg, " "))).WithError(err).Debug(string(output))
 	return string(output), err
 }
