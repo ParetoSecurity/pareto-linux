@@ -116,7 +116,7 @@ func (f *EncryptingFS) Run() error {
 		}
 	}
 
-	f.passed = false
+	f.passed = maybeCryptoViaKernel()
 	f.status = f.FailedMessage()
 
 	return nil
@@ -128,4 +128,23 @@ func (f *EncryptingFS) Status() string {
 		return f.PassedMessage()
 	}
 	return f.status
+}
+
+func maybeCryptoViaKernel() bool {
+	// Read kernel parameters to check if root is booted via crypt
+	cmdline, err := shared.ReadFile("/proc/cmdline")
+	if err != nil {
+		log.WithError(err).Warn("Failed to read /proc/cmdline")
+	}
+
+	params := strings.Fields(string(cmdline))
+	for _, param := range params {
+		if strings.HasPrefix(param, "cryptdevice=") {
+			parts := strings.Split(param, ":")
+			if len(parts) == 3 && parts[2] == "root" {
+				return true
+			}
+		}
+	}
+	return false
 }

@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"os/exec"
 	"strings"
 
 	"github.com/ParetoSecurity/pareto-linux/shared"
@@ -91,7 +90,7 @@ func (k *KernelParamsCheck) RequiresRoot() bool {
 }
 
 func getSysctlValue(param string) (string, error) {
-	out, err := exec.Command("sysctl", "-n", param).Output()
+	out, err := shared.RunCommand("sysctl", "-n", param)
 	if err != nil {
 		return "", err
 	}
