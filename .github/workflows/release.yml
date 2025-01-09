@@ -61,6 +61,13 @@ jobs:
       - name: Create RPM repository
         run: mv dist/*.rpm apt/rpm && createrepo_c apt/rpm
 
+      - name: Create Arch repository
+        run: |
+          sudo apt -y -q install pacman-package-manager
+          mkdir -p apt/arch/
+          mv dist/*.pkg.tar.zst apt/arch/
+          repo-add apt/arch/paretosecurity.db.tar.zst apt/arch/*pkg.tar.zst || true
+
       - name: Host repository for testing
         uses: Eun/http-server-action@f71cec1321f665652a46c40b6852f8e5a68bfcd4 # v1
         with:
