@@ -25,6 +25,8 @@ func CurrentReportingDevice() ReportingDevice {
 		osVersion = fmt.Sprintf("%s %s", osVersion, device.OSVersion)
 	}
 
+	osVersion = fmt.Sprintf("%s %s", osVersion, device.OSVersion)
+
 	return ReportingDevice{
 		MachineUUID: device.UUID,
 		MachineName: Sanitize(device.Hostname),
