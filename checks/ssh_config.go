@@ -73,29 +73,25 @@ func (s *SSHConfigCheck) Passed() bool {
 func (s *SSHConfigCheck) IsRunnable() bool {
 
 	// Check if sshd service is running via systemd
-	sshdStatus, err := shared.RunCommand("systemctl", "is-active", "sshd")
-	if err != nil || strings.TrimSpace(string(sshdStatus)) == "active" {
+	sshdStatus, _ := shared.RunCommand("systemctl", "is-active", "sshd")
+	if strings.TrimSpace(string(sshdStatus)) != "inactive" {
 		return true
 	}
 
 	// Check if ssh service is running via systemd
-	sshStatus, err := shared.RunCommand("systemctl", "is-active", "ssh")
-	if err != nil || strings.TrimSpace(string(sshStatus)) == "active" {
+	sshStatus, _ := shared.RunCommand("systemctl", "is-active", "ssh")
+	if strings.TrimSpace(string(sshStatus)) != "inactive" {
 		return true
 	}
 	// Check if ssh socket service is enabled via systemd
-	sshSocketStatus, err := shared.RunCommand("systemctl", "is-enabled", "sshd.socket")
-	if err != nil || strings.TrimSpace(string(sshSocketStatus)) == "enabled" {
+	sshSocketStatus, _ := shared.RunCommand("systemctl", "is-enabled", "sshd.socket")
+	if strings.TrimSpace(string(sshSocketStatus)) == "enabled" {
 		return true
 	}
 
 	// Check if ssh socket service is enabled via systemd
-	sshSocketStatus, err = shared.RunCommand("systemctl", "is-enabled", "ssh.socket")
-	if err != nil || strings.TrimSpace(string(sshSocketStatus)) == "enabled" {
-		return true
-	}
-
-	return false
+	sshSocketStatus, _ = shared.RunCommand("systemctl", "is-enabled", "ssh.socket")
+	return strings.TrimSpace(string(sshSocketStatus)) == "enabled"
 }
 
 func (s *SSHConfigCheck) ReportIfDisabled() bool {
