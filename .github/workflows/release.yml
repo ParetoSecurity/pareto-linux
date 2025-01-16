@@ -69,6 +69,7 @@ jobs:
           for file in dist/*.pkg.tar.zst ; do \
             arch=$(basename $file .archlinux.pkg.tar.zst | sed 's/.*_//') ; \
             if [ "$arch" = "arm64" ]; then arch="aarch64"; fi ; \
+            if [ "$arch" = "aarch64" ]; then mv $file ${file/arm64/arch64} ; fi ; \
             echo "Processing arch $arch..." && \
             mkdir -p apt/aur/stable/$arch && \
             cp dist/*_$arch.archlinux.pkg.tar.zst apt/aur/stable/$arch && \
