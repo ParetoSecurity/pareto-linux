@@ -19,7 +19,7 @@ require (
 	github.com/charmbracelet/x/ansi v0.6.0 // indirect
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/elastic/go-windows v1.0.0 // indirect
-	github.com/elliotchance/orderedmap/v2 v2.6.0 // indirect
+	github.com/elliotchance/orderedmap/v2 v2.7.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gookit/color v1.5.4 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8 // indirect
@@ -42,7 +42,7 @@ require (
 
 require (
 	fyne.io/systray v1.11.0
-	github.com/caarlos0/log v0.4.6
+	github.com/caarlos0/log v0.4.8
 	github.com/carlmjohnson/requests v0.24.3
 	github.com/elastic/go-sysinfo v1.15.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
