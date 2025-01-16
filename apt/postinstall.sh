@@ -28,7 +28,7 @@ if [[ -f /etc/os-release ]]; then
         curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | pacman-key --add -
         # Add Pareto repository if not already present
         if ! grep -q "\[pareto\]" /etc/pacman.conf; then
-            echo '[pareto]' | tee -a /etc/pacman.conf >/dev/null
+            echo '[paretosecurity]' | tee -a /etc/pacman.conf >/dev/null
             echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | tee -a /etc/pacman.conf >/dev/null
         fi
     fi
