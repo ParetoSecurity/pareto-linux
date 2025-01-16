@@ -182,8 +182,53 @@
             </div>
         </div>
 
+        <!-- Archlinux-based distributions -->
+        <div class="mt-12 max-w-5xl mx-auto">
+            <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">Archlinux-based
+                distributions</h2>
+            <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold text-blue-600 mb-4">Installing</h3>
+                <p class="text-slate-500 mb-4">
+                    The easiest way to install ParetoSecurity is to download the x64 .archlinux package or ARM64
+                    .archlinux
+                    package. After downloading, you can install the package with:
+                </p>
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                    sudo pacman -U paretosecurity_{amd64||arm64}.archlinux.pkg.tar.zst
+                </div>
+                <p class="text-slate-500 mb-4">
+                    Installing the .archlinux package will automatically set up the ParetoSecurity arch repository. On
+                    first update, pacman will retrieve the signing key needed to verify the integrity of the downloaded
+                    packages.
+                </p>
+                <p class="text-slate-500 mb-4">
+                    Alternatively, you can manually configure the ParetoSecurity pacman repository and install
+                    ParetoSecurity by running the following commands:
+                </p>
+                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | pacman-key --add -
+                    echo '[paretosecurity]' | tee -a /etc/pacman.conf >/dev/null
+                    echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | tee -a /etc/pacman.conf
+                    >/dev/null
+                    sudo pacman -Syu paretosecurity
+                </div>
+                <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
+                <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
+                    paretosecurity check
+                </div>
+                <p class="text-slate-500 mt-4">
+                    This will analyze your system and provide a security report highlighting potential improvements and
+                    vulnerabilities.
+                </p>
+            </div>
+        </div>
+
         <footer class="text-center text-slate-500 mt-12">
-            © 2024 ParetoSecurity. All rights reserved.
+            © 2025 ParetoSecurity. All rights reserved.
         </footer>
     </div>
 </body>
