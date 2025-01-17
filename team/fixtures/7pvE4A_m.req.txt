@@ -1,0 +1,5 @@
+PUT /api/v1/team/test-team-id/device HTTP/1.1
+Host: dash.paretosecurity.com
+Content-Type: application/json
+
+{"machineUUID":"f9b4cd87-d375-5b64-8a59-0261ee56c481","machineName":"Mac","auth":"test-token","macOSVersion":"macOS 15.3","modelName":"Unknown","modelSerial":"Unknown"}
