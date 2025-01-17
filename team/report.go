@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
+	"testing"
 	"time"
 
 	"github.com/caarlos0/log"
@@ -26,6 +27,13 @@ type Report struct {
 	LastCheck         string                 `json:"lastCheck"`
 	SignificantChange string                 `json:"significantChange"`
 	State             map[string]string      `json:"state"`
+}
+
+func currentTime() string {
+	if testing.Testing() {
+		return "2025-01-17T20:29:40+01:00"
+	}
+	return time.Now().Format(time.RFC3339)
 }
 
 func NowReport() Report {
@@ -66,7 +74,7 @@ func NowReport() Report {
 		DisabledCount:     disabled,
 		Device:            shared.CurrentReportingDevice(),
 		Version:           shared.Version,
-		LastCheck:         time.Now().Format(time.RFC3339),
+		LastCheck:         currentTime(),
 		SignificantChange: hex.EncodeToString(significantChange[:]),
 		State:             checkStates,
 	}

@@ -166,9 +166,9 @@
                 <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
                     <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
                         class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
-                    sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg
-                    curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee
-                    /etc/yum.repos.d/paretosecurity.repo
+                    sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg<br>
+                    curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee<br>
+                    /etc/yum.repos.d/paretosecurity.repo<br>
                     sudo dnf install paretosecurity
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
@@ -210,10 +210,10 @@
                 <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
                     <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
                         class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
-                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | pacman-key --add -
-                    echo '[paretosecurity]' | tee -a /etc/pacman.conf >/dev/null
-                    echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | tee -a /etc/pacman.conf
-                    >/dev/null
+                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo pacman-key --add -<br>
+                    echo '[paretosecurity]' | sudo tee -a /etc/pacman.conf >/dev/null<br>
+                    echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | sudo tee -a /etc/pacman.conf
+                    >/dev/null<br>
                     sudo pacman -Syu paretosecurity
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
