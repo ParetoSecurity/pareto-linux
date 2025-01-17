@@ -24,6 +24,7 @@ in {
       echo "Test coverage is below 20%: $coverage%"
       exit 1
     fi
+    echo "Test coverage is $coverage%"
   '';
 
   # https://devenv.sh/pre-commit-hooks/
