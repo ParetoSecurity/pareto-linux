@@ -95,11 +95,6 @@ func (f *Sharing) UUID() string {
 	return "b96524e0-850b-4bb8-abc7-517051b6c14e"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *Sharing) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *Sharing) PassedMessage() string {
 	return "No file sharing services found running"

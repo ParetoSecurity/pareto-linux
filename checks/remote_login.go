@@ -93,11 +93,6 @@ func (f *RemoteLogin) UUID() string {
 	return "4ced961d-7cfc-4e7b-8f80-195f6379446e"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *RemoteLogin) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *RemoteLogin) PassedMessage() string {
 	return "No remote access services found running"

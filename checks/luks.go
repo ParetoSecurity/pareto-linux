@@ -40,11 +40,6 @@ func (f *EncryptingFS) UUID() string {
 	return "21830a4e-84f1-48fe-9c5b-beab436b2cdb"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *EncryptingFS) ReportIfDisabled() bool {
-	return true
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *EncryptingFS) PassedMessage() string {
 	return "Block device encryption is enabled"

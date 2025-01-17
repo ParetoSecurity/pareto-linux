@@ -67,11 +67,6 @@ func (f *PasswordToUnlock) UUID() string {
 	return "37dee029-605b-4aab-96b9-5438e5aa44d8"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *PasswordToUnlock) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *PasswordToUnlock) PassedMessage() string {
 	return "Password after sleep or screensaver is on"

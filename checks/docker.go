@@ -59,11 +59,6 @@ func (f *DockerAccess) UUID() string {
 	return "25443ceb-c1ec-408c-b4f3-2328ea0c84e1"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *DockerAccess) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *DockerAccess) PassedMessage() string {
 	return "Docker is running in rootless mode"

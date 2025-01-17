@@ -40,6 +40,8 @@ func TestSharing_Run(t *testing.T) {
 			err := sharing.Run()
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expected, sharing.Passed())
+			assert.NotEmpty(t, sharing.UUID())
+			assert.False(t, sharing.RequiresRoot())
 		})
 	}
 }

@@ -97,11 +97,6 @@ func (f *SoftwareUpdates) UUID() string {
 	return "7436553a-ae52-479b-937b-2ae14d15a520"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *SoftwareUpdates) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *SoftwareUpdates) PassedMessage() string {
 	return "All apps are up to date"

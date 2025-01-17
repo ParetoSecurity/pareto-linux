@@ -57,11 +57,9 @@ func NowReport() Report {
 						checkStates[check.UUID()] = "fail"
 					}
 				} else {
-					if check.ReportIfDisabled() {
-						disabled++
-						disabledSeed += check.UUID()
-						checkStates[check.UUID()] = "off"
-					}
+					disabled++
+					disabledSeed += check.UUID()
+					checkStates[check.UUID()] = "off"
 				}
 			}
 		}

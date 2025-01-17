@@ -69,6 +69,8 @@ func TestAutologin_Run(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedPassed, a.Passed())
 			assert.Equal(t, tt.expectedStatus, a.Status())
+			assert.NotEmpty(t, a.UUID())
+			assert.False(t, a.RequiresRoot())
 		})
 	}
 }

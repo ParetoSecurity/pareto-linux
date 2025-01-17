@@ -37,6 +37,8 @@ func TestPrinterRun(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedPassed, printer.Passed())
 			assert.Equal(t, tt.expectedPorts, printer.ports)
+			assert.NotEmpty(t, printer.UUID())
+			assert.False(t, printer.RequiresRoot())
 		})
 	}
 }

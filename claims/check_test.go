@@ -14,7 +14,6 @@ func TestClaims(t *testing.T) {
 				t.Errorf("Claim %s has a nil check", claim.Title)
 			}
 			check.RequiresRoot()
-			check.ReportIfDisabled()
 			check.Status()
 			check.UUID()
 			check.Passed()

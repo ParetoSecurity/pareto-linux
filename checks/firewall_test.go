@@ -81,6 +81,8 @@ func TestCheckFirewalld(t *testing.T) {
 			f := &Firewall{}
 			result := f.checkFirewalld()
 			assert.Equal(t, tt.expectedResult, result)
+			assert.NotEmpty(t, f.UUID())
+			assert.True(t, f.RequiresRoot())
 		})
 	}
 }

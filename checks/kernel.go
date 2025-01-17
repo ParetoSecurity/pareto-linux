@@ -70,10 +70,6 @@ func (k *KernelParamsCheck) IsRunnable() bool {
 	return can
 }
 
-func (k *KernelParamsCheck) ReportIfDisabled() bool {
-	return true
-}
-
 func (k *KernelParamsCheck) UUID() string {
 	return "cbf2736b-72df-43e3-8789-8eb676ff9014"
 }

@@ -146,11 +146,6 @@ func (f *SSHKeysAlgo) UUID() string {
 	return "ef69f752-0e89-46e2-a644-310429ae5f45"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *SSHKeysAlgo) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *SSHKeysAlgo) PassedMessage() string {
 	return "SSH keys use strong encryption"

@@ -90,11 +90,6 @@ func (f *ParetoUpdated) UUID() string {
 	return "44e4754a-0b42-4964-9cc2-b88b2023cb1e"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *ParetoUpdated) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *ParetoUpdated) PassedMessage() string {
 	return "Pareto Security is up to date"

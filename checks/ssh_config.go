@@ -94,10 +94,6 @@ func (s *SSHConfigCheck) IsRunnable() bool {
 	return strings.TrimSpace(string(sshSocketStatus)) == "enabled"
 }
 
-func (s *SSHConfigCheck) ReportIfDisabled() bool {
-	return true
-}
-
 func (s *SSHConfigCheck) UUID() string {
 	return "da4edd80-6af0-4fb3-9fc7-f9a0e9d07f3b"
 }

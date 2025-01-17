@@ -46,6 +46,8 @@ func TestDockerAccess_Run(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedPassed, dockerAccess.passed)
 			assert.Equal(t, tt.expectedStatus, dockerAccess.status)
+			assert.NotEmpty(t, dockerAccess.UUID())
+			assert.False(t, dockerAccess.RequiresRoot())
 		})
 	}
 }

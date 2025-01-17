@@ -100,11 +100,6 @@ func (f *Firewall) UUID() string {
 	return "2e46c89a-5461-4865-a92e-3b799c12034a"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *Firewall) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *Firewall) PassedMessage() string {
 	return "Firewall is on"

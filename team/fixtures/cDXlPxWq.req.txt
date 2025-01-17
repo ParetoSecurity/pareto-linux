@@ -1,0 +1,5 @@
+PATCH /api/v1/team/test-team-id/device HTTP/1.1
+Host: dash.paretosecurity.com
+Content-Type: application/json
+
+{"passedCount":0,"failedCount":11,"disabledCount":4,"device":{"machineUUID":"f9b4cd87-d375-5b64-8a59-0261ee56c481","machineName":"Mac","auth":"test-token","macOSVersion":"macOS 15.3","modelName":"Unknown","modelSerial":"Unknown"},"version":"dev","lastCheck":"2025-01-17T20:29:40+01:00","significantChange":"ec076a467e57f0961a03d6e58b4bf17d8d1b83ffdcb9b7875bad1a441ffdaa69","state":{"21830a4e-84f1-48fe-9c5b-beab436b2cdb":"off","25443ceb-c1ec-408c-b4f3-2328ea0c84e1":"off","2e46c89a-5461-4865-a92e-3b799c12034a":"off","37dee029-605b-4aab-96b9-5438e5aa44d8":"fail","44e4754a-0b42-4964-9cc2-b88b2023cb1e":"fail","4ced961d-7cfc-4e7b-8f80-195f6379446e":"fail","7436553a-ae52-479b-937b-2ae14d15a520":"fail","b96524e0-150b-4bb8-abc7-517051b6c14e":"fail","b96524e0-850b-4bb8-abc7-517051b6c14e":"fail","c96524f2-850b-4bb9-abc7-517051b6c14e":"fail","cbf2736b-72df-43e3-8789-8eb676ff9014":"off","da4edd80-6af0-4fb3-9fc7-f9a0e9d07f3b":"fail","ef69f752-0e89-46e2-a644-310429ae5f45":"fail","f962c423-fdf5-428a-a57a-816abc9b253e":"fail"}}

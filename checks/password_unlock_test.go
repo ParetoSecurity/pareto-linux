@@ -82,6 +82,8 @@ func TestCheckGnome(t *testing.T) {
 			f := &PasswordToUnlock{}
 			result := f.checkGnome()
 			assert.Equal(t, tt.expected, result)
+			assert.NotEmpty(t, f.UUID())
+			assert.False(t, f.RequiresRoot())
 		})
 	}
 }

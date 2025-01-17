@@ -36,4 +36,6 @@ func TestRemoteLogin_Run_OpenPorts(t *testing.T) {
 	assert.Contains(t, remoteLogin.ports, 3389)
 	assert.NotContains(t, remoteLogin.ports, 3390)
 	assert.NotContains(t, remoteLogin.ports, 5900)
+	assert.NotEmpty(t, remoteLogin.UUID())
+	assert.False(t, remoteLogin.RequiresRoot())
 }

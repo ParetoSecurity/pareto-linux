@@ -15,7 +15,6 @@ type Check interface {
 	Run() error
 	Passed() bool
 	IsRunnable() bool
-	ReportIfDisabled() bool
 	UUID() string
 	Status() string
 	RequiresRoot() bool

@@ -81,11 +81,6 @@ func (f *Autologin) UUID() string {
 	return "f962c423-fdf5-428a-a57a-816abc9b253e"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *Autologin) ReportIfDisabled() bool {
-	return false
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *Autologin) PassedMessage() string {
 	return "Automatic login is off"

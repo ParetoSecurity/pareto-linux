@@ -50,7 +50,8 @@ func TestKernelParamsCheck_Run(t *testing.T) {
 				assert.NoError(t, err)
 			}
 			assert.Equal(t, tt.expectedPassed, k.Passed())
-
+			assert.NotEmpty(t, k.UUID())
+			assert.True(t, k.RequiresRoot())
 		})
 	}
 }

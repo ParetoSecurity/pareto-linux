@@ -51,6 +51,8 @@ func TestCheckUpdates(t *testing.T) {
 			passed, detail := su.checkUpdates()
 			assert.Equal(t, tt.expectedPassed, passed)
 			assert.Equal(t, tt.expectedDetail, detail)
+			assert.NotEmpty(t, su.UUID())
+			assert.False(t, su.RequiresRoot())
 		})
 	}
 }

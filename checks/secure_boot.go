@@ -66,11 +66,6 @@ func (f *SecureBoot) UUID() string {
 	return "c96524f2-850b-4bb9-abc7-517051b6c14e"
 }
 
-// ReportIfDisabled returns whether the check should report if it is disabled
-func (f *SecureBoot) ReportIfDisabled() bool {
-	return true
-}
-
 // PassedMessage returns the message to return if the check passed
 func (f *SecureBoot) PassedMessage() string {
 	return "SecureBoot is enabled"
