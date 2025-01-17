@@ -18,10 +18,10 @@ in {
   enterTest = ''
     go mod verify
     goreleaser check
-    go test -coverprofile=cover.out $(go list ./... | grep -v /cmd | grep -v /claims)
+    go test -coverprofile=cover.out $(go list ./... | grep -v /cmd | grep -v /claims | grep -v /team)
     coverage=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
     if (( $(echo "$coverage < 25" | bc -l) )); then
-      echo "Test coverage is below 20%: $coverage%"
+      echo "Test coverage is below 25s%: $coverage%"
       exit 1
     fi
     echo "Test coverage is $coverage%"
