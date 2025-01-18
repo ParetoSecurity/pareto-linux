@@ -211,6 +211,7 @@
                     <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
                         class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
                     curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo pacman-key --add -<br>
+                    sudo pacman-key --lsign-key info@niteo.co<br>
                     echo '[paretosecurity]' | sudo tee -a /etc/pacman.conf >/dev/null<br>
                     echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | sudo tee -a /etc/pacman.conf
                     >/dev/null<br>
