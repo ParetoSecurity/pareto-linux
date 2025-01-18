@@ -26,6 +26,7 @@ if [[ -f /etc/os-release ]]; then
     if [[ "$ID_LIKE" == "arch" ]]; then
         # Download and install GPG key
         curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | pacman-key --add -
+        pacman-key --lsign-key info@niteo.co >/dev/null
         # Add Pareto repository if not already present
         if ! grep -q "\[paretosecurity\]" /etc/pacman.conf; then
             echo '[paretosecurity]' | tee -a /etc/pacman.conf >/dev/null
