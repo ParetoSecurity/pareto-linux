@@ -91,11 +91,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold text-blue-600 mb-2">Automatic installation</h3>
+                    <p class="text-slate-500 mb-4">You can automatically install ParetoSecurity with:</p>
+                    <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                        <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                            class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                        curl -sl pkg.paretosecurity.com/install.sh | sudo bash
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Debian- and Ubuntu-based distributions -->
-        <div class="mt-12 max-w-5xl mx-auto">
+        <div class="mt-12 max-w-5xl mx-auto" x-data="{ showManualDebian: false }">
             <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">Debian- and Ubuntu-based distributions
             </h2>
             <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
@@ -114,19 +123,26 @@
                     signing key needed to automatically update ParetoSecurity and verify the integrity of the
                     downloaded packages.
                 </p>
-                <p class="text-slate-500 mb-4">
-                    Alternatively, you can manually configure the ParetoSecurity APT repository and install
-                    ParetoSecurity by running the following commands:
-                </p>
-                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
-                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
-                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
-                    sudo apt-get install wget gpg<br>
-                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee
-                    /usr/share/keyrings/paretosecurity.gpg >/dev/null<br>
-                    echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg] https://pkg.paretosecurity.com/debian
-                    stable main' | sudo tee /etc/apt/sources.list.d/pareto.list<br>
-                    sudo apt update && sudo apt install paretosecurity
+                <button @click="showManualDebian = !showManualDebian"
+                    class="bg-gray-300 hover:bg-gray-400 text-black py-1 px-3 rounded text-sm">
+                    Show manual installation
+                </button>
+                <div x-show="showManualDebian" x-cloak>
+                    <p class="text-slate-500 mb-4">
+                        Alternatively, you can manually configure the ParetoSecurity APT repository and install
+                        ParetoSecurity by running the following commands:
+                    </p>
+                    <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                        <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                            class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                        sudo apt-get install wget gpg<br>
+                        curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo tee
+                        /usr/share/keyrings/paretosecurity.gpg >/dev/null<br>
+                        echo 'deb [signed-by=/usr/share/keyrings/paretosecurity.gpg]
+                        https://pkg.paretosecurity.com/debian
+                        stable main' | sudo tee /etc/apt/sources.list.d/pareto.list<br>
+                        sudo apt update && sudo apt install paretosecurity
+                    </div>
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
                 <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
@@ -140,7 +156,7 @@
         </div>
 
         <!-- RHEL-, Fedora-, and CentOS-based distributions -->
-        <div class="mt-12 max-w-5xl mx-auto">
+        <div class="mt-12 max-w-5xl mx-auto" x-data="{ showManualRhel: false }">
             <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">RHEL-, Fedora-, and CentOS-based
                 distributions</h2>
             <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
@@ -159,17 +175,23 @@
                     first update, dnf will retrieve the signing key needed to verify the integrity of the downloaded
                     packages.
                 </p>
-                <p class="text-slate-500 mb-4">
-                    Alternatively, you can manually configure the ParetoSecurity yum repository and install
-                    ParetoSecurity by running the following commands:
-                </p>
-                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
-                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
-                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
-                    sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg<br>
-                    curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee<br>
-                    /etc/yum.repos.d/paretosecurity.repo<br>
-                    sudo dnf install paretosecurity
+                <button @click="showManualRhel = !showManualRhel"
+                    class="bg-gray-300 hover:bg-gray-400 text-black py-1 px-3 rounded text-sm">
+                    Show manual installation
+                </button>
+                <div x-show="showManualRhel" x-cloak>
+                    <p class="text-slate-500 mb-4">
+                        Alternatively, you can manually configure the ParetoSecurity yum repository and install
+                        ParetoSecurity by running the following commands:
+                    </p>
+                    <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                        <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                            class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                        sudo rpm --import https://pkg.paretosecurity.com/paretosecurity.gpg<br>
+                        curl -fsSl https://pkg.paretosecurity.com/rpm/paretosecurity.repo | sudo tee<br>
+                        /etc/yum.repos.d/paretosecurity.repo<br>
+                        sudo dnf install paretosecurity
+                    </div>
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
                 <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
@@ -183,7 +205,7 @@
         </div>
 
         <!-- Archlinux-based distributions -->
-        <div class="mt-12 max-w-5xl mx-auto">
+        <div class="mt-12 max-w-5xl mx-auto" x-data="{ showManualArch: false }">
             <h2 class="text-2xl font-semibold text-center text-slate-800 mb-4">Archlinux-based
                 distributions</h2>
             <div class="bg-white border border-slate-200 p-6 rounded-lg shadow-sm">
@@ -203,19 +225,26 @@
                     first update, pacman will retrieve the signing key needed to verify the integrity of the downloaded
                     packages.
                 </p>
-                <p class="text-slate-500 mb-4">
-                    Alternatively, you can manually configure the ParetoSecurity pacman repository and install
-                    ParetoSecurity by running the following commands:
-                </p>
-                <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
-                    <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
-                        class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
-                    curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo pacman-key --add -<br>
-                    sudo pacman-key --lsign-key info@niteo.co<br>
-                    echo '[paretosecurity]' | sudo tee -a /etc/pacman.conf >/dev/null<br>
-                    echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | sudo tee -a /etc/pacman.conf
-                    >/dev/null<br>
-                    sudo pacman -Syu paretosecurity
+                <button @click="showManualArch = !showManualArch"
+                    class="bg-gray-300 hover:bg-gray-400 text-black py-1 px-3 rounded text-sm">
+                    Show manual installation
+                </button>
+                <div x-show="showManualArch" x-cloak>
+                    <p class="text-slate-500 mb-4">
+                        Alternatively, you can manually configure the ParetoSecurity pacman repository and install
+                        ParetoSecurity by running the following commands:
+                    </p>
+                    <div class="relative bg-black text-green-400 font-mono p-4 rounded text-sm mb-4">
+                        <button @click="navigator.clipboard.writeText($el.parentElement.innerText.replace('Copy', ''))"
+                            class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-2 rounded text-xs">Copy</button>
+                        curl -fsSL https://pkg.paretosecurity.com/paretosecurity.gpg | sudo pacman-key --add -<br>
+                        sudo pacman-key --lsign-key info@niteo.co<br>
+                        echo '[paretosecurity]' | sudo tee -a /etc/pacman.conf >/dev/null<br>
+                        echo "Server = https://pkg.paretosecurity.com/aur/stable/$(uname -m)" | sudo tee -a
+                        /etc/pacman.conf
+                        >/dev/null<br>
+                        sudo pacman -Syu paretosecurity
+                    </div>
                 </div>
                 <h3 class="text-lg font-semibold text-blue-600 my-4">Quick Start</h3>
                 <div class="bg-black text-green-400 font-mono p-4 rounded text-sm">
