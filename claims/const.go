@@ -14,7 +14,7 @@ var All = []Claim{
 		check.Register(&checks.SSHKeysAlgo{}),
 		check.Register(&checks.SSHConfigCheck{}),
 	}},
-	{"System Updates", []check.Check{
+	{"Software Updates", []check.Check{
 		check.Register(&checks.SoftwareUpdates{}),
 		check.Register(&checks.ParetoUpdated{}),
 	}},
