@@ -2,7 +2,8 @@ package claims
 
 import (
 	"github.com/ParetoSecurity/pareto-core/check"
-	checks "github.com/ParetoSecurity/pareto-core/checks"
+	checks "github.com/ParetoSecurity/pareto-core/checks/linux"
+	shared "github.com/ParetoSecurity/pareto-core/checks/shared"
 )
 
 var All = []Claim{
@@ -16,12 +17,12 @@ var All = []Claim{
 	}},
 	{"Software Updates", []check.Check{
 		check.Register(&checks.SoftwareUpdates{}),
-		check.Register(&checks.ParetoUpdated{}),
+		check.Register(&shared.ParetoUpdated{}),
 	}},
 	{"Firewall & Sharing", []check.Check{
 		check.Register(&checks.Firewall{}),
 		check.Register(&checks.Printer{}),
-		check.Register(&checks.RemoteLogin{}),
+		check.Register(&shared.RemoteLogin{}),
 		check.Register(&checks.Sharing{}),
 	}},
 	{"System Integrity", []check.Check{

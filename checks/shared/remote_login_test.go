@@ -1,4 +1,4 @@
-package checks
+package shared
 
 import (
 	"testing"
@@ -24,7 +24,7 @@ func TestRemoteLogin_Run_OpenPorts(t *testing.T) {
 	remoteLogin := &RemoteLogin{}
 
 	// Mock checkPort to return true for specific ports
-	checkPortMock = func(port int, proto string) bool {
+	checkPortMock = func(port int, _ string) bool {
 		return port == 22 || port == 3389
 	}
 
