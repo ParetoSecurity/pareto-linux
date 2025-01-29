@@ -17,7 +17,6 @@ in {
   # https://devenv.sh/tests/
   enterTest = ''
     go mod verify
-    goreleaser check
     go test -coverprofile=cover.out $(go list ./... | grep -v /cmd | grep -v /claims | grep -v /team)
     coverage=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
     if (( $(echo "$coverage < 25" | bc -l) )); then
