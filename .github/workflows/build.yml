@@ -51,7 +51,7 @@ jobs:
           path: dist
   integration:
     name: Test on ${{ matrix.os }}
-    runs-on: namespace-profile-pareto-core
+    runs-on: namespace-profile-pareto-linux
     needs: build
     strategy:
       matrix:
