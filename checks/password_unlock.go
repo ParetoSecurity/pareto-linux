@@ -4,7 +4,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/shared"
 )
 
 type PasswordToUnlock struct {

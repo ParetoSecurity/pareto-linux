@@ -12,8 +12,8 @@ import (
 	"github.com/carlmjohnson/requests"
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/ParetoSecurity/pareto-linux/claims"
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/claims"
+	shared "github.com/ParetoSecurity/pareto-core/shared"
 )
 
 const reportURL = "https://dash.paretosecurity.com"

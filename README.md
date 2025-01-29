@@ -1,8 +1,8 @@
-# pareto-linux
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ParetoSecurity/pareto-linux/badge)](https://scorecard.dev/viewer/?uri=github.com/ParetoSecurity/pareto-linux)
-[![Integration Tests](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/build.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/build.yml)
-[![Unit Tests](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/unit.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/unit.yml)
-[![Release](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/release.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-linux/actions/workflows/release.yml)
+# pareto-core
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ParetoSecurity/pareto-core/badge)](https://scorecard.dev/viewer/?uri=github.com/ParetoSecurity/pareto-core)
+[![Integration Tests](https://github.com/ParetoSecurity/pareto-core/actions/workflows/build.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-core/actions/workflows/build.yml)
+[![Unit Tests](https://github.com/ParetoSecurity/pareto-core/actions/workflows/unit.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-core/actions/workflows/unit.yml)
+[![Release](https://github.com/ParetoSecurity/pareto-core/actions/workflows/release.yml/badge.svg)](https://github.com/ParetoSecurity/pareto-core/actions/workflows/release.yml)
 
 
 Automatically audit your Linux machine for basic security hygiene.
@@ -35,7 +35,7 @@ paretosecurity check --json
 To run a one-time security audit without installation:
 
 ```bash
-nix run github:paretosecurity/pareto-linux -- check
+nix run github:paretosecurity/pareto-core -- check
 ```
 
 or if running from local repo with JSON reporter
@@ -56,7 +56,7 @@ This will analyze your system and provide a security report highlighting potenti
 As root run:
 
 ```ShellSession
-$ sudo nix-channel --add https://github.com/paretosecurity/pareto-linux/archive/main.tar.gz paretosecurity
+$ sudo nix-channel --add https://github.com/paretosecurity/pareto-core/archive/main.tar.gz paretosecurity
 $ sudo nix-channel --update
 ```
 
@@ -93,7 +93,7 @@ To install the `paretosecurity` binary:
 
 ```nix
 {
-  inputs.paretosecurity.url = "github:paretosecurity/pareto-linux";
+  inputs.paretosecurity.url = "github:paretosecurity/pareto-core";
   # optional, not necessary for the module
   #inputs.paretosecurity.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -126,7 +126,7 @@ e.g. inside your `flake.nix` file:
 
 ```nix
 {
-  inputs.paretosecurity.url = "github:paretosecurity/pareto-linux";
+  inputs.paretosecurity.url = "github:paretosecurity/pareto-core";
   # ...
 
   outputs = { self, nixpkgs, paretosecurity }: {

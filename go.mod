@@ -1,4 +1,4 @@
-module github.com/ParetoSecurity/pareto-linux
+module github.com/ParetoSecurity/pareto-core
 
 go 1.23.0
 

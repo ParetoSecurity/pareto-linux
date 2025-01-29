@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ParetoSecurity/pareto-linux/shared"
-	"github.com/ParetoSecurity/pareto-linux/team"
+	"github.com/ParetoSecurity/pareto-core/shared"
+	team "github.com/ParetoSecurity/pareto-core/team"
 	"github.com/caarlos0/log"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/samber/lo"

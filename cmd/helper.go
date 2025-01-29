@@ -5,8 +5,8 @@ import (
 	"net"
 	"os"
 
-	"github.com/ParetoSecurity/pareto-linux/claims"
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/claims"
+	shared "github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/caarlos0/log"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"

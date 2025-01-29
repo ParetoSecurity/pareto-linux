@@ -42,7 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   test:
     name: Tests
-    runs-on: namespace-profile-pareto-linux
+    runs-on: namespace-profile-pareto-core
     steps:
       - uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5.0.3
       - uses: ./.github/actions/devenv

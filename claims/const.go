@@ -1,8 +1,8 @@
 package claims
 
 import (
-	"github.com/ParetoSecurity/pareto-linux/check"
-	"github.com/ParetoSecurity/pareto-linux/checks"
+	"github.com/ParetoSecurity/pareto-core/check"
+	checks "github.com/ParetoSecurity/pareto-core/checks"
 )
 
 var All = []Claim{

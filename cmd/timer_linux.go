@@ -12,7 +12,7 @@ import (
 )
 
 const timerContent = `[Unit]
-Description=Timer for pareto-linux hourly execution
+Description=Timer for pareto-core hourly execution
 
 [Timer]
 OnCalendar=hourly
@@ -22,7 +22,7 @@ Persistent=true
 WantedBy=timers.target`
 
 const localServiceContent = `[Unit]
-Description=Service for pareto-linux
+Description=Service for pareto-core
 
 [Service]
 Type=oneshot
@@ -40,7 +40,7 @@ func isUserTimerInstalled() bool {
 	}
 
 	systemdPath := filepath.Join(homeDir, ".config", "systemd", "user")
-	if _, err := os.Stat(filepath.Join(systemdPath, "pareto-linux.timer")); err == nil {
+	if _, err := os.Stat(filepath.Join(systemdPath, "pareto-coretimer")); err == nil {
 		return true
 	}
 	return false
@@ -60,14 +60,14 @@ func installUserTimer() {
 	}
 
 	// Create timer file
-	timerPath := filepath.Join(systemdPath, "pareto-linux.timer")
+	timerPath := filepath.Join(systemdPath, "pareto-coretimer")
 	if err := os.WriteFile(timerPath, []byte(timerContent), 0644); err != nil {
 		log.Fatalf("Failed to create timer file:", err)
 		return
 	}
 
 	// Create service file
-	servicePath := filepath.Join(systemdPath, "pareto-linux.service")
+	servicePath := filepath.Join(systemdPath, "pareto-coreservice")
 	if err := os.WriteFile(servicePath, []byte(localServiceContent), 0644); err != nil {
 		log.Fatalf("Failed to create service file:", err)
 		return
@@ -78,7 +78,7 @@ func installUserTimer() {
 		log.Fatalf("Failed to reload systemd:", err)
 		return
 	}
-	if err := exec.Command("systemctl", "--user", "enable", "--now", "pareto-linux.timer").Run(); err != nil {
+	if err := exec.Command("systemctl", "--user", "enable", "--now", "pareto-coretimer").Run(); err != nil {
 		log.Fatalf("Failed to enable and start timer:", err)
 		return
 	}
@@ -102,14 +102,14 @@ func uninstallUserTimer() {
 	}
 
 	// Create timer file
-	timerPath := filepath.Join(systemdPath, "pareto-linux.timer")
+	timerPath := filepath.Join(systemdPath, "pareto-coretimer")
 	if err := os.Remove(timerPath); err != nil {
 		log.Fatalf("Failed to remove timer file:", err)
 		return
 	}
 
 	// Create service file
-	servicePath := filepath.Join(systemdPath, "pareto-linux.service")
+	servicePath := filepath.Join(systemdPath, "pareto-coreservice")
 	if err := os.Remove(servicePath); err != nil {
 		log.Fatalf("Failed to remove service file:", err)
 		return

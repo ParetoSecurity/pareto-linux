@@ -30,12 +30,12 @@ fi
 # Check for systemd
 if command -v systemctl >/dev/null 2>&1; then
     # Create socket unit
-    cat <<'EOF' | tee /etc/systemd/system/pareto-linux.socket >/dev/null
+    cat <<'EOF' | tee /etc/systemd/system/pareto-core.socket >/dev/null
 [Unit]
-Description=Socket for pareto-linux
+Description=Socket for pareto-core
 
 [Socket]
-ListenStream=/var/run/pareto-linux.sock
+ListenStream=/var/run/pareto-core.sock
 SocketMode=0666
 Accept=no
 
@@ -44,13 +44,13 @@ WantedBy=sockets.target
 EOF
 
     # Create service unit
-    cat <<'EOF' | tee /etc/systemd/system/pareto-linux.service >/dev/null
+    cat <<'EOF' | tee /etc/systemd/system/pareto-core.service >/dev/null
 [Unit]
-Description=Service for pareto-linux
-Requires=pareto-linux.socket
+Description=Service for pareto-core
+Requires=pareto-core.socket
 
 [Service]
-ExecStart=/usr/bin/paretosecurity helper --verbose --socket /var/run/pareto-linux.sock
+ExecStart=/usr/bin/paretosecurity helper --verbose --socket /var/run/pareto-core.sock
 User=root
 Group=root
 StandardInput=socket
@@ -73,6 +73,6 @@ EOF
 
     # Reload systemd and enable socket
     systemctl daemon-reload
-    systemctl enable pareto-linux.socket
-    systemctl start pareto-linux.socket
+    systemctl enable pareto-core.socket
+    systemctl start pareto-core.socket
 fi

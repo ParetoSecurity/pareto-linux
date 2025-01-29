@@ -12,20 +12,20 @@ pkgs.testers.runNixOSTest {
   nodes.machine = {pkgs, ...}: {
     environment.systemPackages = [flakePackage];
 
-    systemd.sockets."pareto-linux" = {
+    systemd.sockets."pareto-core" = {
       wantedBy = ["sockets.target"];
       socketConfig = {
-        ListenStream = "/var/run/pareto-linux.sock";
+        ListenStream = "/var/run/pareto-core.sock";
         SocketMode = "0666";
       };
     };
 
-    systemd.services."pareto-linux" = {
-      requires = ["pareto-linux.socket"];
-      after = ["pareto-linux.socket"];
+    systemd.services."pareto-core" = {
+      requires = ["pareto-core.socket"];
+      after = ["pareto-core.socket"];
       wantedBy = ["multi-user.target"];
       serviceConfig = {
-        ExecStart = ["${flakePackage}/bin/paretosecurity" "helper" "--verbose" "--socket" "/var/run/pareto-linux.sock"];
+        ExecStart = ["${flakePackage}/bin/paretosecurity" "helper" "--verbose" "--socket" "/var/run/pareto-core.sock"];
         User = "root";
         Group = "root";
         StandardInput = "socket";
@@ -40,7 +40,7 @@ pkgs.testers.runNixOSTest {
       };
     };
 
-    systemd.user.services."pareto-linux-hourly" = {
+    systemd.user.services."pareto-core-hourly" = {
       wantedBy = ["timers.target"];
       serviceConfig = {
         Type = "oneshot";
@@ -49,7 +49,7 @@ pkgs.testers.runNixOSTest {
       };
     };
 
-    systemd.user.timers."pareto-linux-hourly" = {
+    systemd.user.timers."pareto-core-hourly" = {
       wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = "hourly";

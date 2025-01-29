@@ -10,9 +10,9 @@ import (
 	"os/exec"
 
 	"fyne.io/systray"
-	"github.com/ParetoSecurity/pareto-linux/check"
-	"github.com/ParetoSecurity/pareto-linux/claims"
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/check"
+	claims "github.com/ParetoSecurity/pareto-core/claims"
+	shared "github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/caarlos0/log"
 	"github.com/pkg/browser"
 	"github.com/samber/lo"

@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/caarlos0/log"
 	"github.com/carlmjohnson/requests"
 	"github.com/davecgh/go-spew/spew"

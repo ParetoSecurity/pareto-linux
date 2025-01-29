@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/caarlos0/log"
 	"github.com/spf13/cobra"
 )

@@ -9,6 +9,6 @@ pkgs.buildGoModule rec {
   vendorHash = "sha256-tqupnxl3DVFpxRzmMX0BNKzWSqeACrfyYLq7JQCtTgs=";
   subPackages = ["."];
   postInstall = ''
-    mv $out/bin/pareto-linux $out/bin/paretosecurity
+    mv $out/bin/pareto-core $out/bin/paretosecurity
   '';
 }

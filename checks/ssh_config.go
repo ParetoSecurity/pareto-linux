@@ -5,7 +5,7 @@ import (
 
 	"github.com/caarlos0/log"
 
-	"github.com/ParetoSecurity/pareto-linux/shared"
+	"github.com/ParetoSecurity/pareto-core/shared"
 )
 
 type SSHConfigCheck struct {
