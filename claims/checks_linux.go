@@ -11,8 +11,8 @@ var All = []Claim{
 		check.Register(&checks.Autologin{}),
 		check.Register(&checks.DockerAccess{}),
 		check.Register(&checks.PasswordToUnlock{}),
-		check.Register(&checks.SSHKeys{}),
-		check.Register(&checks.SSHKeysAlgo{}),
+		check.Register(&shared.SSHKeys{}),
+		check.Register(&shared.SSHKeysAlgo{}),
 		check.Register(&checks.SSHConfigCheck{}),
 	}},
 	{"Software Updates", []check.Check{
