@@ -1,97 +1,67 @@
 package checks
 
 import (
-	"os"
 	"testing"
 
+	"github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPasswordManagerCheck_Run(t *testing.T) {
+func TestPasswordManagerCheck_Run_Linux(t *testing.T) {
 	tests := []struct {
 		name           string
-		mockFiles      map[string]bool
+		mockCommands   map[string]string
 		expectedPassed bool
 		expectedStatus string
 	}{
 		{
-			name: "1Password present",
-			mockFiles: map[string]bool{
-				"/snap/bin/1password": true,
-				"/usr/bin/1password": true,
-				"/usr/local/bin/1password": true,
-				"/opt/1password/1password": true,
+			name: "1Password present via apt",
+			mockCommands: map[string]string{
+				"sh -c dpkg -l | grep 1password": "ii  1password  1.0  all  Password manager",
 			},
 			expectedPassed: true,
 			expectedStatus: "Password manager is present",
 		},
 		{
-			name: "Bitwarden present",
-			mockFiles: map[string]bool{
-				"/snap/bin/bitwarden": true,
-				"/usr/bin/bitwarden": true,
-				"/usr/local/bin/bitwarden": true,
-				"/opt/bitwarden/bitwarden": true,
+			name: "Bitwarden present via snap",
+			mockCommands: map[string]string{
+				"sh -c snap list | grep bitwarden": "bitwarden  1.0  stable  password manager",
 			},
 			expectedPassed: true,
 			expectedStatus: "Password manager is present",
 		},
 		{
-			name: "Dashlane present",
-			mockFiles: map[string]bool{
-				"/snap/bin/dashlane": true,
-				"/usr/bin/dashlane": true,
-				"/usr/local/bin/dashlane": true,
-				"/opt/dashlane/dashlane": true,
+			name: "Dashlane present via yum",
+			mockCommands: map[string]string{
+				"sh -c yum list installed | grep dashlane": "dashlane  1.0  installed  password manager",
 			},
 			expectedPassed: true,
 			expectedStatus: "Password manager is present",
 		},
 		{
-			name: "KeePassX present",
-			mockFiles: map[string]bool{
-				"/snap/bin/keepassx": true,
-				"/usr/bin/keepassx": true,
-				"/usr/local/bin/keepassx": true,
-				"/opt/keepassx/keepassx": true,
+			name: "KeePassX present via flatpak",
+			mockCommands: map[string]string{
+				"sh -c flatpak list | grep keepassx": "keepassx  1.0  stable  password manager",
 			},
 			expectedPassed: true,
 			expectedStatus: "Password manager is present",
 		},
 		{
-			name: "KeePassXC present",
-			mockFiles: map[string]bool{
-				"/snap/bin/keepassxc": true,
-				"/usr/bin/keepassxc": true,
-				"/usr/local/bin/keepassxc": true,
-				"/opt/keepassxc/keepassxc": true,
+			name: "KeePassXC present via apt",
+			mockCommands: map[string]string{
+				"sh -c dpkg -l | grep keepassxc": "ii  keepassxc  1.0  all  Password manager",
 			},
 			expectedPassed: true,
 			expectedStatus: "Password manager is present",
 		},
 		{
 			name: "No password manager present",
-			mockFiles: map[string]bool{
-				"/snap/bin/1password": false,
-				"/snap/bin/bitwarden": false,
-				"/snap/bin/dashlane":  false,
-				"/snap/bin/keepassx":  false,
-				"/snap/bin/keepassxc": false,
-				"/usr/bin/1password": false,
-				"/usr/bin/bitwarden": false,
-				"/usr/bin/dashlane":  false,
-				"/usr/bin/keepassx":  false,
-				"/usr/bin/keepassxc": false,
-				"/usr/local/bin/1password": false,
-				"/usr/local/bin/bitwarden": false,
-				"/usr/local/bin/dashlane":  false,
-				"/usr/local/bin/keepassx":  false,
-				"/usr/local/bin/keepassxc": false,
-				"/opt/1password/1password": false,
-				"/opt/bitwarden/bitwarden": false,
-				"/opt/dashlane/dashlane":  false,
-				"/opt/keepassx/keepassx":  false,
-				"/opt/keepassxc/keepassxc": false,
+			mockCommands: map[string]string{
+				"sh -c dpkg -l | grep 1password":           "",
+				"sh -c snap list | grep bitwarden":         "",
+				"sh -c yum list installed | grep dashlane": "",
+				"sh -c flatpak list | grep keepassx":       "",
+				"sh -c dpkg -l | grep keepassxc":           "",
 			},
 			expectedPassed: false,
 			expectedStatus: "No password manager found",
@@ -100,14 +70,9 @@ func TestPasswordManagerCheck_Run(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Mock os.Stat
-			statMock := func(name string) (os.FileInfo, error) {
-				if tt.mockFiles[name] {
-					return nil, nil
-				}
-				return nil, os.ErrNotExist
-			}
-			osStat = statMock
+			// Mock shared.RunCommand
+
+			shared.RunCommandMocks = tt.mockCommands
 
 			pmc := &PasswordManagerCheck{}
 			err := pmc.Run()

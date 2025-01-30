@@ -1,7 +1,6 @@
 package checks
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,14 +69,6 @@ func TestPasswordManagerCheck_Run(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Mock os.Stat
-			statMock := func(name string) (os.FileInfo, error) {
-				if tt.mockFiles[name] {
-					return nil, nil
-				}
-				return nil, os.ErrNotExist
-			}
-			osStat = statMock
 
 			pmc := &PasswordManagerCheck{}
 			err := pmc.Run()

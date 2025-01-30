@@ -3,11 +3,12 @@ package checks
 import (
 	"os"
 	"path/filepath"
+
+	"github.com/samber/lo"
 )
 
 type PasswordManagerCheck struct {
 	passed bool
-	status string
 }
 
 func (pmc *PasswordManagerCheck) Name() string {
@@ -15,41 +16,41 @@ func (pmc *PasswordManagerCheck) Name() string {
 }
 
 func (pmc *PasswordManagerCheck) Run() error {
-	paths := []string{
-		"/Applications/1Password.app",
-		"/Applications/1Password 8.app",
-		"/Applications/1Password 7.app",
-		"/Applications/Bitwarden.app",
-		"/Applications/Dashlane.app",
-		"/Applications/KeePassXC.app",
-		"/Applications/KeePassX.app",
-		"/System/Applications/1Password.app",
-		"/System/Applications/1Password 8.app",
-		"/System/Applications/1Password 7.app",
-		"/System/Applications/Bitwarden.app",
-		"/System/Applications/Dashlane.app",
-		"/System/Applications/KeePassXC.app",
-		"/System/Applications/KeePassX.app",
-		filepath.Join(os.Getenv("HOME"), "Applications/1Password.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/1Password 8.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/1Password 7.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/Bitwarden.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/Dashlane.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/KeePassXC.app"),
-		filepath.Join(os.Getenv("HOME"), "Applications/KeePassX.app"),
+	appNames := []string{
+		"1Password.app",
+		"1Password 8.app",
+		"1Password 7.app",
+		"Bitwarden.app",
+		"Dashlane.app",
+		"KeePassXC.app",
+		"KeePassX.app",
 	}
 
-	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
-			pmc.passed = true
-			pmc.status = "Password manager is present"
-			return nil
+	if checkInstalledApplications(appNames) {
+		pmc.passed = true
+	} else {
+		pmc.passed = false
+	}
+	return nil
+}
+
+func checkInstalledApplications(appNames []string) bool {
+	searchPaths := []string{
+		"/Applications",
+		"/System/Applications",
+		filepath.Join(os.Getenv("HOME"), "Applications"),
+	}
+
+	for _, path := range searchPaths {
+		if contents, err := os.ReadDir(path); err == nil {
+			for _, entry := range contents {
+				if entry.IsDir() && lo.Contains(appNames, entry.Name()) {
+					return true
+				}
+			}
 		}
 	}
-
-	pmc.passed = false
-	pmc.status = "No password manager found"
-	return nil
+	return false
 }
 
 func (pmc *PasswordManagerCheck) Passed() bool {

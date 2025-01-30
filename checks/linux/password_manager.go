@@ -1,8 +1,6 @@
 package checks
 
 import (
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/ParetoSecurity/pareto-core/shared"
@@ -18,36 +16,6 @@ func (pmc *PasswordManagerCheck) Name() string {
 }
 
 func (pmc *PasswordManagerCheck) Run() error {
-	paths := []string{
-		"/snap/bin/1password",
-		"/snap/bin/bitwarden",
-		"/snap/bin/dashlane",
-		"/snap/bin/keepassx",
-		"/snap/bin/keepassxc",
-		"/usr/bin/1password",
-		"/usr/bin/bitwarden",
-		"/usr/bin/dashlane",
-		"/usr/bin/keepassx",
-		"/usr/bin/keepassxc",
-		"/usr/local/bin/1password",
-		"/usr/local/bin/bitwarden",
-		"/usr/local/bin/dashlane",
-		"/usr/local/bin/keepassx",
-		"/usr/local/bin/keepassxc",
-		"/opt/1password/1password",
-		"/opt/bitwarden/bitwarden",
-		"/opt/dashlane/dashlane",
-		"/opt/keepassx/keepassx",
-		"/opt/keepassxc/keepassxc",
-	}
-
-	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
-			pmc.passed = true
-			pmc.status = "Password manager is present"
-			return nil
-		}
-	}
 
 	// Check for password managers installed via package managers
 	packageManagers := []string{"apt", "snap", "yum", "flatpak"}
