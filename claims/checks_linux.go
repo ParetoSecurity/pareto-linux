@@ -14,6 +14,7 @@ var All = []Claim{
 		check.Register(&shared.SSHKeys{}),
 		check.Register(&shared.SSHKeysAlgo{}),
 		check.Register(&checks.SSHConfigCheck{}),
+		check.Register(&checks.PasswordManagerCheck{}),
 	}},
 	{"Software Updates", []check.Check{
 		check.Register(&checks.SoftwareUpdates{}),
