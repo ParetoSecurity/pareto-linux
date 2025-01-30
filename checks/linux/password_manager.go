@@ -64,7 +64,7 @@ func (pmc *PasswordManagerCheck) IsRunnable() bool {
 }
 
 func (pmc *PasswordManagerCheck) UUID() string {
-	return "d220f1a2-4c5b-0766-9fb5-6bc9963e6721"
+	return "f962c423-fdf5-428a-a57a-827abc9b253e"
 }
 
 func (pmc *PasswordManagerCheck) PassedMessage() string {
