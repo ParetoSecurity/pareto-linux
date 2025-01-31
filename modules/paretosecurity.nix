@@ -4,8 +4,8 @@
   pkgs,
   ...
 }: {
-  options.paretosecurity.paretosecurityBin = mkOption {
-    type = types.str;
+  options.paretosecurity.paretosecurityBin = lib.mkOption {
+    type = lib.types.str;
     default = "${pkgs.paretosecurity}/bin/paretosecurity";
     defaultText = literalExpression ''
       "''${pkgs.paretosecurity}/bin/paretosecurity"
