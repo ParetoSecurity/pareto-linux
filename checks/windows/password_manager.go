@@ -15,16 +15,13 @@ func (pmc *PasswordManagerCheck) Name() string {
 
 func (pmc *PasswordManagerCheck) Run() error {
 	// TODO; need real paths
+	userProfile := os.Getenv("USERPROFILE")
 	paths := []string{
-		filepath.Join(os.Getenv("PROGRAMFILES"), "1Password", "1Password.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES"), "Bitwarden", "Bitwarden.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES"), "Dashlane", "Dashlane.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES"), "KeePassX", "KeePassX.exe"),
+		filepath.Join(userProfile, "AppData", "Local", "1Password", "app", "8", "1Password.exe"),
+		filepath.Join(userProfile, "AppData", "Local", "Programs", "Bitwarden", "Bitwarden.exe"),
+		filepath.Join(os.Getenv("PROGRAMFILES"), "KeePass Password Safe 2", "KeePass.exe"),
+		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "KeePass Password Safe 2", "KeePass.exe"),
 		filepath.Join(os.Getenv("PROGRAMFILES"), "KeePassXC", "KeePassXC.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "1Password", "1Password.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Bitwarden", "Bitwarden.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Dashlane", "Dashlane.exe"),
-		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "KeePassX", "KeePassX.exe"),
 		filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "KeePassXC", "KeePassXC.exe"),
 	}
 

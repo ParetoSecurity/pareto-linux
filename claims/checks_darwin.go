@@ -2,8 +2,8 @@ package claims
 
 import (
 	"github.com/ParetoSecurity/pareto-core/check"
-	shared "github.com/ParetoSecurity/pareto-core/checks/shared"
 	checks "github.com/ParetoSecurity/pareto-core/checks/darwin"
+	shared "github.com/ParetoSecurity/pareto-core/checks/shared"
 )
 
 var All = []Claim{
