@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ParetoSecurity/pareto-core/shared"
+	"github.com/caarlos0/log"
 )
 
 type PasswordManagerCheck struct {
@@ -16,17 +17,25 @@ func (pmc *PasswordManagerCheck) Name() string {
 	return "Password Manager Presence"
 }
 
-func (pmc *PasswordManagerCheck) Run() error {
-
-	// Check for password managers installed via package managers
-
+func (pmc *PasswordManagerCheck) isManagerInstalled() bool {
 	passwordManagers := []string{"1password", "bitwarden", "dashlane", "keepassx", "keepassxc"}
 
 	for _, pwdManager := range passwordManagers {
 		if isPackageInstalled(pwdManager) {
-			pmc.passed = true
-			return nil
+			log.Info("Password manager found: " + pwdManager)
+			return true
 		}
+	}
+	return false
+}
+
+func (pmc *PasswordManagerCheck) Run() error {
+
+	// Check for password managers installed via package managers
+
+	if pmc.isManagerInstalled() {
+		pmc.passed = true
+		return nil
 	}
 
 	pmc.passed = checkForBrowserExtensions()
@@ -60,6 +69,7 @@ func checkForBrowserExtensions() bool {
 					name := strings.ToLower(entry.Name())
 					for _, ext := range browserExtensions {
 						if strings.Contains(name, strings.ToLower(ext)) {
+							log.Info("Password manager extension found: " + ext)
 							return true
 						}
 					}
@@ -76,18 +86,23 @@ func isPackageInstalled(pkgName string) bool {
 	// Check which package managers are available
 	if _, err := shared.RunCommand("which", "dpkg"); err == nil {
 		pkgManagers["apt"] = "dpkg -l"
+		log.Info("apt package manager found")
 	}
 	if _, err := shared.RunCommand("which", "snap"); err == nil {
 		pkgManagers["snap"] = "snap list"
+		log.Info("snap package manager found")
 	}
 	if _, err := shared.RunCommand("which", "yum"); err == nil {
 		pkgManagers["yum"] = "yum list installed"
+		log.Info("yum package manager found")
 	}
 	if _, err := shared.RunCommand("which", "flatpak"); err == nil {
 		pkgManagers["flatpak"] = "flatpak list"
+		log.Info("flatpak package manager found")
 	}
 	if _, err := shared.RunCommand("which", "pacman"); err == nil {
 		pkgManagers["pacman"] = "pacman -Q"
+		log.Info("pacman package manager found")
 	}
 
 	for pkgManager, baseCmd := range pkgManagers {
