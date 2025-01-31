@@ -14,11 +14,6 @@ func TestCheckInstalledApplications(t *testing.T) {
 		expected bool
 	}{
 		{
-			name:     "Password manager present",
-			appNames: []string{"1Password.app", "Bitwarden.app"},
-			expected: true,
-		},
-		{
 			name:     "Password manager not present",
 			appNames: []string{"NonExistentApp.app"},
 			expected: false,

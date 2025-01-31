@@ -27,7 +27,7 @@ func (pmc *PasswordManagerCheck) Run() error {
 	}
 
 	for _, path := range paths {
-		if _, err := os.Stat(path); err == nil {
+		if _, err := osStat(path); err == nil {
 			pmc.passed = true
 			return nil
 		}
