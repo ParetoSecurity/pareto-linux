@@ -7,7 +7,6 @@ import (
 
 type PasswordManagerCheck struct {
 	passed bool
-	status string
 }
 
 func (pmc *PasswordManagerCheck) Name() string {
@@ -32,13 +31,11 @@ func (pmc *PasswordManagerCheck) Run() error {
 	for _, path := range paths {
 		if _, err := os.Stat(path); err == nil {
 			pmc.passed = true
-			pmc.status = "Password manager is present"
 			return nil
 		}
 	}
 
 	pmc.passed = false
-	pmc.status = "No password manager found"
 	return nil
 }
 
