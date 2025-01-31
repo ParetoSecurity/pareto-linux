@@ -3,6 +3,7 @@ package checks
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type PasswordManagerCheck struct {
@@ -32,8 +33,45 @@ func (pmc *PasswordManagerCheck) Run() error {
 		}
 	}
 
-	pmc.passed = false
+	pmc.passed = checkForBrowserExtensions()
 	return nil
+}
+
+func checkForBrowserExtensions() bool {
+	home := os.Getenv("USERPROFILE")
+	extensionPaths := map[string]string{
+		"Google Chrome":  filepath.Join(home, "AppData", "Local", "Google", "Chrome", "User Data", "Default", "Extensions"),
+		"Firefox":        filepath.Join(home, "AppData", "Roaming", "Mozilla", "Firefox", "Profiles"),
+		"Microsoft Edge": filepath.Join(home, "AppData", "Local", "Microsoft", "Edge", "User Data", "Default", "Extensions"),
+		"Brave Browser":  filepath.Join(home, "AppData", "Local", "BraveSoftware", "Brave-Browser", "User Data", "Default", "Extensions"),
+	}
+
+	browserExtensions := []string{
+		"LastPass",
+		"ProtonPass",
+		"NordPass",
+		"Bitwarden",
+		"1Password",
+		"KeePass",
+		"Dashlane",
+	}
+
+	for _, extPath := range extensionPaths {
+		if _, err := os.Stat(extPath); err == nil {
+			entries, err := os.ReadDir(extPath)
+			if err == nil {
+				for _, entry := range entries {
+					name := strings.ToLower(entry.Name())
+					for _, ext := range browserExtensions {
+						if strings.Contains(name, strings.ToLower(ext)) {
+							return true
+						}
+					}
+				}
+			}
+		}
+	}
+	return false
 }
 
 func (pmc *PasswordManagerCheck) Passed() bool {

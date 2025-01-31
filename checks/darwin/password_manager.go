@@ -3,6 +3,7 @@ package checks
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/samber/lo"
 )
@@ -26,7 +27,7 @@ func (pmc *PasswordManagerCheck) Run() error {
 		"KeePassX.app",
 	}
 
-	if checkInstalledApplications(appNames) {
+	if checkInstalledApplications(appNames) || checkForBrowserExtensions() {
 		pmc.passed = true
 	} else {
 		pmc.passed = false
@@ -46,6 +47,43 @@ func checkInstalledApplications(appNames []string) bool {
 			for _, entry := range contents {
 				if entry.IsDir() && lo.Contains(appNames, entry.Name()) {
 					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func checkForBrowserExtensions() bool {
+	home := os.Getenv("HOME")
+	extensionPaths := map[string]string{
+		"Google Chrome":  filepath.Join(home, "Library", "Application Support", "Google", "Chrome", "Default", "Extensions"),
+		"Firefox":        filepath.Join(home, "Library", "Application Support", "Firefox", "Profiles"),
+		"Microsoft Edge": filepath.Join(home, "Library", "Application Support", "Microsoft Edge", "Default", "Extensions"),
+		"Brave Browser":  filepath.Join(home, "Library", "Application Support", "BraveSoftware", "Brave-Browser", "Default", "Extensions"),
+	}
+
+	browserExtensions := []string{
+		"LastPass",
+		"ProtonPass",
+		"NordPass",
+		"Bitwarden",
+		"1Password",
+		"KeePass",
+		"Dashlane",
+	}
+
+	for _, extPath := range extensionPaths {
+		if _, err := os.Stat(extPath); err == nil {
+			entries, err := os.ReadDir(extPath)
+			if err == nil {
+				for _, entry := range entries {
+					name := strings.ToLower(entry.Name())
+					for _, ext := range browserExtensions {
+						if strings.Contains(name, strings.ToLower(ext)) {
+							return true
+						}
+					}
 				}
 			}
 		}
