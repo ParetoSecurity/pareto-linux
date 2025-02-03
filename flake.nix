@@ -42,6 +42,15 @@
             testScript = builtins.readFile "${toString ./.}/test/integration/${script}";
           })
           .driver;
+        testRelease = {
+          distro,
+          version,
+          script,
+        }:
+          (inputs.nix-vm-test.lib.x86_64-linux.${distro}.${version} {
+            testScript = builtins.readFile "${toString ./.}/test/integration/${script}";
+          })
+          .driver;
       in {
         packages.default = flakePackage;
         checks.test-nixos = import ./test/integration/nixos.nix {
@@ -64,17 +73,17 @@
           script = "ubuntu.py";
         };
 
-        packages.test-release-debian = testPackage {
+        packages.test-release-debian = testRelease {
           distro = "debian";
           version = "13";
           script = "debian-release.py";
         };
-        packages.test-release-fedora = testPackage {
+        packages.test-release-fedora = testRelease {
           distro = "fedora";
           version = "40";
           script = "fedora-release.py";
         };
-        packages.test-release-ubuntu = testPackage {
+        packages.test-release-ubuntu = testRelease {
           distro = "ubuntu";
           version = "23_10";
           script = "ubuntu-release.py";
