@@ -63,6 +63,22 @@
           version = "23_10";
           script = "ubuntu.py";
         };
+
+        packages.test-release-debian = testPackage {
+          distro = "debian";
+          version = "13";
+          script = "debian-release.py";
+        };
+        packages.test-release-fedora = testPackage {
+          distro = "fedora";
+          version = "40";
+          script = "fedora-release.py";
+        };
+        packages.test-release-ubuntu = testPackage {
+          distro = "ubuntu";
+          version = "23_10";
+          script = "ubuntu-release.py";
+        };
       };
     };
 }
