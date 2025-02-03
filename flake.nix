@@ -35,6 +35,7 @@
           script,
         }:
           (inputs.nix-vm-test.lib.x86_64-linux.${distro}.${version} {
+            diskSize = "+100M";
             sharedDirs.packageDir = {
               source = "${toString ./.}/pkg";
               target = "/mnt/package";
@@ -48,6 +49,7 @@
           script,
         }:
           (inputs.nix-vm-test.lib.x86_64-linux.${distro}.${version} {
+            diskSize = "+100M";
             sharedDirs = {};
             testScript = builtins.readFile "${toString ./.}/test/integration/${script}";
           })
