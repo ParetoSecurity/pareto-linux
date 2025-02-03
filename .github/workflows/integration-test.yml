@@ -4,13 +4,6 @@ on:
   repository_dispatch:
     types: [integration-test]
   workflow_dispatch:
-  push:
-    paths:
-      - 'apt/install.sh'
-      - 'test/integration/debian-release.py'
-      - 'test/integration/ubuntu-release.py'
-      - 'test/integration/fedora-release.py'
-      - '.github/workflows/integration-test.yml'
   pull_request:
     paths:
       - 'apt/install.sh'
