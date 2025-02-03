@@ -30,22 +30,6 @@ paretosecurity check --json
 
 ### Using Nix
 
-#### Quick Start without installing anything
-
-To run a one-time security audit without installation:
-
-```bash
-nix run github:paretosecurity/pareto-core -- check
-```
-
-or if running from local repo with JSON reporter
-
-```bash
-nix run . -- check --json
-```
-
-This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
-
 <details>
 <summary>
   
@@ -80,7 +64,16 @@ To install the `paretosecurity` binary:
 }
 ```
 
+#### Run checks
+
+```bash
+paretosecurity check
+```
+
+This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
+
 </details>
+
 
 <details>
 <summary>
@@ -144,4 +137,11 @@ e.g. inside your `flake.nix` file:
 }
 ```
 
+#### Run checks
+
+```bash
+paretosecurity check
+```
+
+This will analyze your system and provide a security report highlighting potential improvements and vulnerabilities.
 </details>
