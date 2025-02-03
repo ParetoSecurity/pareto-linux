@@ -48,6 +48,7 @@
           script,
         }:
           (inputs.nix-vm-test.lib.x86_64-linux.${distro}.${version} {
+            sharedDirs = {};
             testScript = builtins.readFile "${toString ./.}/test/integration/${script}";
           })
           .driver;
