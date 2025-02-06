@@ -76,3 +76,51 @@ func TestKernelParamsCheck_Run(t *testing.T) {
 		})
 	}
 }
+
+func TestKernelParamsCheck_Name(t *testing.T) {
+	k := &KernelParamsCheck{}
+	expectedName := "Kernel Parameters are set correctly"
+	if k.Name() != expectedName {
+		t.Errorf("Expected Name %s, got %s", expectedName, k.Name())
+	}
+}
+
+func TestKernelParamsCheck_Status(t *testing.T) {
+	k := &KernelParamsCheck{}
+	expectedStatus := "Critical kernel parameters are correct"
+	if k.Status() != expectedStatus {
+		t.Errorf("Expected Status %s, got %s", expectedStatus, k.Status())
+	}
+}
+
+func TestKernelParamsCheck_UUID(t *testing.T) {
+	k := &KernelParamsCheck{}
+	expectedUUID := "cbf2736b-72df-43e3-8789-8eb676ff9014"
+	if k.UUID() != expectedUUID {
+		t.Errorf("Expected UUID %s, got %s", expectedUUID, k.UUID())
+	}
+}
+
+func TestKernelParamsCheck_Passed(t *testing.T) {
+	k := &KernelParamsCheck{passed: true}
+	expectedPassed := true
+	if k.Passed() != expectedPassed {
+		t.Errorf("Expected Passed %v, got %v", expectedPassed, k.Passed())
+	}
+}
+
+func TestKernelParamsCheck_FailedMessage(t *testing.T) {
+	k := &KernelParamsCheck{}
+	expectedFailedMessage := "Critical kernel parameters are not correct"
+	if k.FailedMessage() != expectedFailedMessage {
+		t.Errorf("Expected FailedMessage %s, got %s", expectedFailedMessage, k.FailedMessage())
+	}
+}
+
+func TestKernelParamsCheck_PassedMessage(t *testing.T) {
+	k := &KernelParamsCheck{}
+	expectedPassedMessage := "Critical kernel parameters are correct"
+	if k.PassedMessage() != expectedPassedMessage {
+		t.Errorf("Expected PassedMessage %s, got %s", expectedPassedMessage, k.PassedMessage())
+	}
+}

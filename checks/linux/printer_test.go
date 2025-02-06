@@ -58,3 +58,51 @@ func TestPrinterRun(t *testing.T) {
 		})
 	}
 }
+
+func TestPrinter_Name(t *testing.T) {
+	printer := &Printer{}
+	expectedName := "Sharing printers is off"
+	if printer.Name() != expectedName {
+		t.Errorf("Expected Name %s, got %s", expectedName, printer.Name())
+	}
+}
+
+func TestPrinter_Status(t *testing.T) {
+	printer := &Printer{}
+	expectedStatus := "Sharing printers is off"
+	if printer.Status() != expectedStatus {
+		t.Errorf("Expected Status %s, got %s", expectedStatus, printer.Status())
+	}
+}
+
+func TestPrinter_UUID(t *testing.T) {
+	printer := &Printer{}
+	expectedUUID := "b96524e0-150b-4bb8-abc7-517051b6c14e"
+	if printer.UUID() != expectedUUID {
+		t.Errorf("Expected UUID %s, got %s", expectedUUID, printer.UUID())
+	}
+}
+
+func TestPrinter_Passed(t *testing.T) {
+	printer := &Printer{passed: true}
+	expectedPassed := true
+	if printer.Passed() != expectedPassed {
+		t.Errorf("Expected Passed %v, got %v", expectedPassed, printer.Passed())
+	}
+}
+
+func TestPrinter_FailedMessage(t *testing.T) {
+	printer := &Printer{}
+	expectedFailedMessage := "Sharing printers is on"
+	if printer.FailedMessage() != expectedFailedMessage {
+		t.Errorf("Expected FailedMessage %s, got %s", expectedFailedMessage, printer.FailedMessage())
+	}
+}
+
+func TestPrinter_PassedMessage(t *testing.T) {
+	printer := &Printer{}
+	expectedPassedMessage := "Sharing printers is off"
+	if printer.PassedMessage() != expectedPassedMessage {
+		t.Errorf("Expected PassedMessage %s, got %s", expectedPassedMessage, printer.PassedMessage())
+	}
+}

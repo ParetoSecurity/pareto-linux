@@ -131,3 +131,51 @@ func TestIsRunnable(t *testing.T) {
 		})
 	}
 }
+
+func TestSSHConfigCheck_Name(t *testing.T) {
+	su := &SSHConfigCheck{}
+	expectedName := "SSH Server Configuration is Secure"
+	if su.Name() != expectedName {
+		t.Errorf("Expected Name %s, got %s", expectedName, su.Name())
+	}
+}
+
+func TestSSHConfigCheck_Status(t *testing.T) {
+	su := &SSHConfigCheck{}
+	expectedStatus := "SSH configuration is not secure."
+	if su.Status() != expectedStatus {
+		t.Errorf("Expected Status %s, got %s", expectedStatus, su.Status())
+	}
+}
+
+func TestSSHConfigCheck_UUID(t *testing.T) {
+	su := &SSHConfigCheck{}
+	expectedUUID := "da4edd80-6af0-4fb3-9fc7-f9a0e9d07f3b"
+	if su.UUID() != expectedUUID {
+		t.Errorf("Expected UUID %s, got %s", expectedUUID, su.UUID())
+	}
+}
+
+func TestSSHConfigCheck_Passed(t *testing.T) {
+	su := &SSHConfigCheck{passed: true}
+	expectedPassed := true
+	if su.Passed() != expectedPassed {
+		t.Errorf("Expected Passed %v, got %v", expectedPassed, su.Passed())
+	}
+}
+
+func TestSSHConfigCheck_FailedMessage(t *testing.T) {
+	su := &SSHConfigCheck{}
+	expectedFailedMessage := "SSH configuration is not secure."
+	if su.FailedMessage() != expectedFailedMessage {
+		t.Errorf("Expected FailedMessage %s, got %s", expectedFailedMessage, su.FailedMessage())
+	}
+}
+
+func TestSSHConfigCheck_PassedMessage(t *testing.T) {
+	su := &SSHConfigCheck{}
+	expectedPassedMessage := "SSH configuration is secure."
+	if su.PassedMessage() != expectedPassedMessage {
+		t.Errorf("Expected PassedMessage %s, got %s", expectedPassedMessage, su.PassedMessage())
+	}
+}
