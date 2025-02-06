@@ -21,11 +21,27 @@ func TestPrinterRun(t *testing.T) {
 			expectedPassed: true,
 			expectedPorts:  map[int]string{},
 		},
-		{name: "CUPS port open", mockCheckPort: func(port int, proto string) bool {
-			return port == 631
-		}, expectedPassed: false, expectedPorts: map[int]string{
-			631: "CUPS",
-		}},
+		{
+			name: "CUPS port open",
+			mockCheckPort: func(port int, proto string) bool {
+				return port == 631
+			},
+			expectedPassed: false,
+			expectedPorts: map[int]string{
+				631: "CUPS",
+			},
+		},
+		{
+			name: "Multiple ports open",
+			mockCheckPort: func(port int, proto string) bool {
+				return port == 631 || port == 515
+			},
+			expectedPassed: false,
+			expectedPorts: map[int]string{
+				631: "CUPS",
+				515: "LPD",
+			},
+		},
 	}
 
 	for _, tt := range tests {

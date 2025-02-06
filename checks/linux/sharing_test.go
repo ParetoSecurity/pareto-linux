@@ -29,6 +29,23 @@ func TestSharing_Run(t *testing.T) {
 			},
 			expected: false,
 		},
+		{
+			name: "All ports open",
+			mockFunc: func(port int, proto string) bool {
+				return true
+			},
+			expected: false,
+		},
+		{
+			name: "Only one port open",
+			mockFunc: func(port int, proto string) bool {
+				if port == 445 {
+					return true
+				}
+				return false
+			},
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {

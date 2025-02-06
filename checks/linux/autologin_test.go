@@ -42,11 +42,19 @@ func TestAutologin_Run(t *testing.T) {
 			expectedStatus: "AutomaticLoginEnable=true in GDM is enabled",
 		},
 		{
+			name: "GDM autologin enabled in custom.conf (alternative path)",
+			mockFiles: map[string]string{
+				"/etc/gdm/custom.conf": "AutomaticLoginEnable=true",
+			},
+			expectedPassed: false,
+			expectedStatus: "AutomaticLoginEnable=true in GDM is enabled",
+		},
+		{
 			name:           "GDM autologin enabled in dconf",
 			mockCommand:    "dconf read /org/gnome/login-screen/enable-automatic-login",
-			mockCommandOut: "false",
-			expectedPassed: true,
-			expectedStatus: "Automatic login is off",
+			mockCommandOut: "true",
+			expectedPassed: false,
+			expectedStatus: "Automatic login is enabled in GNOME",
 		},
 		{
 			name:           "No autologin enabled",

@@ -45,6 +45,7 @@ func TestCheckUFW(t *testing.T) {
 		})
 	}
 }
+
 func TestCheckFirewalld(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -83,6 +84,53 @@ func TestCheckFirewalld(t *testing.T) {
 			assert.Equal(t, tt.expectedResult, result)
 			assert.NotEmpty(t, f.UUID())
 			assert.True(t, f.RequiresRoot())
+		})
+	}
+}
+
+func TestFirewall_Run(t *testing.T) {
+	tests := []struct {
+		name           string
+		mockUFWOutput  string
+		mockFirewalldOutput string
+		expectedPassed bool
+		expectedStatus string
+	}{
+		{
+			name:           "UFW is active",
+			mockUFWOutput:  "Status: active",
+			mockFirewalldOutput: "",
+			expectedPassed: true,
+			expectedStatus: "Firewall is on",
+		},
+		{
+			name:           "Firewalld is active",
+			mockUFWOutput:  "Status: inactive",
+			mockFirewalldOutput: "active",
+			expectedPassed: true,
+			expectedStatus: "Firewall is on",
+		},
+		{
+			name:           "Both UFW and Firewalld are inactive",
+			mockUFWOutput:  "Status: inactive",
+			mockFirewalldOutput: "inactive",
+			expectedPassed: false,
+			expectedStatus: "Firewall is off",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			shared.RunCommandMocks = map[string]string{
+				"ufw status": tt.mockUFWOutput,
+				"systemctl is-active firewalld": tt.mockFirewalldOutput,
+			}
+
+			f := &Firewall{}
+			err := f.Run()
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedPassed, f.Passed())
+			assert.Equal(t, tt.expectedStatus, f.Status())
 		})
 	}
 }

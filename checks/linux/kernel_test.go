@@ -32,6 +32,21 @@ func TestKernelParamsCheck_Run(t *testing.T) {
 			expectedPassed: false,
 			expectedStatus: "net.ipv4.tcp_syncookies is set to 0 but should be 1. fs.protected_symlinks is set to 0 but should be 1. ",
 		},
+		{
+			name:           "Helper function error",
+			isRoot:         false,
+			runCheckHelper: true,
+			helperError:    assert.AnError,
+			expectedPassed: false,
+			expectedStatus: "Failed to run check via helper",
+		},
+		{
+			name:           "Sysctl command error",
+			isRoot:         true,
+			sysctlError:    assert.AnError,
+			expectedPassed: false,
+			expectedStatus: "Failed to get sysctl value",
+		},
 	}
 
 	for _, tt := range tests {
@@ -43,6 +58,11 @@ func TestKernelParamsCheck_Run(t *testing.T) {
 				"sysctl -n fs.protected_hardlinks":    tt.sysctlValues["fs.protected_hardlinks"],
 				"sysctl -n fs.protected_symlinks":     tt.sysctlValues["fs.protected_symlinks"],
 			}
+			if tt.runCheckHelper {
+				shared.RunCheckViaHelperMock = func(uuid string) (bool, error) {
+					return false, tt.helperError
+				}
+			}
 			err := k.Run()
 			if tt.sysctlError != nil || tt.helperError != nil {
 				assert.Error(t, err)
@@ -50,6 +70,7 @@ func TestKernelParamsCheck_Run(t *testing.T) {
 				assert.NoError(t, err)
 			}
 			assert.Equal(t, tt.expectedPassed, k.Passed())
+			assert.Equal(t, tt.expectedStatus, k.Status())
 			assert.NotEmpty(t, k.UUID())
 			assert.True(t, k.RequiresRoot())
 		})

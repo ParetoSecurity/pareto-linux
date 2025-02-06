@@ -108,3 +108,56 @@ func TestPasswordManagerCheck_Run_Linux(t *testing.T) {
 		})
 	}
 }
+
+func TestPasswordManagerCheck_Run_BrowserExtensions(t *testing.T) {
+	tests := []struct {
+		name           string
+		mockFileSystem map[string]bool
+		expectedPassed bool
+		expectedStatus string
+	}{
+		{
+			name: "1Password extension present in Chrome",
+			mockFileSystem: map[string]bool{
+				"/home/user/.config/google-chrome/Default/Extensions/1password": true,
+			},
+			expectedPassed: true,
+			expectedStatus: "Password manager is present",
+		},
+		{
+			name: "Bitwarden extension present in Firefox",
+			mockFileSystem: map[string]bool{
+				"/home/user/.mozilla/firefox/bitwarden": true,
+			},
+			expectedPassed: true,
+			expectedStatus: "Password manager is present",
+		},
+		{
+			name: "No password manager extensions present",
+			mockFileSystem: map[string]bool{
+				"/home/user/.config/google-chrome/Default/Extensions/1password": false,
+				"/home/user/.mozilla/firefox/bitwarden":                         false,
+			},
+			expectedPassed: false,
+			expectedStatus: "No password manager found",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Mock os.Stat
+			osStat = func(name string) (os.FileInfo, error) {
+				if tt.mockFileSystem[name] {
+					return nil, nil
+				}
+				return nil, os.ErrNotExist
+			}
+
+			pmc := &PasswordManagerCheck{}
+			err := pmc.Run()
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expectedPassed, pmc.Passed())
+			assert.Equal(t, tt.expectedStatus, pmc.Status())
+		})
+	}
+}
