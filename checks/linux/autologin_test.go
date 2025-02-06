@@ -82,3 +82,51 @@ func TestAutologin_Run(t *testing.T) {
 		})
 	}
 }
+
+func TestAutologin_Name(t *testing.T) {
+	a := &Autologin{}
+	expectedName := "Automatic login is disabled"
+	if a.Name() != expectedName {
+		t.Errorf("Expected Name %s, got %s", expectedName, a.Name())
+	}
+}
+
+func TestAutologin_Status(t *testing.T) {
+	a := &Autologin{}
+	expectedStatus := ""
+	if a.Status() != expectedStatus {
+		t.Errorf("Expected Status %s, got %s", expectedStatus, a.Status())
+	}
+}
+
+func TestAutologin_UUID(t *testing.T) {
+	a := &Autologin{}
+	expectedUUID := "f962c423-fdf5-428a-a57a-816abc9b253e"
+	if a.UUID() != expectedUUID {
+		t.Errorf("Expected UUID %s, got %s", expectedUUID, a.UUID())
+	}
+}
+
+func TestAutologin_Passed(t *testing.T) {
+	a := &Autologin{passed: true}
+	expectedPassed := true
+	if a.Passed() != expectedPassed {
+		t.Errorf("Expected Passed %v, got %v", expectedPassed, a.Passed())
+	}
+}
+
+func TestAutologin_FailedMessage(t *testing.T) {
+	a := &Autologin{}
+	expectedFailedMessage := "Automatic login is on"
+	if a.FailedMessage() != expectedFailedMessage {
+		t.Errorf("Expected FailedMessage %s, got %s", expectedFailedMessage, a.FailedMessage())
+	}
+}
+
+func TestAutologin_PassedMessage(t *testing.T) {
+	a := &Autologin{}
+	expectedPassedMessage := "Automatic login is off"
+	if a.PassedMessage() != expectedPassedMessage {
+		t.Errorf("Expected PassedMessage %s, got %s", expectedPassedMessage, a.PassedMessage())
+	}
+}
