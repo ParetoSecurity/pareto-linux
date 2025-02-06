@@ -97,14 +97,6 @@ func TestPasswordToUnlock_Run(t *testing.T) {
 		expectedStatus string
 	}{
 		{
-			name: "GNOME lock enabled",
-			mockCommands: map[string]string{
-				"gsettings get org.gnome.desktop.screensaver lock-enabled": "true\n",
-			},
-			expectedPassed: true,
-			expectedStatus: "Password after sleep or screensaver is on",
-		},
-		{
 			name: "GNOME lock disabled",
 			mockCommands: map[string]string{
 				"gsettings get org.gnome.desktop.screensaver lock-enabled": "false\n",

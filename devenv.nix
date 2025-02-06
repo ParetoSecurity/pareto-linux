@@ -18,12 +18,12 @@ in {
   enterTest = ''
     go mod verify
     go test -coverprofile=cover.out ./...
-    coverage=$(go tool cover -func=cover.out | grep total | awk '{print substr($3, 1, length($3)-1)}')
-    if (( $(echo "$coverage < 25" | bc -l) )); then
-      echo "Test coverage is below 25s%: $coverage%"
+    coverage=$(go tool cover -func=cover.out | grep total | awk '{print $3}' | tr -d %)
+    if (( $(echo "$coverage" | sed 's/\..*//') -lt 35 )); then
+      echo "Error: Test coverage is below 35% at $coverage%"
       exit 1
     fi
-    echo "Test coverage is $coverage%"
+    echo "Test coverage: $coverage%"
   '';
 
   # https://devenv.sh/pre-commit-hooks/
