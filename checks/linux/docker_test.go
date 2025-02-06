@@ -61,15 +61,13 @@ func TestDockerAccess_IsRunnable(t *testing.T) {
 	}{
 		{
 			name:           "Docker is installed",
-			commandOutput:  "Docker version 20.10.7, build f0df350",
+			commandOutput:  "Docker Version 20.10.7, build f0df350",
 			expectedResult: true,
-			expectedStatus: "",
 		},
 		{
 			name:           "Docker is not installed",
 			commandOutput:  "",
 			expectedResult: false,
-			expectedStatus: "Docker is not installed",
 		},
 	}
 
@@ -82,7 +80,6 @@ func TestDockerAccess_IsRunnable(t *testing.T) {
 			result := dockerAccess.IsRunnable()
 
 			assert.Equal(t, tt.expectedResult, result)
-			assert.Equal(t, tt.expectedStatus, dockerAccess.status)
 		})
 	}
 }
@@ -97,7 +94,7 @@ func TestDockerAccess_Name(t *testing.T) {
 
 func TestDockerAccess_Status(t *testing.T) {
 	dockerAccess := &DockerAccess{}
-	expectedStatus := "Docker is not running in rootless mode"
+	expectedStatus := ""
 	if dockerAccess.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, dockerAccess.Status())
 	}

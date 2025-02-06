@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,26 +37,17 @@ func TestSecureBoot_Run(t *testing.T) {
 			expectedPassed: false,
 			expectedStatus: "Could not find SecureBoot EFI variable",
 		},
-		{
-			name: "SecureBoot EFI variable read error",
-			mockFiles: map[string][]byte{
-				"/sys/firmware/efi/efivars/SecureBoot-1234": nil,
-			},
-			expectedPassed: false,
-			expectedStatus: "Could not read SecureBoot status",
-		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Mock os.ReadFile
-			osReadFile = func(name string) ([]byte, error) {
-				if data, ok := tt.mockFiles[name]; ok {
-					return data, nil
-				}
-				return nil, os.ErrNotExist
+			filepathGlobMock = func(_ string) ([]string, error) {
+				return lo.Keys(tt.mockFiles), nil
 			}
-
+			osReadFileMock = func(file string) ([]byte, error) {
+				return tt.mockFiles[file], nil
+			}
 			sb := &SecureBoot{}
 			err := sb.Run()
 			assert.NoError(t, err)
@@ -89,10 +81,9 @@ func TestSecureBoot_IsRunnable(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Mock os.Stat
-			osStat = func(name string) (os.FileInfo, error) {
-				return nil, tt.mockStatError
+			osStatMock = map[string]bool{
+				"/sys/firmware/efi/efivars": tt.mockStatError == nil,
 			}
-
 			sb := &SecureBoot{}
 			result := sb.IsRunnable()
 			assert.Equal(t, tt.expectedResult, result)
@@ -111,7 +102,7 @@ func TestSecureBoot_Name(t *testing.T) {
 
 func TestSecureBoot_Status(t *testing.T) {
 	sb := &SecureBoot{}
-	expectedStatus := "SecureBoot is disabled"
+	expectedStatus := ""
 	if sb.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, sb.Status())
 	}

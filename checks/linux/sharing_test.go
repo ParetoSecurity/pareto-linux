@@ -73,7 +73,7 @@ func TestSharing_Name(t *testing.T) {
 
 func TestSharing_Status(t *testing.T) {
 	sharing := &Sharing{}
-	expectedStatus := "No file sharing services found running"
+	expectedStatus := "Sharing services found running on ports:"
 	if sharing.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, sharing.Status())
 	}

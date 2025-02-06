@@ -2,7 +2,6 @@ package checks
 
 import (
 	"os"
-	"path/filepath"
 )
 
 type SecureBoot struct {
@@ -20,14 +19,14 @@ func (f *SecureBoot) Run() error {
 
 	// Find and read the SecureBoot EFI variable
 	pattern := "/sys/firmware/efi/efivars/SecureBoot-*"
-	matches, err := filepath.Glob(pattern)
+	matches, err := filepathGlob(pattern)
 	if err != nil || len(matches) == 0 {
 		f.passed = false
 		f.status = "Could not find SecureBoot EFI variable"
 		return nil
 	}
 
-	data, err := os.ReadFile(matches[0])
+	data, err := osReadFile(matches[0])
 	if err != nil {
 		f.passed = false
 		f.status = "Could not read SecureBoot status"
@@ -40,6 +39,7 @@ func (f *SecureBoot) Run() error {
 	if len(data) >= 5 && data[4] == 1 {
 		f.passed = true
 		f.status = f.PassedMessage()
+		return nil
 	}
 	f.passed = false
 	f.status = f.FailedMessage()
@@ -54,7 +54,7 @@ func (f *SecureBoot) Passed() bool {
 
 // CanRun returns whether the check can run
 func (f *SecureBoot) IsRunnable() bool {
-	if _, err := os.Stat("/sys/firmware/efi/efivars"); os.IsNotExist(err) {
+	if _, err := osStat("/sys/firmware/efi/efivars"); os.IsNotExist(err) {
 		f.status = "System is not running in UEFI mode"
 		return true
 	}

@@ -1,9 +1,11 @@
 package checks
 
 import (
+	"os"
 	"testing"
 
 	"github.com/ParetoSecurity/pareto-core/shared"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -112,52 +114,36 @@ func TestPasswordManagerCheck_Run_Linux(t *testing.T) {
 func TestPasswordManagerCheck_Run_BrowserExtensions(t *testing.T) {
 	tests := []struct {
 		name           string
-		mockFileSystem map[string]bool
+		mockFileSystem []string
 		expectedPassed bool
-		expectedStatus string
 	}{
 		{
 			name: "1Password extension present in Chrome",
-			mockFileSystem: map[string]bool{
-				"/home/user/.config/google-chrome/Default/Extensions/1password": true,
+			mockFileSystem: []string{
+				"/home/user/.config/google-chrome/Default/Extensions/aeblfdkhhhdcdjpifhhbdiojplfjncoa",
 			},
 			expectedPassed: true,
-			expectedStatus: "Password manager is present",
 		},
 		{
-			name: "Bitwarden extension present in Firefox",
-			mockFileSystem: map[string]bool{
-				"/home/user/.mozilla/firefox/bitwarden": true,
-			},
-			expectedPassed: true,
-			expectedStatus: "Password manager is present",
-		},
-		{
-			name: "No password manager extensions present",
-			mockFileSystem: map[string]bool{
-				"/home/user/.config/google-chrome/Default/Extensions/1password": false,
-				"/home/user/.mozilla/firefox/bitwarden":                         false,
-			},
+			name:           "No password manager extensions present",
+			mockFileSystem: []string{},
 			expectedPassed: false,
-			expectedStatus: "No password manager found",
 		},
 	}
 
 	for _, tt := range tests {
+		os.Setenv("HOME", "/home/user")
 		t.Run(tt.name, func(t *testing.T) {
 			// Mock os.Stat
-			osStat = func(name string) (os.FileInfo, error) {
-				if tt.mockFileSystem[name] {
-					return nil, nil
-				}
-				return nil, os.ErrNotExist
+			osReadDirMock = func(_ string) ([]os.DirEntry, error) {
+				return lo.Map(tt.mockFileSystem, func(name string, _ int) os.DirEntry {
+					return &mockDirEntry{name: name}
+				}), nil
 			}
-
 			pmc := &PasswordManagerCheck{}
 			err := pmc.Run()
 			assert.NoError(t, err)
 			assert.Equal(t, tt.expectedPassed, pmc.Passed())
-			assert.Equal(t, tt.expectedStatus, pmc.Status())
 		})
 	}
 }

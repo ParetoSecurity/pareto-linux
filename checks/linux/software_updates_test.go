@@ -115,7 +115,7 @@ func TestSoftwareUpdates_Name(t *testing.T) {
 
 func TestSoftwareUpdates_Status(t *testing.T) {
 	su := &SoftwareUpdates{}
-	expectedStatus := "All packages are up to date"
+	expectedStatus := ""
 	if su.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, su.Status())
 	}

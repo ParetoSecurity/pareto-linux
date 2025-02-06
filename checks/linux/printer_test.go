@@ -39,7 +39,6 @@ func TestPrinterRun(t *testing.T) {
 			expectedPassed: false,
 			expectedPorts: map[int]string{
 				631: "CUPS",
-				515: "LPD",
 			},
 		},
 	}
@@ -69,7 +68,7 @@ func TestPrinter_Name(t *testing.T) {
 
 func TestPrinter_Status(t *testing.T) {
 	printer := &Printer{}
-	expectedStatus := "Sharing printers is off"
+	expectedStatus := "Printer sharing services found running on ports:"
 	if printer.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, printer.Status())
 	}

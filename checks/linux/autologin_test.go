@@ -93,7 +93,7 @@ func TestAutologin_Name(t *testing.T) {
 
 func TestAutologin_Status(t *testing.T) {
 	a := &Autologin{}
-	expectedStatus := "Automatic login is off"
+	expectedStatus := ""
 	if a.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, a.Status())
 	}

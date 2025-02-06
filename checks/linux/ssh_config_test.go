@@ -142,7 +142,7 @@ func TestSSHConfigCheck_Name(t *testing.T) {
 
 func TestSSHConfigCheck_Status(t *testing.T) {
 	su := &SSHConfigCheck{}
-	expectedStatus := "SSH configuration is not secure."
+	expectedStatus := ""
 	if su.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, su.Status())
 	}

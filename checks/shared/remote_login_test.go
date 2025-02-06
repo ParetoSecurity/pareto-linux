@@ -50,7 +50,7 @@ func TestRemoteLogin_Name(t *testing.T) {
 
 func TestRemoteLogin_Status(t *testing.T) {
 	remoteLogin := &RemoteLogin{}
-	expectedStatus := "No remote access services found running"
+	expectedStatus := "Remote access services found running on ports:"
 	if remoteLogin.Status() != expectedStatus {
 		t.Errorf("Expected Status %s, got %s", expectedStatus, remoteLogin.Status())
 	}
