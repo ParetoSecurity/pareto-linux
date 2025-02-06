@@ -39,10 +39,7 @@ func TestSharing_Run(t *testing.T) {
 		{
 			name: "Only one port open",
 			mockFunc: func(port int, proto string) bool {
-				if port == 445 {
-					return true
-				}
-				return false
+				return port == 445
 			},
 			expected: false,
 		},
