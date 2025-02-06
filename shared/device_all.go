@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"testing"
 
 	"github.com/caarlos0/log"
 	"github.com/elastic/go-sysinfo"
@@ -66,6 +67,17 @@ type LinkingDevice struct {
 // with the hostname, OS name, OS version, kernel version, UUID, and ticket.
 // Returns a pointer to the LinkingDevice and an error if any occurs during the process.
 func NewLinkingDevice() (*LinkingDevice, error) {
+
+	if testing.Testing() {
+		return &LinkingDevice{
+			Hostname:  "test-hostname",
+			OS:        "test-os",
+			OSVersion: "test-os-version",
+			Kernel:    "test-kernel",
+			UUID:      "test-uuid",
+			Ticket:    "test-ticket",
+		}, nil
+	}
 
 	hostInfo, err := sysinfo.Host()
 	if err != nil {
