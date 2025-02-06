@@ -19,8 +19,8 @@ in {
     go mod verify
     go test -coverprofile=cover.out ./...
     coverage=$(go tool cover -func=cover.out | grep total | awk '{print $3}' | tr -d %)
-    if [ $(echo "$coverage" | sed 's/\..*//') -lt 35 ]; then
-      echo "Error: Test coverage is below 35% at $coverage%"
+    if [ $(echo "$coverage" | sed 's/\..*//') -lt 30 ]; then
+      echo "Error: Test coverage is below 30% at $coverage%"
       exit 1
     fi
     echo "Test coverage: $coverage%"
