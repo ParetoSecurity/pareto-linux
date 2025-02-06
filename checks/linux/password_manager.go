@@ -22,7 +22,7 @@ func (pmc *PasswordManagerCheck) isManagerInstalled() bool {
 
 	for _, pwdManager := range passwordManagers {
 		if isPackageInstalled(pwdManager) {
-			log.Info("Password manager found: " + pwdManager)
+			log.Debug("Password manager found: " + pwdManager)
 			return true
 		}
 	}
@@ -46,32 +46,28 @@ func checkForBrowserExtensions() bool {
 	home := os.Getenv("HOME")
 	extensionPaths := map[string]string{
 		"Google Chrome":  filepath.Join(home, ".config", "google-chrome", "Default", "Extensions"),
-		"Firefox":        filepath.Join(home, ".mozilla", "firefox"),
 		"Microsoft Edge": filepath.Join(home, ".config", "microsoft-edge", "Default", "Extensions"),
 		"Brave Browser":  filepath.Join(home, ".config", "BraveSoftware", "Brave-Browser", "Default", "Extensions"),
 	}
 
 	browserExtensions := []string{
-		"LastPass",
-		"ProtonPass",
-		"NordPass",
-		"Bitwarden",
-		"1Password",
-		"KeePass",
-		"Dashlane",
+		"hdokiejnpimakedhajhdlcegeplioahd", // LastPass
+		"ghmbeldphafepmbegfdlkpapadhbakde", // ProtonPass
+		"eiaeiblijfjekdanodkjadfinkhbfgcd", // nordpass
+		"nngceckbapebfimnlniiiahkandclbl",  // bitwarden
+		"aeblfdkhhhdcdjpifhhbdiojplfjncoa", // 1password
+		"fdjamakpfbbddfjaooikfcpapjohcfmg", // dashlane
 	}
 
 	for _, extPath := range extensionPaths {
-		if _, err := os.Stat(extPath); err == nil {
-			entries, err := os.ReadDir(extPath)
-			if err == nil {
-				for _, entry := range entries {
-					name := strings.ToLower(entry.Name())
-					for _, ext := range browserExtensions {
-						if strings.Contains(name, strings.ToLower(ext)) {
-							log.Info("Password manager extension found: " + ext)
-							return true
-						}
+		entries, err := osReadDir(extPath)
+		if err == nil {
+			for _, entry := range entries {
+				name := strings.ToLower(entry.Name())
+				for _, ext := range browserExtensions {
+					if strings.Contains(name, strings.ToLower(ext)) {
+						log.Debug("Password manager extension found: " + ext)
+						return true
 					}
 				}
 			}
@@ -86,23 +82,23 @@ func isPackageInstalled(pkgName string) bool {
 	// Check which package managers are available
 	if _, err := shared.RunCommand("which", "dpkg"); err == nil {
 		pkgManagers["apt"] = "dpkg -l"
-		log.Info("apt package manager found")
+		log.Debug("apt package manager found")
 	}
 	if _, err := shared.RunCommand("which", "snap"); err == nil {
 		pkgManagers["snap"] = "snap list"
-		log.Info("snap package manager found")
+		log.Debug("snap package manager found")
 	}
 	if _, err := shared.RunCommand("which", "yum"); err == nil {
 		pkgManagers["yum"] = "yum list installed"
-		log.Info("yum package manager found")
+		log.Debug("yum package manager found")
 	}
 	if _, err := shared.RunCommand("which", "flatpak"); err == nil {
 		pkgManagers["flatpak"] = "flatpak list"
-		log.Info("flatpak package manager found")
+		log.Debug("flatpak package manager found")
 	}
 	if _, err := shared.RunCommand("which", "pacman"); err == nil {
 		pkgManagers["pacman"] = "pacman -Q"
-		log.Info("pacman package manager found")
+		log.Debug("pacman package manager found")
 	}
 
 	for pkgManager, baseCmd := range pkgManagers {

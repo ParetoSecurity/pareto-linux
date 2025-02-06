@@ -45,8 +45,8 @@ func (f *DockerAccess) Passed() bool {
 // CanRun returns whether the check can run
 func (f *DockerAccess) IsRunnable() bool {
 
-	_, err := shared.RunCommand("docker", "version")
-	if err != nil {
+	out, _ := shared.RunCommand("docker", "version")
+	if !strings.Contains(out, "Version") {
 		f.status = "Docker is not installed"
 		return false
 	}
