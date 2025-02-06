@@ -29,6 +29,5 @@ var All = []Claim{
 	{"System Integrity", []check.Check{
 		check.Register(&checks.SecureBoot{}),
 		check.Register(&checks.EncryptingFS{}),
-		check.Register(&checks.KernelParamsCheck{}),
 	}},
 }
