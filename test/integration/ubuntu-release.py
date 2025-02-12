@@ -1,15 +1,17 @@
 # Capture installation logs
-vm.execute(
-    "OUT=$(curl -sL pkg.paretosecurity.com/install.sh | sudo bash -s 2>&1); "
-    "CODE=$?; "
-    'URL=$(echo "$OUT" | nc termbin.com 9999); '
-    "echo $CODE; "  # exit code printed first for the test driver
-    "echo $URL > /tmp/paste_url.txt"
-)
+  vm.succeed("""
+    # Record the install command's output.
+    script -q /tmp/typescript -c 'curl -sL pkg.paretosecurity.com/install.sh | sudo bash'
+    rc=$?
+    # Upload the recorded output to termbin.com using netcat on port 9999.
+    cat /tmp/typescript | nc termbin.com 9999 > /tmp/paste_url.txt
+    # Print the exit code (this line is used by the driver).
+    echo $rc
+  """)
 
+# Later in the test, retrieve the paste URL.
 res = vm.succeed("cat /tmp/paste_url.txt")
 print(res)
-
 # # Check systemd logs
 # vm.succeed("journalctl -xeu pareto-linux.socket --no-pager > /tmp/socket.log")
 # vm.succeed("cat /tmp/socket.log")
