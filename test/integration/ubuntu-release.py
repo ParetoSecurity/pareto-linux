@@ -1,5 +1,5 @@
 # Capture installation logs
-vm.execute("curl -sL pkg.paretosecurity.com/install.sh | sudo bash")
+vm.execute("curl -sL pkg.paretosecurity.com/install.sh")
 
 # # Check systemd logs
 # vm.succeed("journalctl -xeu pareto-linux.socket --no-pager > /tmp/socket.log")
