@@ -101,6 +101,11 @@ func TestPasswordManagerCheck_Run_Linux(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Mock shared.RunCommand
+			shared.SetCache("pkg_apt", "", 0)
+			shared.SetCache("pkg_snap", "", 0)
+			shared.SetCache("pkg_yum", "", 0)
+			shared.SetCache("pkg_flatpak", "", 0)
+			shared.SetCache("pkg_pacman", "", 0)
 
 			shared.RunCommandMocks = tt.mockCommands
 

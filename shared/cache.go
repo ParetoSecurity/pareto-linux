@@ -2,7 +2,6 @@ package shared
 
 import (
 	"sync"
-	"testing"
 
 	"time"
 )
@@ -18,9 +17,6 @@ var (
 )
 
 func GetCache(key string) (string, bool) {
-	if testing.Testing() {
-		return "", false
-	}
 
 	cacheMutex.RLock()
 	defer cacheMutex.RUnlock()
@@ -36,9 +32,6 @@ func GetCache(key string) (string, bool) {
 }
 
 func SetCache(key string, value string, ttlSeconds int) {
-	if testing.Testing() {
-		return
-	}
 
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
