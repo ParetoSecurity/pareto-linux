@@ -16,9 +16,19 @@ in {
   languages.go.enable = true;
   languages.go.package = upstream.go_1_24;
 
-  # https://devenv.sh/tests/
-  enterTest = ''
-    go mod verify
+  scripts.help-scripts.description = "List all available scripts";
+  scripts.help-scripts.exec = ''
+    echo
+    echo Helper scripts:
+    echo
+    ${pkgs.gnused}/bin/sed -e 's| |••|g' -e 's|=| |' <<EOF | ${pkgs.util-linuxMinimal}/bin/column -t | ${pkgs.gnused}/bin/sed -e 's|••| |g'
+    ${lib.generators.toKeyValue {} (lib.filterAttrs (name: _: name != "help-scripts") (lib.mapAttrs (name: value: value.description) config.scripts))}
+    EOF
+    echo
+  '';
+
+  scripts.coverage.description = "Run tests and check coverage";
+  scripts.coverage.exec = ''
     go test -coverprofile=cover.out ./...
     coverage=$(go tool cover -func=cover.out | grep total | awk '{print $3}' | tr -d %)
     if [ $(echo "$coverage" | sed 's/\..*//') -lt 30 ]; then
@@ -28,6 +38,7 @@ in {
     echo "Test coverage: $coverage%"
   '';
 
+  scripts.verify-package.description = "Verify package.nix hash";
   scripts.verify-package.exec = ''
     output=$(nix run .# -- --help 2>&1)
     specified=$(echo "$output" | grep "specified:" | awk '{print $2}')
@@ -40,6 +51,18 @@ in {
     else
       echo "Hashes match; no update required."
     fi
+  '';
+
+  enterShell = ''
+    help-scripts
+
+    echo "Hint: Run 'devenv test -d' to run tests"
+  '';
+
+  # https://devenv.sh/tests/
+  enterTest = ''
+    go mod verify
+    coverage
   '';
 
   # https://devenv.sh/pre-commit-hooks/
