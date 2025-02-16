@@ -11,10 +11,13 @@ in {
   packages = [
     pkgs.alejandra
     pkgs.goreleaser
+    upstream.go_1_24
   ];
   languages.nix.enable = true;
-  languages.go.enable = true;
-  languages.go.package = upstream.go_1_24;
+
+  env.GOROOT = upstream.go_1_24 + "/share/go/";
+  env.GOPATH = config.env.DEVENV_STATE + "/go";
+  env.GOTOOLCHAIN = "local";
 
   scripts.help-scripts.description = "List all available scripts";
   scripts.help-scripts.exec = ''
@@ -54,6 +57,7 @@ in {
   '';
 
   enterShell = ''
+    export PATH=$GOPATH/bin:$PATH
     help-scripts
 
     echo "Hint: Run 'devenv test -d' to run tests"

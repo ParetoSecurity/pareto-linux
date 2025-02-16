@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
-	"testing"
 	"time"
 
 	"github.com/caarlos0/log"
@@ -29,14 +28,8 @@ type Report struct {
 	State             map[string]string      `json:"state"`
 }
 
-func currentTime() string {
-	if testing.Testing() {
-		return "2025-01-17T20:29:40+01:00"
-	}
-	return time.Now().Format(time.RFC3339)
-}
-
-func NowReport() Report {
+// NowReport compiles and returns a Report that summarizes the results of all runnable checks.
+func NowReport(all []claims.Claim) Report {
 	passed := 0
 	failed := 0
 	disabled := 0
@@ -44,23 +37,21 @@ func NowReport() Report {
 	failedSeed, _ := shared.SystemUUID()
 	checkStates := make(map[string]string)
 
-	for _, claim := range claims.All {
-		if claim.Title != "My Checks" {
-			for _, check := range claim.Checks {
-				if check.IsRunnable() {
-					if check.Passed() {
-						passed++
-						checkStates[check.UUID()] = "pass"
-					} else {
-						failed++
-						failedSeed += check.UUID()
-						checkStates[check.UUID()] = "fail"
-					}
+	for _, claim := range all {
+		for _, check := range claim.Checks {
+			if check.IsRunnable() {
+				if check.Passed() {
+					passed++
+					checkStates[check.UUID()] = "pass"
 				} else {
-					disabled++
-					disabledSeed += check.UUID()
-					checkStates[check.UUID()] = "off"
+					failed++
+					failedSeed += check.UUID()
+					checkStates[check.UUID()] = "fail"
 				}
+			} else {
+				disabled++
+				disabledSeed += check.UUID()
+				checkStates[check.UUID()] = "off"
 			}
 		}
 	}
@@ -72,7 +63,7 @@ func NowReport() Report {
 		DisabledCount:     disabled,
 		Device:            shared.CurrentReportingDevice(),
 		Version:           shared.Version,
-		LastCheck:         currentTime(),
+		LastCheck:         time.Now().Format(time.RFC3339),
 		SignificantChange: hex.EncodeToString(significantChange[:]),
 		State:             checkStates,
 	}
@@ -80,7 +71,7 @@ func NowReport() Report {
 
 // ReportAndSave generates a report and saves it to the configuration file.
 func ReportToTeam() error {
-	report := NowReport()
+	report := NowReport(claims.All)
 	log.Debug(spew.Sdump(report))
 	res := ""
 	errRes := ""

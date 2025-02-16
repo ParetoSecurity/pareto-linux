@@ -1,5 +1,0 @@
-PATCH /api/v1/team/test-team-id/device HTTP/1.1
-Host: dash.paretosecurity.com
-Content-Type: application/json
-
-{"passedCount":0,"failedCount":5,"disabledCount":0,"device":{"machineUUID":"test-uuid","machineName":"test-hostname","auth":"test-token","macOSVersion":"test-os test-os-version","modelName":"Unknown","modelSerial":"Unknown"},"version":"dev","lastCheck":"2025-01-17T20:29:40+01:00","significantChange":"9716b1eb5943eed2808c624b3207e3ab2a6b771a51585ff2403c357eb2660064","state":{"44e4754a-0b42-4964-9cc2-b88b2023cb1e":"fail","4ced961d-7cfc-4e7b-8f80-195f6379446e":"fail","ef69f752-0e89-46e2-a644-310429ae5f45":"fail","f962c423-fdf5-428a-a57a-827abc9b253e":"fail"}}

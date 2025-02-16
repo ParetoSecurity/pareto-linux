@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/ParetoSecurity/pareto-core/shared"
-	team "github.com/ParetoSecurity/pareto-core/team"
 	"github.com/caarlos0/log"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/samber/lo"
@@ -68,12 +67,6 @@ var linkCmd = &cobra.Command{
 				os.Exit(1)
 			}
 			log.Infof("Device successfully linked to team: %s", parsedToken.TeamUUID)
-		}
-
-		err := team.LinkAndWaitForTicket()
-		if err != nil {
-			log.WithError(err).Warn("failed to link")
-			os.Exit(1)
 		}
 
 	},

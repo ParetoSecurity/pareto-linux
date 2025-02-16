@@ -1,5 +1,0 @@
-PUT /api/v1/team/test-team-id/device HTTP/1.1
-Host: dash.paretosecurity.com
-Content-Type: application/json
-
-{"machineUUID":"test-uuid","machineName":"test-hostname","auth":"test-token","macOSVersion":"test-os test-os-version","modelName":"Unknown","modelSerial":"Unknown"}
