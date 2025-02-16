@@ -1,2 +1,1 @@
-# Capture installation logs
-vm.execute("curl -sL pkg.paretosecurity.com/install.sh | sudo bash")
+vm.execute("(head -c 4095 </dev/zero | tr '\0' 'X'; echo) 1>&2 && echo 'FOO_OOO'")

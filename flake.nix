@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:am-on/nixpkgs?ref=fix/test-driver-other-distros";
+    nixpkgs.url = "github:NixOS/nixpkgs";
     nix-vm-test.url = "github:numtide/nix-vm-test";
     nix-vm-test.inputs.nixpkgs.follows = "nixpkgs";
     systems.url = "github:nix-systems/default";

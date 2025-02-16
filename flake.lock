@@ -39,16 +39,15 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1739610657,
-        "narHash": "sha256-Pb+M19Syy0fx8X+FX8zUFlQDGUYqlYIxwCOfjWzDX7U=",
-        "owner": "am-on",
+        "lastModified": 1739679242,
+        "narHash": "sha256-8OxTv2m4W8rnaw+0uJjZnK2BVXNb9uTmD4hhphWIfDc=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6e91025613fc0c5bda4c8b4b1b49d4ae1d496b8c",
+        "rev": "80e02910ac90de148ff08d16095ecfd60f2d74f6",
         "type": "github"
       },
       "original": {
-        "owner": "am-on",
-        "ref": "fix/test-driver-other-distros",
+        "owner": "NixOS",
         "repo": "nixpkgs",
         "type": "github"
       }
