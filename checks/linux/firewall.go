@@ -8,6 +8,7 @@ import (
 	"github.com/caarlos0/log"
 )
 
+// Firewall checks the system firewall.
 type Firewall struct {
 	passed bool
 	status string
@@ -75,7 +76,7 @@ func (f *Firewall) Passed() bool {
 	return f.passed
 }
 
-// CanRun returns whether the check can run
+// IsRunnable returns whether Firewall is runnable.
 func (f *Firewall) IsRunnable() bool {
 
 	can := shared.IsSocketServicePresent()

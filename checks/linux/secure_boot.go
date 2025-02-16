@@ -4,6 +4,7 @@ import (
 	"os"
 )
 
+// SecureBoot checks secure boot configuration.
 type SecureBoot struct {
 	passed bool
 	status string
@@ -52,7 +53,7 @@ func (f *SecureBoot) Passed() bool {
 	return f.passed
 }
 
-// CanRun returns whether the check can run
+// IsRunnable returns whether SecureBoot is runnable.
 func (f *SecureBoot) IsRunnable() bool {
 	if _, err := osStat("/sys/firmware/efi/efivars"); os.IsNotExist(err) {
 		f.status = "System is not running in UEFI mode"

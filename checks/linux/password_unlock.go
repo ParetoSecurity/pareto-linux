@@ -7,6 +7,7 @@ import (
 	"github.com/ParetoSecurity/pareto-core/shared"
 )
 
+// PasswordToUnlock represents a check to ensure that a password is required to unlock the screen.
 type PasswordToUnlock struct {
 	passed bool
 }
@@ -57,7 +58,7 @@ func (f *PasswordToUnlock) Passed() bool {
 	return f.passed
 }
 
-// CanRun returns whether the check can run
+// IsRunnable returns whether the check can run
 func (f *PasswordToUnlock) IsRunnable() bool {
 	return true
 }

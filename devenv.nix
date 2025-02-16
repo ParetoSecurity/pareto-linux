@@ -28,31 +28,32 @@ in {
     echo "Test coverage: $coverage%"
   '';
 
+  scripts.verify-package.exec = ''
+    output=$(nix run .# -- --help 2>&1)
+    specified=$(echo "$output" | grep "specified:" | awk '{print $2}')
+    got=$(echo "$output" | grep "got:" | awk '{print $2}')
+    echo "Specified: $specified"
+    echo "Got: $got"
+    if [ "$specified" != "$got" ]; then
+      echo "Mismatch detected, updating package.nix hash from $specified to $got"
+      sed -i"" -e "s/$specified/$got/g" ./package.nix
+    else
+      echo "Hashes match; no update required."
+    fi
+  '';
+
   # https://devenv.sh/pre-commit-hooks/
   pre-commit.hooks = {
     alejandra.enable = true;
     gofmt.enable = true;
-    govet.enable = true;
-    revive.enable = true;
-    staticcheck.enable = true;
+    golangci-lint.enable = true;
+    # revive.enable = true;
     packaga-sha = {
       name = "Verify package.nix hash";
       enable = true;
       pass_filenames = false;
       files = "go.(mod|sum)$";
-      entry = ''
-        output=$(nix run .# -- --help 2>&1)
-        specified=$(echo "$output" | grep "specified:" | awk '{print $2}')
-        got=$(echo "$output" | grep "got:" | awk '{print $2}')
-        echo "Specified: $specified"
-        echo "Got: $got"
-        if [ "$specified" != "$got" ]; then
-          echo "Mismatch detected, updating package.nix hash from $specified to $got"
-          sed -i"" -e "s/$specified/$got/g" ./package.nix
-        else
-          echo "Hashes match; no update required."
-        fi
-      '';
+      entry = "verify-package";
     };
   };
 

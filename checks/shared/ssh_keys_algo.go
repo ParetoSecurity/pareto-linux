@@ -1,3 +1,4 @@
+// Package shared provides SSH key algo utilities.
 package shared
 
 import (
@@ -8,23 +9,32 @@ import (
 	"strings"
 )
 
+// KeyType represents the type of SSH key.
 type KeyType string
 
 const (
-	ED25519    KeyType = "ED25519"
-	ED25519_SK KeyType = "ED25519-SK"
-	ECDSA      KeyType = "ECDSA"
-	ECDSA_SK   KeyType = "ECDSA-SK"
-	DSA        KeyType = "DSA"
-	RSA        KeyType = "RSA"
+	// Ed25519 is the Ed25519 key algorithm.
+	Ed25519 KeyType = "ED25519"
+	// Ed25519Sk is the Ed25519-SK key algorithm.
+	Ed25519Sk KeyType = "ED25519-SK"
+	// Ecdsa is the ECDSA key algorithm.
+	Ecdsa KeyType = "ECDSA"
+	// EcdsaSk is the ECDSA-SK key algorithm.
+	EcdsaSk KeyType = "ECDSA-SK"
+	// Dsa is the DSA key algorithm.
+	Dsa KeyType = "DSA"
+	// Rsa is the RSA key algorithm.
+	Rsa KeyType = "RSA"
 )
 
+// KeyInfo holds information about a key.
 type KeyInfo struct {
 	strength  int
 	signature string
 	keyType   KeyType
 }
 
+// SSHKeysAlgo runs the SSH keys algorithm.
 type SSHKeysAlgo struct {
 	passed  bool
 	sshKey  string
@@ -58,13 +68,13 @@ func (f *SSHKeysAlgo) isKeyStrong(path string) bool {
 
 	info := parseKeyInfo(string(output))
 	switch info.keyType {
-	case RSA:
+	case Rsa:
 		return info.strength >= 2048
-	case DSA:
+	case Dsa:
 		return info.strength >= 8192
-	case ECDSA, ECDSA_SK:
+	case Ecdsa, EcdsaSk:
 		return info.strength >= 521
-	case ED25519, ED25519_SK:
+	case Ed25519, Ed25519Sk:
 		return info.strength >= 256
 	default:
 		return false
@@ -112,7 +122,7 @@ func (f *SSHKeysAlgo) Passed() bool {
 	return f.passed
 }
 
-// CanRun returns whether the check can run
+// IsRunnable returns whether SSHKeysAlgo is runnable.
 func (f *SSHKeysAlgo) IsRunnable() bool {
 	home, err := os.UserHomeDir()
 	if err != nil {

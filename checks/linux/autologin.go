@@ -1,3 +1,4 @@
+// Package linux provides checks for Linux systems.
 package checks
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/ParetoSecurity/pareto-core/shared"
 )
 
+// Autologin checks for autologin misconfiguration.
 type Autologin struct {
 	passed bool
 	status string
@@ -71,7 +73,7 @@ func (f *Autologin) Passed() bool {
 	return f.passed
 }
 
-// CanRun returns whether the check can run
+// IsRunnable returns whether Autologin is runnable.
 func (f *Autologin) IsRunnable() bool {
 	return true
 }

@@ -9,13 +9,13 @@ import (
 func TestPrinterRun(t *testing.T) {
 	tests := []struct {
 		name           string
-		mockCheckPort  func(port int, proto string) bool
+		mockCheckPort  func(_ int, _ string) bool
 		expectedPassed bool
 		expectedPorts  map[int]string
 	}{
 		{
 			name: "No ports open",
-			mockCheckPort: func(port int, proto string) bool {
+			mockCheckPort: func(_ int, _ string) bool {
 				return false
 			},
 			expectedPassed: true,
