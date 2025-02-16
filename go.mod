@@ -1,10 +1,10 @@
 module github.com/ParetoSecurity/pareto-core
 
-go 1.23.0
+go 1.24.0
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.33.0
 )
@@ -43,7 +43,7 @@ require (
 	fyne.io/systray v1.11.0
 	github.com/caarlos0/log v0.4.8
 	github.com/carlmjohnson/requests v0.24.3
-	github.com/elastic/go-sysinfo v1.15.0
+	github.com/elastic/go-sysinfo v1.15.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

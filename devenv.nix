@@ -6,6 +6,7 @@
   ...
 }: let
   flakePackage = import ./package.nix {inherit pkgs lib;};
+  upstream = import inputs.upstream {system = pkgs.stdenv.system;};
 in {
   packages = [
     pkgs.alejandra
@@ -13,6 +14,7 @@ in {
   ];
   languages.nix.enable = true;
   languages.go.enable = true;
+  languages.go.package = upstream.go_1_24;
 
   # https://devenv.sh/tests/
   enterTest = ''
@@ -30,14 +32,27 @@ in {
   pre-commit.hooks = {
     alejandra.enable = true;
     gofmt.enable = true;
-    golangci-lint.enable = true;
     govet.enable = true;
-    nix-run = {
+    revive.enable = true;
+    staticcheck.enable = true;
+    packaga-sha = {
       name = "Verify package.nix hash";
       enable = true;
       pass_filenames = false;
       files = "go.(mod|sum)$";
-      entry = "nix run .# -- --help";
+      entry = ''
+        output=$(nix run .# -- --help 2>&1)
+        specified=$(echo "$output" | grep "specified:" | awk '{print $2}')
+        got=$(echo "$output" | grep "got:" | awk '{print $2}')
+        echo "Specified: $specified"
+        echo "Got: $got"
+        if [ "$specified" != "$got" ]; then
+          echo "Mismatch detected, updating package.nix hash from $specified to $got"
+          sed -i"" -e "s/$specified/$got/g" ./package.nix
+        else
+          echo "Hashes match; no update required."
+        fi
+      '';
     };
   };
 
