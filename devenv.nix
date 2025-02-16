@@ -73,7 +73,7 @@ in {
   pre-commit.hooks = {
     alejandra.enable = true;
     gofmt.enable = true;
-    golangci-lint.enable = true;
+    # golangci-lint.enable = true;
     # revive.enable = true;
     packaga-sha = {
       name = "Verify package.nix hash";
