@@ -67,7 +67,7 @@ func transport() http.RoundTripper {
 		return reqtest.Caching(baseTrans, "fixtures")
 	}
 	logger := func(req *http.Request, res *http.Response, err error, d time.Duration) {
-		log.Debugf("method=%q url=%q err=%v status=%q duration=%v\n",
+		log.Infof("method=%q url=%q err=%v status=%q duration=%v\n",
 			req.Method, req.URL, err, res.Status, d.Round(1*time.Second))
 	}
 

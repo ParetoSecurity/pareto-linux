@@ -3,10 +3,11 @@ package shared
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	sharedG "github.com/ParetoSecurity/pareto-core/shared"
 )
 
 // KeyType represents the type of SSH key.
@@ -61,7 +62,7 @@ func parseKeyInfo(output string) KeyInfo {
 }
 
 func (f *SSHKeysAlgo) isKeyStrong(path string) bool {
-	output, err := exec.Command("ssh-keygen", "-l", "-f", path).Output()
+	output, err := sharedG.RunCommand("ssh-keygen", "-l", "-f", path)
 	if err != nil {
 		return false
 	}

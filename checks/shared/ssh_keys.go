@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	sharedG "github.com/ParetoSecurity/pareto-core/shared"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -20,7 +21,7 @@ func (f *SSHKeys) Name() string {
 
 // checks if private key has password protection
 func (f *SSHKeys) hasPassword(privateKeyPath string) bool {
-	keyBytes, err := os.ReadFile(privateKeyPath)
+	keyBytes, err := sharedG.ReadFile(privateKeyPath)
 	if err != nil {
 		return true // assume secure if can't read
 	}
@@ -96,7 +97,7 @@ func (f *SSHKeys) IsRunnable() bool {
 
 // UUID returns the UUID of the check
 func (f *SSHKeys) UUID() string {
-	return "ef69f752-0e89-46e2-a644-310429ae5f45"
+	return "b6aaec0f-d76c-429e-aecf-edab7f1ac400"
 }
 
 // PassedMessage returns the message to return if the check passed

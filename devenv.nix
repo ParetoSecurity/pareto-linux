@@ -32,10 +32,10 @@ in {
 
   scripts.coverage.description = "Run tests and check coverage";
   scripts.coverage.exec = ''
-    go test -coverprofile=cover.out ./...
-    coverage=$(go tool cover -func=cover.out | grep total | awk '{print $3}' | tr -d %)
-    if [ $(echo "$coverage" | sed 's/\..*//') -lt 40 ]; then
-      echo "Error: Test coverage is below 40% at $coverage%"
+    go test -coverprofile=coverage.txt ./...
+    coverage=$(go tool cover -func=coverage.txt | grep total | awk '{print $3}' | tr -d %)
+    if [ $(echo "$coverage" | sed 's/\..*//') -lt 45 ]; then
+      echo "Error: Test coverage is below 45% at $coverage%"
       exit 1
     fi
     echo "Test coverage: $coverage%"
