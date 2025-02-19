@@ -80,7 +80,7 @@ func handleConnection(conn net.Conn) {
 }
 
 var helperCmd = &cobra.Command{
-	Use:   "helper [--install] [--socket]",
+	Use:   "helper [--socket]",
 	Short: "A root helper",
 	Long:  `A root helper that listens on a Unix domain socket and responds to authenticated requests.`,
 	Run: func(cmd *cobra.Command, args []string) {
