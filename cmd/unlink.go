@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"testing"
 
 	"github.com/ParetoSecurity/pareto-core/shared"
 	"github.com/caarlos0/log"
@@ -17,6 +18,9 @@ var unlinkCmd = &cobra.Command{
 		shared.Config.AuthToken = ""
 		if err := shared.SaveConfig(); err != nil {
 			log.WithError(err).Warn("failed to save config")
+			if testing.Testing() {
+				return
+			}
 			os.Exit(1)
 		}
 	},
