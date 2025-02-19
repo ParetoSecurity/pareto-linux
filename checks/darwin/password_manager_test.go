@@ -1,6 +1,8 @@
 package checks
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -73,5 +75,69 @@ func TestPasswordManagerCheck_PassedMessage(t *testing.T) {
 	expectedPassedMessage := "Password manager is present"
 	if pmc.PassedMessage() != expectedPassedMessage {
 		t.Errorf("Expected PassedMessage %s, got %s", expectedPassedMessage, pmc.PassedMessage())
+	}
+}
+
+func TestCheckForBrowserExtensions(t *testing.T) {
+	// save original HOME so we can restore it
+	origHome := os.Getenv("HOME")
+	defer os.Setenv("HOME", origHome)
+
+	tests := []struct {
+		name         string
+		setUpDirs    map[string][]string // map of relative dir (from HOME) to list of entry names to create
+		expectedBool bool
+	}{
+		{
+			name: "Found extension in Chrome",
+			setUpDirs: map[string][]string{
+				filepath.Join("Library", "Application Support", "Google", "Chrome", "Default", "Extensions"): {"My1PasswordExtension"},
+			},
+			expectedBool: true,
+		},
+		{
+			name: "Found extension in Firefox",
+			setUpDirs: map[string][]string{
+				filepath.Join("Library", "Application Support", "Firefox", "Profiles"): {"nordpass_addon"},
+			},
+			expectedBool: true,
+		},
+		{
+			name: "Directories exist but no matching extension",
+			setUpDirs: map[string][]string{
+				filepath.Join("Library", "Application Support", "Microsoft Edge", "Default", "Extensions"):                 {"randomfolder"},
+				filepath.Join("Library", "Application Support", "BraveSoftware", "Brave-Browser", "Default", "Extensions"): {"anotherfolder"},
+			},
+			expectedBool: false,
+		},
+		{
+			name:         "No directories exist",
+			setUpDirs:    map[string][]string{},
+			expectedBool: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a temporary HOME directory
+			tempHome := t.TempDir()
+			os.Setenv("HOME", tempHome)
+
+			// Set up directories and entries as specified by the test case.
+			for relDir, entries := range tt.setUpDirs {
+				dirPath := filepath.Join(tempHome, relDir)
+				err := os.MkdirAll(dirPath, 0755)
+				assert.NoError(t, err)
+				// Create subdirectories for each entry
+				for _, entryName := range entries {
+					entryPath := filepath.Join(dirPath, entryName)
+					err := os.Mkdir(entryPath, 0755)
+					assert.NoError(t, err)
+				}
+			}
+			// Run the function and check the result
+			result := checkForBrowserExtensions()
+			assert.Equal(t, tt.expectedBool, result)
+		})
 	}
 }
