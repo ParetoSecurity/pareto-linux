@@ -58,7 +58,7 @@ jobs:
   code_coverage:
     name: "Code coverage report"
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-pareto-linux
     needs: test
     permissions:
       contents: read
