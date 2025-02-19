@@ -65,7 +65,7 @@ jobs:
       actions: read
       pull-requests: write
     steps:
-    - uses: fgrosse/go-coverage-report@v1.1.1 # Consider using a Git revision for maximum security
+    - uses: fgrosse/go-coverage-report@v1.2.0 # Consider using a Git revision for maximum security
       with:
         coverage-artifact-name: "code-coverage"
         coverage-file-name: "coverage.txt"
