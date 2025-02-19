@@ -54,7 +54,10 @@ jobs:
       with:
         name: code-coverage
         path: coverage.txt # Make sure to use the same file name you chose for the "-coverprofile" in the "Test" step
-
+    - name: Archive test results
+      uses: actions/upload-artifact@v4
+      with:
+        path: checks/shared/fixtures
   code_coverage:
     name: "Code coverage report"
     if: github.event_name == 'pull_request'
