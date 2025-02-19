@@ -24,26 +24,27 @@
         ]
       },
       "locked": {
-        "lastModified": 1739205898,
-        "narHash": "sha256-LwimggGfjUQUYq7JSRqcCrizxCyymXQY1yO0vbIN8D4=",
-        "owner": "numtide",
+        "lastModified": 1739867904,
+        "narHash": "sha256-KI5gKh/h3QvDxWg+AJ06LkDetha/HjiRl8t4rLlctSM=",
+        "owner": "am-on",
         "repo": "nix-vm-test",
-        "rev": "cfaa0ac4b085866d18afc886971b9e89ea662e90",
+        "rev": "6b44f595d4ba99bca58748bd00e40813a3bfe459",
         "type": "github"
       },
       "original": {
-        "owner": "numtide",
+        "owner": "am-on",
+        "ref": "fix/ubuntu-output-parsing-bug",
         "repo": "nix-vm-test",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1739679242,
-        "narHash": "sha256-8OxTv2m4W8rnaw+0uJjZnK2BVXNb9uTmD4hhphWIfDc=",
+        "lastModified": 1739944468,
+        "narHash": "sha256-5zvkkCOyauf12rBEN9PYx7gW2qLsdmWYNiFY2ZKtsrY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "80e02910ac90de148ff08d16095ecfd60f2d74f6",
+        "rev": "255804f6d70268f72b4e03903cee3be2f7d24c25",
         "type": "github"
       },
       "original": {

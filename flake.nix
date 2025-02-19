@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    nix-vm-test.url = "github:numtide/nix-vm-test";
+    nix-vm-test.url = "github:am-on/nix-vm-test?ref=fix/ubuntu-output-parsing-bug";
     nix-vm-test.inputs.nixpkgs.follows = "nixpkgs";
     systems.url = "github:nix-systems/default";
   };
