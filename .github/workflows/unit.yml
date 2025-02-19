@@ -14,7 +14,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+    - main
 
 # Prevent multiple jobs running after fast subsequent pushes
 concurrency:
@@ -23,29 +23,49 @@ concurrency:
 
 jobs:
   dependabot:
-    needs: [test]
+    needs: [ test ]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
     if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
     steps:
-      - id: metadata
-        uses: dependabot/fetch-metadata@d7267f607e9d3fb96fc2fbe83e0af444713e90b7 # v2.3.0
-        with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-      - run: |
-          gh pr review --approve "$PR_URL"
-          gh pr merge --squash --auto "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    - id: metadata
+      uses: dependabot/fetch-metadata@d7267f607e9d3fb96fc2fbe83e0af444713e90b7 # v2.3.0
+      with:
+        github-token: "${{ secrets.GITHUB_TOKEN }}"
+    - run: |
+        gh pr review --approve "$PR_URL"
+        gh pr merge --squash --auto "$PR_URL"
+      env:
+        PR_URL: ${{github.event.pull_request.html_url}}
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   test:
     name: Tests
     runs-on: namespace-profile-pareto-linux
     steps:
-      - uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5.0.3
-      - uses: ./.github/actions/devenv
-        with:
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      - run: devenv test -d
+    - uses: namespacelabs/nscloud-checkout-action@b8c45d632ce8118a5a0a51eb75a57cfccc74b8fa # v5.0.3
+    - uses: ./.github/actions/devenv
+      with:
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    - run: devenv test -d
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: coverage.txt # Make sure to use the same file name you chose for the "-coverprofile" in the "Test" step
+
+  code_coverage:
+    name: "Code coverage report"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: write
+    steps:
+    - uses: fgrosse/go-coverage-report@v1.1.1 # Consider using a Git revision for maximum security
+      with:
+        coverage-artifact-name: "code-coverage"
+        coverage-file-name: "coverage.txt"
